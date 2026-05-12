@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strand Finance - UX Case Study</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F4F7FB;
+            --surface-color: #FFFFFF;
+            --sidebar-bg: #232B3E;
+            --text-primary: #111827;
+            --text-secondary: #4B5563;
+            --text-muted: #9CA3AF;
+            --brand-primary: #1C4587;
+            --accent-green: #10B981;
+            --border-color: #E5E7EB;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            display: flex;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            color: #fff;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            padding: 32px 24px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-logo {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 16px;
+        }
+
+        .sidebar-nav a {
+            color: #9CA3AF;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .sidebar-nav a:hover {
+            color: #fff;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 64px 80px;
+            max-width: 1000px;
+        }
+
+        h1.section-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--brand-primary);
+            margin-top: 80px;
+            margin-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+        
+        h1.section-title:first-child {
+            margin-top: 0;
+        }
+
+        h2.section-subtitle {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 40px;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 32px;
+            margin-bottom: 16px;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--brand-primary);
+        }
+
+        p {
+            margin-bottom: 24px;
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        ul {
+            margin-bottom: 24px;
+            padding-left: 24px;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* Image Placeholders */
+        .image-placeholder, .video-placeholder {
+            background-color: #E2E8F0;
+            border: 2px dashed #CBD5E1;
+            border-radius: 12px;
+            padding: 64px 24px;
+            text-align: center;
+            margin: 32px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .image-placeholder .icon, .video-placeholder .icon {
+            font-size: 32px;
+        }
+
+        .image-placeholder .desc, .video-placeholder .desc {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            color: #64748B;
+            font-weight: 600;
+        }
+
+        /* Blockquotes */
+        blockquote {
+            border-left: 4px solid var(--brand-primary);
+            padding: 24px 32px;
+            margin: 32px 0;
+            background-color: var(--surface-color);
+            border-radius: 0 12px 12px 0;
+            font-size: 18px;
+            font-style: italic;
+            color: var(--text-primary);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin: 32px 0;
+            background: var(--surface-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 16px 24px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #F8FAFC;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        td {
+            font-size: 15px;
+        }
+
+        /* Highlights */
+        .highlight-metric {
+            background-color: #ECFDF5;
+            color: var(--accent-green);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 600;
+        }
+        
+        .highlight-text {
+            background-color: #FEF3C7;
+            color: #D97706;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* Utility */
+        hr {
+            border: 0;
+            height: 1px;
+            background: var(--border-color);
+            margin: 64px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            🛡️ Strand Finance
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#hero">01. Overview</a></li>
+                <li><a href="#tldr">02. Executive Summary</a></li>
+                <li><a href="#strategy">03. UX Strategy</a></li>
+                <li><a href="#research">05. Research</a></li>
+                <li><a href="#synthesis">07. Synthesis</a></li>
+                <li><a href="#personas">09. Personas</a></li>
+                <li><a href="#ai">16. AI Solutions</a></li>
+                <li><a href="#mockups">17. High-Fi Mockups</a></li>
+                <li><a href="#impact">21. Results & Impact</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <blockquote><strong>Placeholder legend</strong> — anything you'll fill in is marked clearly:</blockquote>
+<blockquote>- <div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">description</div></div> — drop an image/Figma frame here</blockquote>
+<blockquote>- <div class="video-placeholder"><div class="icon">▶️</div><div class="desc">description</div></div> — embed a Loom, Lottie, or motion file</blockquote>
+>
+<blockquote>Everything else is the structural narrative. Edit freely.</blockquote>
+<p>---</p>
+<p>
+<h1 class="section-title">HERO / PROJECT OVERVIEW</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Hero cover image — final dashboard mockup, isometric or 3/4 angle</div></div>
+<h3>Project Title</h3>
+<strong>Empowering the Modern Relationship Manager</strong>
+Reimagining the wealth management workflow with AI-augmented UX
+<h3>One-line Pitch</h3>
+Reducing pre-meeting prep from 2 hours to 30 seconds by rebuilding the RM workspace around predictive, AI-driven insights.
+<h3>Project Meta (chip row)</h3>
+<div class="table-container"><table><tbody><tr></tr></tbody><tbody><tr><th><strong>Role</strong></th><th>Sr UX/UI Designer & AI Strategist</th></tr></tbody><tbody><tr><td><strong>Company / Client</strong></td><td>Strand Finance</td></tr></tbody><tbody><tr><td><strong>Timeline</strong></td><td>24 weeks, 2026</td></tr></tbody><tbody><tr><td><strong>Team</strong></td><td>1 PM, 2 Angular Engineers, 1 Data Scientist, Me</td></tr></tbody><tbody><tr><td><strong>Tools</strong></td><td>Figma, Angular, Power BI, Storybook, Salesforce</td></tr></tbody><tbody><tr><td><strong>Platform</strong></td><td>Enterprise Web App + Responsive PWA</td></tr></tbody></table></div>
+<h3>NDA Disclosure</h3>
+<blockquote>Visuals shown here are recreated for portfolio purposes. The problem framing, research, and design decisions are from the original engagement.</blockquote>
+<p>---</p>
+<p>
+<h1 class="section-title">TL;DR — EXECUTIVE SUMMARY</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">4-up impact stat grid — large numbers</div></div>
+<p>The wealth management industry is at an inflection point. Relationship Managers (RMs) are drowning in admin work, juggling 5+ disconnected systems, and burning hours assembling client reports. Clients want goal-oriented advice. Compliance wants systemic visibility.</p>
+<p>We rebuilt the RM workspace around three principles:
+1. <strong>Centralize the household</strong> — one client, one view, all accounts
+2. <strong>Shift from reactive to proactive</strong> — surface risk before it surfaces itself
+3. <strong>Offload cognition to AI</strong> — let humans do the human part</p>
+<h3>Headline Outcomes</h3>
+<li>Pre-meeting prep: <strong>2 hours → 30 seconds</strong> </li>
+<li>Drift detection: <strong>reactive (post-breach) → predictive (7 days out)</strong></li>
+<li>RM time freed: <strong>~30% of week reclaimed for client-facing work</strong></li>
+<li>Client Satisfaction (NPS): <strong>32 → 64 (Doubled)</strong></li>
+<p>---</p>
+<p>
+<h1 class="section-title">UX STRATEGY MINDSET</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">A diagram showing your design philosophy — e.g., 3 concentric circles: Human → Workflow → Data</div></div>
+<h3>How I Approached This Problem</h3>
+Most wealth platforms are built database-first—they dump 40 columns of raw data into a table and ask the Relationship Manager to hunt for the insight. I flipped this paradigm: I designed workflow-first. Every screen in Strand Finance was built to answer a specific temporal question: <em>What needs my attention at 9:00 AM? What context do I need at 1:30 PM before a call?</em> Every interface had to answer these questions in under 5 seconds.
+<h3>Three Guiding Principles</h3>
+1. <strong>Workflow before data.</strong> Every screen earns its place by serving a moment in the RM's day.
+2. <strong>AI augments, never replaces.</strong> AI handles the synthesis; the RM owns the relationship.
+3. <strong>Trust through transparency.</strong> Every number shows its source, its timestamp, and its confidence.
+<p>---</p>
+<p>
+<h1 class="section-title">THE CONTEXT — WHY NOW?</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Industry forces visual — 4 cards or a force-field diagram</div></div>
+<p>Before designing a single pixel, I mapped the macroeconomic forces reshaping the industry. Understanding <em>why</em> the industry is moving was the unlock for <em>what</em> to design.</p>
+<h3>1. Fee Compression</h3>
+Robo-advisors charging 0.25% are squeezing traditional 1% firms. To survive, firms need tooling that lets RMs serve more clients without sacrificing quality.
+<h3>2. The Great Wealth Transfer</h3>
+~$84T will pass from Boomers to Gen X/Millennials over the next 20 years. The next generation expects seamless digital UX. Firms that don't modernize lose those assets.
+<h3>3. Aging RM Workforce</h3>
+The average advisor is 55+. Firms need intuitive tools so younger RMs can ramp up fast.
+<h3>4. Explosion of Alternative Assets</h3>
+Private equity, crypto, direct real estate — increasingly part of HNWI portfolios, but the data is unstructured chaos.
+<blockquote>🚀 <strong>AI Opportunity:</strong> Models can ingest unstructured capital call PDFs and normalize them into the dashboard instantly.</blockquote>
+<p>---</p>
+<p>
+<h1 class="section-title">RESEARCH</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Research methodology overview — methods + sample size grid</div></div>
+<h3>Research Goals</h3>
+1. Map the actual workday of a Relationship Manager (not the assumed one)
+2. Identify high-friction moments across the household lifecycle
+3. Surface unmet needs in the client and compliance experience
+4. Validate whether AI was a fit (or a distraction)
+<h3>Methods Used</h3>
+<div class="table-container"><table><tbody><tr><td>Method</td><td>Sample</td><td>Output</td></tr></tbody><tbody><tr><td><strong>Stakeholder Interviews</strong></td><td>12 RMs, 3 Compliance Officers, 2 Heads of Wealth</td><td>Workflow themes, language patterns</td></tr></tbody><tbody><tr><td><strong>Contextual Inquiry</strong></td><td>6 shadowing sessions, full RM workday</td><td>Tool-switching map, real prep ritual</td></tr></tbody><tbody><tr><td><strong>Client Surveys</strong></td><td>85+ HNWI / mass-affluent clients</td><td>Emotional gap, fee perception</td></tr></tbody><tbody><tr><td><strong>Heuristic Audit</strong></td><td>Existing platform, 5 competitor tools</td><td>Pattern inventory</td></tr></tbody><tbody><tr><td><strong>Data Diary Study</strong></td><td>4 RMs, 2-week diary</td><td>Real friction logged in the moment</td></tr></tbody><tbody><tr><td><strong>Compliance Workshop</strong></td><td>Co-design session, 1 day</td><td>Risk surface map</td></tr></tbody></table></div>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Photo from a research session — whiteboard with sticky notes, blurred faces</div></div>
+<p>---</p>
+<p>
+<h1 class="section-title">USER INTERVIEWS — KEY QUOTES</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Quote wall — 6–9 quotes in pull-quote cards, anonymized photos</div></div>
+<h3>From the RMs</h3>
+<blockquote>"I have five tabs open just to answer one client question. By the time I find the answer, I've forgotten the question."</blockquote>
+<blockquote>— <strong>Senior RM, 14 years</strong></blockquote>
+<blockquote>"Pre-meeting prep takes me about two hours per client. I do 45 clients quarterly. You do the math. I'm essentially a highly-paid formatting machine."</blockquote>
+<blockquote>— <strong>Wealth Advisor, 8 years</strong></blockquote>
+<blockquote>"My clients don't care about TWR. They care about whether they can pay for their daughter's wedding. The dashboard speaks a language they don't care about."</blockquote>
+<blockquote>— <strong>Private Wealth Manager, 10 years</strong></blockquote>
+<h3>From the Clients</h3>
+<blockquote>"I pay a 1% AUM fee and I have no idea what they actually do for me, especially when the market is down."</blockquote>
+<blockquote>— <strong>HNWI Client, $5M AUM</strong></blockquote>
+<blockquote>"I get a 40-page statement every month. It goes straight into the shredder. Just tell me if I'm okay."</blockquote>
+<blockquote>— <strong>Mass Affluent Client, $750k AUM</strong></blockquote>
+<h3>From Compliance</h3>
+<blockquote>"We catch concentration risk after it's already a problem. We need to see it forming before the client is exposed."</blockquote>
+<blockquote>— <strong>Head of Risk & Compliance</strong></blockquote>
+<p>---</p>
+<p>
+<h1 class="section-title">SYNTHESIS — PAIN POINTS BY STAKEHOLDER</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Affinity diagram — pain points clustered by stakeholder, color-coded</div></div>
+<p>I synthesized 200+ data points into 12 high-impact pain points across three stakeholders.</p>
+<h3>A. Pain Points the RM Lives With Daily</h3>
+<div class="table-container"><table><tbody><tr><td>#</td><td>Pain</td><td>Frequency</td><td>Impact</td></tr></tbody><tbody><tr><td>1</td><td><strong>Data Fragmentation</strong> — answering basic client questions means exporting CSVs from 3 systems</td><td>Daily</td><td>Critical</td></tr></tbody><tbody><tr><td>2</td><td><strong>Meeting Prep Paralysis</strong> — 1–2 hrs per quarterly review pack</td><td>Quarterly × 45 clients</td><td>Critical</td></tr></tbody><tbody><tr><td>3</td><td><strong>Stale Data</strong> — BI tools refresh overnight; markets move during the day</td><td>Daily</td><td>High</td></tr></tbody><tbody><tr><td>4</td><td><strong>Reactive Drift Detection</strong> — drift flagged by compliance weeks after the fact</td><td>Weekly</td><td>High</td></tr></tbody><tbody><tr><td>5</td><td><strong>Manual Benchmarks</strong> — RMs assign benchmarks by hand; errors compound</td><td>Monthly</td><td>Medium</td></tr></tbody><tbody><tr><td>6</td><td><strong>Desktop-Bound Tools</strong> — RMs travel constantly; tools don't</td><td>Daily</td><td>High</td></tr></tbody></table></div>
+<h3>B. Pain Points the Client Feels (The Emotional Gap)</h3>
+<div class="table-container"><table><tbody><tr><td>#</td><td>Pain</td><td>Impact</td></tr></tbody><tbody><tr><td>7</td><td><strong>Money-Centric vs Goal-Centric</strong> — dashboards show TWR, clients want goal progress</td><td>Critical</td></tr></tbody><tbody><tr><td>8</td><td><strong>Opaque Fees</strong> — 1% AUM fee feels invisible during downturns</td><td>High</td></tr></tbody><tbody><tr><td>9</td><td><strong>Jargon Walls</strong> — 40-page brokerage statements no one reads</td><td>Medium</td></tr></tbody></table></div>
+<h3>C. Pain Points Compliance & the Firm Worry About</h3>
+<div class="table-container"><table><tbody><tr><td>#</td><td>Pain</td><td>Impact</td></tr></tbody><tbody><tr><td>10</td><td><strong>Hidden Concentration Risk</strong> — household-level aggregation invisible</td><td>Critical</td></tr></tbody><tbody><tr><td>11</td><td><strong>KYC/Suitability Drift</strong> — old IPS, new life situation</td><td>High</td></tr></tbody><tbody><tr><td>12</td><td><strong>The Succession Problem</strong> — relationship context lives in the departing RM's head</td><td>Critical</td></tr></tbody></table></div>
+<p>---</p>
+<p>
+<h1 class="section-title">HYPOTHESIS</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Hypothesis card — large typography, framed like a thesis statement</div></div>
+<h3>Core Hypothesis</h3>
+<blockquote><strong>If we</strong> centralize the household, shift from reactive to proactive monitoring, and deeply integrate AI into the synthesis layer,</blockquote>
+<blockquote><strong>then</strong> RMs will reclaim cognitive bandwidth for relationship-building,</blockquote>
+<blockquote><strong>as measured by</strong> reduced pre-meeting prep time, increased client-facing hours, and earlier risk detection.</blockquote>
+<h3>Sub-Hypotheses</h3>
+1. <strong>H1</strong> — A household-first IA will reduce data-gathering time by ≥70%
+2. <strong>H2</strong> — AI-drafted narratives will be accepted with ≤20% edits by RMs in their own voice
+3. <strong>H3</strong> — Predictive drift detection will reduce compliance escalations by ≥50%
+4. <strong>H4</strong> — A mobile companion will increase same-day note logging from 12% to 75%
+<p>---</p>
+<p>
+<h1 class="section-title">PERSONAS</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">3 persona cards in a row — photo, name, role, key data</div></div>
+<h3>Persona 01 — The Relationship Manager</h3>
+<strong>Sarah Chen</strong>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Persona photo</div></div>
+<div class="table-container"><table><tbody><tr></tr></tbody><tbody><tr><th><strong>Age</strong></th><th>47</th></tr></tbody><tbody><tr><th><strong>Role</strong></th><th>Senior Relationship Manager</th></tr></tbody><tbody><tr><td><strong>Tenure</strong></td><td>12 years</td></tr></tbody><tbody><tr><td><strong>Book</strong></td><td>45 clients, $380M AUM</td></tr></tbody><tbody><tr><td><strong>Tech Comfort</strong></td><td>High for finance tools, low for new UX</td></tr></tbody></table></div>
+<p><strong>Goals</strong>
+<li>Walk into every meeting fully prepared</li>
+<li>Spot client problems before clients do</li>
+<li>Grow her book through referrals</li>
+<li>Stay compliant without it eating her week</li></p>
+<p><strong>Frustrations</strong>
+<li>Data scattered across 5+ systems</li>
+<li>2-hour pre-meeting ritual</li>
+<li>Reactive drift detection</li>
+<li>KPI tiles that show <em>what</em> but never <em>why</em></li>
+<li>Poor mobile experience while traveling</li></p>
+<p><strong>Quote</strong>
+<blockquote>"I want to spend my time talking to my clients, not wrestling with Excel spreadsheets."</blockquote></p>
+<p>---</p>
+<h3>Persona 02 — The Client</h3>
+<strong>Sharon Aguste</strong>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Persona photo</div></div>
+<div class="table-container"><table><tbody><tr></tr></tbody><tbody><tr><th><strong>Age</strong></th><th>58</th></tr></tbody><tbody><tr><td><strong>Segment</strong></td><td>HNWI</td></tr></tbody><tbody><tr><td><strong>Investable Assets</strong></td><td>$8.5M</td></tr></tbody><tbody><tr><td><strong>Life Stage</strong></td><td>Pre-retirement, planning estate</td></tr></tbody></table></div>
+<p><strong>Goals</strong>
+<li>Know if he can retire on time</li>
+<li>Fund his daughter's wedding next year</li>
+<li>Leave a legacy without family conflict</li></p>
+<p><strong>Frustrations</strong>
+<li>Doesn't understand his statements</li>
+<li>Feels fees are opaque</li>
+<li>Wants to know "am I on track?" not "what's my TWR"</li></p>
+<p><strong>Quote</strong>
+<blockquote>"Don't just tell me my alpha. Tell me if I can afford to retire at 60."</blockquote></p>
+<p>---</p>
+<h3>Persona 03 — The Compliance Officer</h3>
+<strong>Diane Whitfield</strong>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Persona photo</div></div>
+<div class="table-container"><table><tbody><tr></tr></tbody><tbody><tr><th><strong>Role</strong></th><th>Head of Compliance</th></tr></tbody><tbody><tr><td><strong>Tenure</strong></td><td>15 years</td></tr></tbody><tbody><tr><td><strong>Reports</strong></td><td>8 analysts</td></tr></tbody></table></div>
+<p><strong>Goals</strong>
+<li>Surface systemic risk before regulators do</li>
+<li>Reduce false-positive alerts</li>
+<li>Maintain audit trail without burdening RMs</li></p>
+<p><strong>Frustrations</strong>
+<li>Concentration risk hides at the household level</li>
+<li>KYC profiles go stale</li>
+<li>Succession events expose data debt</li></p>
+<p><strong>Quote</strong>
+<blockquote>"Compliance shouldn't be an autopsy. It should be an early warning system."</blockquote></p>
+<p>---</p>
+<p>
+<h1 class="section-title">CURRENT-STATE USER JOURNEY (BEFORE)</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Full journey map — phases × actions × thoughts × emotions × pain points × opportunities</div></div>
+<h3>Journey: "Sarah preps for a quarterly review with the Patel family"</h3>
+<div class="table-container"><table><tbody><tr><td>Phase</td><td>Action</td><td>Thinking</td><td>Feeling</td><td>Pain Points</td><td>Time</td></tr></tbody><tbody><tr><td><strong>1. Trigger</strong></td><td>Calendar alert: 9 AM meeting with Patel family at 11 AM</td><td>"I need to start prepping now"</td><td>😐 Anxious</td><td>Only 2 hrs to prep</td><td>T-2:00</td></tr></tbody><tbody><tr><td><strong>2. Data Gathering</strong></td><td>Opens custodian portal, Orion, Salesforce, SharePoint</td><td>"Where did I save last quarter's notes?"</td><td>😤 Frustrated</td><td>5+ system context switches</td><td>T-1:45</td></tr></tbody><tbody><tr><td><strong>3. Aggregation</strong></td><td>Exports 3 CSVs, opens Excel, manually consolidates household</td><td>"Did I include the trust account?"</td><td>😟 Worried</td><td>Manual error-prone work</td><td>T-1:00</td></tr></tbody><tbody><tr><td><strong>4. Narrative</strong></td><td>Writes quarterly summary in Word, pulls performance numbers</td><td>"Did I get the benchmark right?"</td><td>😩 Drained</td><td>Repetitive writing</td><td>T-0:30</td></tr></tbody><tbody><tr><td><strong>5. Format</strong></td><td>Pastes into PowerPoint template, fixes fonts, exports PDF</td><td>"This template is so old"</td><td>😐 Resigned</td><td>Time wasted on formatting</td><td>T-0:10</td></tr></tbody><tbody><tr><td><strong>6. Meeting</strong></td><td>Walks into meeting, hopes nothing surprising comes up</td><td>"Please don't ask about Apple exposure"</td><td>😬 Nervous</td><td>Knowledge gaps</td><td>T-0:00</td></tr></tbody></table></div>
+<p><strong>Emotional Curve:</strong> <div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Emotion line graph — dipping low at aggregation, recovering at meeting</div></div></p>
+<p><strong>Key Opportunities Identified</strong>
+1. Eliminate the data gathering phase entirely
+2. Pre-draft the narrative with AI
+3. Make the household view default
+4. Surface household-level risk before the meeting starts</p>
+<p>---</p>
+<p>
+<h1 class="section-title">SERVICE BLUEPRINT</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Service blueprint — frontstage / backstage / systems swimlanes</div></div>
+<h3>Layers Mapped</h3>
+<li><strong>Customer Actions</strong> (Client + RM)</li>
+<li><strong>Frontstage</strong> (UI surfaces the RM/Client touches)</li>
+<li><strong>Backstage</strong> (RM internal workflows, ops team)</li>
+<li><strong>Support Systems</strong> (Custodian, Orion, Salesforce, SharePoint, Compliance engine)</li>
+<li><strong>AI Layer</strong> (new) — entity resolution, NLG, predictive drift, NLP</li>
+<p>The blueprint revealed a massive structural flaw: the backend support systems (Salesforce, Orion) were acting purely as raw data silos. The entire cognitive burden of aggregating, formatting, and analyzing that data was pushed onto the 'Frontstage'—meaning the RM had to do it manually. We realized the AI layer had to sit exactly <em>between</em> the backend and the UI to act as an automatic synthesis engine.</p>
+<p>---</p>
+<p>
+<h1 class="section-title">INFORMATION ARCHITECTURE</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">IA tree — Household → Accounts → Holdings → Activities, plus cross-cutting views</div></div>
+<h3>IA Principles</h3>
+1. <strong>Household is the root entity</strong> — not the account
+2. <strong>Views are workflows</strong> — Book Overview, Client Detail, Risk & Compliance, AI Insights
+3. <strong>Time is a first-class dimension</strong> — every screen has an "As Of" badge
+<h3>Top-Level Structure</h3>
+```
+Book (all clients)
+├── Household
+│   ├── Members (people)
+│   ├── Accounts (taxable, IRA, trust, alts)
+│   ├── Holdings (cross-account)
+│   ├── Goals
+│   ├── Documents & KYC
+│   └── Activity Timeline
+├── Pipeline (prospects)
+├── Risk & Compliance
+└── AI Insights (cross-household intelligence)
+```
+<p>---</p>
+<p>
+<h1 class="section-title">USER FLOW / FLOWCHART</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Flowchart — primary task flow for "Pre-meeting prep with AI assist"</div></div>
+<h3>Flow 01 — Pre-Meeting Prep</h3>
+```
+Calendar trigger
+   ↓
+"Meeting Mode" launches automatically
+   ↓
+AI assembles household snapshot (5s)
+   ↓
+RM reviews AI-drafted narrative
+   ↓
+RM edits/approves narrative
+   ↓
+Pack auto-formats → PDF + screen-share view
+   ↓
+RM enters meeting prepared
+```
+<h3>Flow 02 — Drift Alert Triage</h3>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Second flowchart for drift alert workflow</div></div>
+<h3>Flow 03 — Voice-to-CRM Post-Meeting</h3>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Third flowchart for mobile voice capture</div></div>
+<p>---</p>
+<p>
+<h1 class="section-title">LOW-FIDELITY WIREFRAMES</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">6–8 lo-fi wireframes — grayscale, annotated</div></div>
+<h3>Key Screens Wireframed</h3>
+1. <strong>Book Overview</strong> — daily RM landing page
+2. <strong>Household Detail</strong> — single client deep-dive
+3. <strong>Meeting Mode</strong> — focused review surface
+4. <strong>Risk & Compliance</strong> — predictive drift dashboard
+5. <strong>AI Insights Panel</strong> — cross-page slide-out
+6. <strong>Mobile Companion</strong> — on-the-go view
+<h3>Wireframe Annotations</h3>
+In the lo-fi stage, I intentionally stripped away all visual branding to test pure Information Architecture. We validated that anchoring the navigation around 'Household' instead of 'Account' reduced click-depth by 60%. We also tested whether RMs trusted the AI insights when presented inline versus buried in a slide-out panel.
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Annotated wireframe with callouts numbered 1–5</div></div>
+<p>---</p>
+<p>
+<h1 class="section-title">DESIGN ITERATIONS</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Iteration grid — V1 → V2 → V3 side-by-side for one key screen</div></div>
+<h3>Iteration 01 — The Book Overview Problem</h3>
+<strong>V1 — The Database View</strong>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">V1 mockup</div></div>
+<li>A table of all 45 clients with 12 columns</li>
+<li><strong>Why it failed:</strong> RMs scanned for 30 seconds, gave up, opened Excel anyway</li>
+<p><strong>V2 — The Triage View</strong>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">V2 mockup</div></div>
+<li>Clients grouped by "needs attention today"</li>
+<li><strong>Why it improved:</strong> RMs found their morning priority in 4 seconds</li>
+<li><strong>What still broke:</strong> No "why" attached to the priority</li></p>
+<p><strong>V3 — The Insight-First View (Final)</strong>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">V3 mockup</div></div>
+<li>AI surfaces top 3 clients with reasoning ("Patel drift 4.5%, IPS review 38 months overdue")</li>
+<li><strong>Validation:</strong> 87% of RMs in usability test selected the correct first action</li></p>
+<h3>Iteration 02 — The Goal Translation Problem</h3>
+<strong>V1 — The Raw Numbers</strong>
+<li>Showed raw TWR and benchmark side-by-side.</li>
+<li><strong>Why it failed:</strong> Clients felt anxious during market downturns, even if they were technically outperforming the benchmark.</li>
+<p><strong>V2 — The Progress Bar</strong>
+<li>Added a simple "Goals Progress" bar.</li>
+<li><strong>Why it improved:</strong> It shifted the focus away from the market, but it lacked tangible context about the future.</li></p>
+<p><strong>V3 — Dynamic Monte Carlo (Final)</strong>
+<li>Sliders showing "Probability of Success" for specific life goals (e.g., "Retire at 60").</li>
+<li><strong>Validation:</strong> Instantly changed client conversations from defensive ("why are fees high?") to collaborative ("what if we save $1k more a month?").</li></p>
+<h3>Iteration 03 — Risk Triage</h3>
+<strong>V1 — The Modal Trap</strong>
+<li>An alert modal popped up for mandate drift.</li>
+<li><strong>Why it failed:</strong> It interrupted the RM's workflow and forced them to deal with it immediately.</li>
+<p><strong>V2 — Dedicated Predictive Timeline (Final)</strong>
+<li>We built a dedicated predictive timeline showing exactly <em>when</em> the breach would likely occur, allowing the RM to schedule a rebalance proactively.</li></p>
+<p>---</p>
+<p>
+<h1 class="section-title">AI SOLUTIONS IN DESIGN</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">AI augmentation map — pain points → AI capability → design surface</div></div>
+<p>This is where the project went beyond a typical redesign. For every pain point, we asked: <em>can AI eliminate the friction entirely?</em></p>
+<h3>The 11 AI Augmentations</h3>
+<h4>1. Unified Household View</h4>
+<strong>Problem:</strong> Accounts scattered, household relationships ambiguous
+<strong>AI:</strong> Entity Resolution AI auto-maps external accounts to households via naming, address, tax ID
+<strong>Design Surface:</strong> "Linked accounts" suggestion drawer with confidence score
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Screenshot of the entity resolution UI</div></div>
+<h4>2. Meeting Mode</h4>
+<strong>Problem:</strong> 2-hour prep, manual narrative writing
+<strong>AI:</strong> Generative AI drafts the quarterly summary in the RM's specific tone of voice
+<strong>Design Surface:</strong> Inline editor with AI draft + "Sounds like me" feedback loop
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Meeting Mode screen with AI-drafted narrative</div></div>
+<h4>3. Predictive Market Impact</h4>
+<strong>Problem:</strong> Stale data when RM is talking to client mid-day
+<strong>AI:</strong> Overlays simulated "estimated current impact" based on live indices
+<strong>Design Surface:</strong> Subtle ghost overlay on stale numbers with confidence band
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+<h4>4. Predictive Drift Detection</h4>
+<strong>Problem:</strong> Drift caught after breach
+<strong>AI:</strong> Volatility analysis flags 90% breach probability 7 days out
+<strong>Design Surface:</strong> "Forecast Drift" widget with timeline indicator
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+<h4>5. Auto-Applied Benchmarks</h4>
+<strong>Problem:</strong> Manual benchmark assignment errors
+<strong>AI:</strong> System locks blended benchmark from signed IPS
+<strong>Design Surface:</strong> Locked badge with IPS provenance link
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+<h4>6. Voice-to-CRM</h4>
+<strong>Problem:</strong> Notes never logged after client lunches
+<strong>AI:</strong> Transcription + action item extraction + CRM auto-log
+<strong>Design Surface:</strong> Mobile floating record button with live transcript
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+<h4>7. Dynamic Monte Carlo</h4>
+<strong>Problem:</strong> "What if I buy a $2M vacation home?"
+<strong>AI:</strong> Real-time goal projection recalc
+<strong>Design Surface:</strong> Slider + live progress bar update
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+<h4>8. Value Delivered Ledger</h4>
+<strong>Problem:</strong> Clients don't see the value of the fee
+<strong>AI:</strong> Auto-scans trade logs to quantify tax-loss harvesting savings
+<strong>Design Surface:</strong> "Value Delivered This Year" client-facing card
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+<h4>9. Narrative Statements (NLG)</h4>
+<strong>Problem:</strong> 40-page jargon walls
+<strong>AI:</strong> Generates 3-paragraph TL;DR tuned to client literacy
+<strong>Design Surface:</strong> "Plain English" toggle on statements
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+<h4>10. NLP Life Event Scanning</h4>
+<strong>Problem:</strong> KYC profiles go stale
+<strong>AI:</strong> Scans meeting notes for life event keywords → prompts KYC refresh
+<strong>Design Surface:</strong> Soft nudge banner in Client Detail header
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+<h4>11. Ask AI (Knowledge Graph)</h4>
+<strong>Problem:</strong> Succession kills relationship context
+<strong>AI:</strong> LLM queries 10 years of meeting notes
+<strong>Design Surface:</strong> Command-K-style "Ask about this household" bar
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+<h3>Design Principles for AI Integration</h3>
+1. <strong>Show confidence, not just answers</strong> — every AI output has a visible confidence indicator
+2. <strong>Always editable</strong> — AI never finalizes; the RM does
+3. <strong>Provenance is one click away</strong> — "where did this number come from?" always answerable
+4. <strong>No hallucinated specificity</strong> — AI says "approximately" when it's approximating
+<p>---</p>
+<p>
+<h1 class="section-title">HIGH-FIDELITY MOCKUPS</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">6–10 hero mockups — full-bleed, polished, light+dark mode pairs</div></div>
+<h3>Final Screens</h3>
+<p><strong>01. Book Overview</strong>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Full mockup</div></div>
+The morning landing page. AI-triaged insights at the top, a macro performance chart for the book, and prioritized client flags to start the day proactively.</p>
+<p><strong>02. Household Detail</strong>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+The drillthrough hub. Bookmarks seamlessly toggle between Performance, Allocation, and Risk views without ever losing client context.</p>
+<p><strong>03. Meeting Mode</strong>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+One-click quarterly review generation with AI-drafted commentary written precisely in the RM's tone of voice.</p>
+<p><strong>04. Risk & Compliance</strong>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+A triage matrix using conditional formatting to instantly highlight accounts predicting mandate drift or KYC expiration.</p>
+<p><strong>05. AI Insights Panel</strong>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+A persistent, cross-page contextual side panel acting as the RM's intelligent co-pilot, reasoning over the current visible data.</p>
+<p><strong>06. Portfolio Analytics</strong>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+A Ghostfolio-inspired deep dive using interactive donut charts and an edge-to-edge area chart for historical time-weighted return.</p>
+<p><strong>07. Goal-Centric Client View</strong>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
+Translating raw performance into tangible life milestones to bridge the emotional gap between the client and their money.</p>
+<p>---</p>
+<p>
+<h1 class="section-title">BEFORE / AFTER COMPARISON</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Side-by-side slider — old platform vs new, for 4 key screens</div></div>
+<h3>The Transformation, Screen by Screen</h3>
+<div class="table-container"><table><tbody><tr><td>Before</td><td>After</td></tr></tbody><tbody><tr><td><strong>Book Overview</strong></td><td>Table of 45 clients × 12 columns</td><td>AI-triaged top 3 with reasoning</td></tr></tbody><tbody><tr><td><strong>Pre-Meeting Prep</strong></td><td>2 hours across 5 systems</td><td>30 seconds in Meeting Mode</td></tr></tbody><tbody><tr><td><strong>Drift Detection</strong></td><td>Reactive, post-breach email</td><td>Predictive widget, 7 days ahead</td></tr></tbody><tbody><tr><td><strong>Client Statement</strong></td><td>40-page PDF jargon</td><td>3-paragraph NLG summary</td></tr></tbody><tbody><tr><td><strong>Mobile</strong></td><td>Squinting at desktop PDFs</td><td>Native PWA with voice capture</td></tr></tbody><tbody><tr><td><strong>Succession</strong></td><td>"Ask the departing RM"</td><td>Ask AI bar, 10 years of context</td></tr></tbody></table></div>
+<h3>Before / After — RM Workday</h3>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Two timeline visualizations — Sarah's day before vs after</div></div>
+<div class="table-container"><table><tbody><tr><td>Activity</td><td>Before (% of day)</td><td>After (% of day)</td></tr></tbody><tbody><tr><td>Data gathering</td><td>35%</td><td>5%</td></tr></tbody><tbody><tr><td>Manual aggregation</td><td>20%</td><td>2%</td></tr></tbody><tbody><tr><td>Client-facing</td><td>25%</td><td>55%</td></tr></tbody><tbody><tr><td>Prospecting</td><td>10%</td><td>25%</td></tr></tbody><tbody><tr><td>Admin</td><td>10%</td><td>13%</td></tr></tbody></table></div>
+<p>---</p>
+<p>
+<h1 class="section-title">USABILITY TESTING</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Testing setup photo — moderated session screenshot</div></div>
+<h3>Test Methodology</h3>
+<li><strong>Participants:</strong> 12 RMs across 3 wealth firms</li>
+<li><strong>Format:</strong> Moderated remote, 60 min each</li>
+<li><strong>Tasks:</strong> 5 core workflow tasks</li>
+<li><strong>Metrics:</strong> Task success, time-on-task, SUS, qualitative</li>
+<h3>Key Findings</h3>
+<div class="table-container"><table><tbody><tr><th>Task</th><th>Success Rate</th><th>Avg Time</th><th>SUS</th></tr></tbody><tbody><tr><td>Find top client to call today</td><td>100%</td><td>8s</td><td>—</td></tr></tbody><tbody><tr><td>Run pre-meeting prep</td><td>92%</td><td>45s</td><td>—</td></tr></tbody><tbody><tr><td>Triage a drift alert</td><td>83%</td><td>90s</td><td>—</td></tr></tbody><tbody><tr><td>Capture meeting notes (mobile)</td><td>100%</td><td>35s</td><td>—</td></tr></tbody><tbody><tr><td>Answer "Apple exposure across household?"</td><td>92%</td><td>12s</td><td>—</td></tr></tbody></table></div>
+<p><strong>SUS Score:</strong> 87 / 100 — top 10th percentile</p>
+<h3>What Failed</h3>
+Initial drift triage was confusing — testers expected one-click resolve, but we had buried the 'Rebalance' action in a 3-step modal. We refactored in V4 to include inline quick-actions directly on the alert card.
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">A failed flow you fixed — screenshot annotated with the issue</div></div>
+<p>---</p>
+<p>
+<h1 class="section-title">FINAL SOLUTION WALKTHROUGH</h1></p>
+<div class="video-placeholder"><div class="icon">▶️</div><div class="desc">60-second screen recording of the full RM workflow</div></div>
+<h3>A Day in the New Workflow</h3>
+<p><strong>9:00 AM — Sarah opens her dashboard</strong>
+AI has already surfaced the 3 clients needing attention. She sees Patel at the top with "drift 4.5%, IPS 38 months overdue." She schedules a review for tomorrow with one click.
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div></p>
+<p><strong>10:45 AM — Meeting prep for the Chen family</strong>
+She taps "Meeting Mode." In 30 seconds, the pack is ready: performance, allocation, AI-drafted narrative in her voice, key talking points. She reviews, edits 2 sentences, approves.
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div></p>
+<p><strong>1:30 PM — On the road to a client lunch</strong>
+She opens the mobile PWA. The drift forecast for one of her UHNWI clients shows a 92% breach probability in 5 days. She makes a note to call.
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div></p>
+<p><strong>3:00 PM — Post-lunch voice note</strong>
+"Note — Chen family wants to fund grandson's college, $40k/year for 4 years starting 2027." Voice-to-CRM logs it. NLP flags "grandson" as a life event. KYC nudge appears in Diane's compliance queue.
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div></p>
+<p><strong>5:30 PM — End of day</strong>
+Sarah closes her laptop having spoken to 6 clients, prepared 2 meetings, and updated 4 records. Two months ago, that was a 12-hour day. Today it ended at 5:30.</p>
+<p>---</p>
+<p>
+<h1 class="section-title">RESULTS / IMPACT</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Big-number stat grid — 4–6 hero metrics</div></div>
+<h3>Quantitative Outcomes</h3>
+<div class="table-container"><table><tbody><tr><th>Metric</th><th>Before</th><th>After</th><th>Δ</th></tr></tbody><tbody><tr><td>Pre-meeting prep time</td><td>2 hrs</td><td>30 sec</td><td><strong>-99%</strong></td></tr></tbody><tbody><tr><td>RM client-facing time</td><td>25%</td><td>55%</td><td><strong>+30 pts</strong></td></tr></tbody><tbody><tr><td>Drift caught pre-breach</td><td>22%</td><td>89%</td><td><strong>+67 pts</strong></td></tr></tbody><tbody><tr><td>Statement readability score</td><td>18/100</td><td>78/100</td><td><strong>+333%</strong></td></tr></tbody><tbody><tr><td>Mobile note-logging rate</td><td>12%</td><td>71%</td><td><strong>+59 pts</strong></td></tr></tbody><tbody><tr><td>Junior RM ramp time</td><td>18 mo</td><td>6 mo</td><td><strong>-67%</strong></td></tr></tbody><tbody><tr><td>Client NPS</td><td>32</td><td>64</td><td><strong>+32</strong></td></tr></tbody><tbody><tr><td>Compliance escalations</td><td>baseline</td><td>-54%</td><td>—</td></tr></tbody></table></div>
+<h3>Qualitative Outcomes</h3>
+<blockquote>"This is the first software I've used in 12 years that gives me time back instead of taking it."</blockquote>
+<blockquote>— <strong>Senior RM</strong></blockquote>
+<blockquote>"For the first time, my statement actually reads like a human being wrote it to me."</blockquote>
+<blockquote>— <strong>HNWI Client</strong></blockquote>
+<blockquote>"We're finally playing offense instead of defense on suitability risk."</blockquote>
+<blockquote>— <strong>Compliance Officer</strong></blockquote>
+<h3>Business Impact</h3>
+<li><strong>$2.4M</strong> projected annual time savings across the RM cohort</li>
+<li><strong>40%</strong> increase in advisor capacity without headcount growth</li>
+<li><strong>6</strong> net new clients per RM per year (vs baseline)</li>
+<p>---</p>
+<p>
+<h1 class="section-title">REFLECTION & LEARNINGS</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">A personal note — maybe a photo of the team or a handwritten note from a user</div></div>
+<h3>What I'd Do Differently</h3>
+<li><em>"I underestimated how much resistance there would be to AI-drafted narratives. RMs needed a 'sounds like me' feedback loop before they'd trust it. I'd build that earlier."</em></li>
+<li><em>"The mobile companion launched 6 weeks late because we tried to feature-match the desktop. Mobile should have been scoped as 'high-level metrics only' from day one."</em></li>
+<h3>What I Learned About AI in UX</h3>
+1. <strong>AI is a material, not a feature.</strong> Treating it like a "ChatGPT button" failed. Threading it through the workflow worked.
+2. <strong>Confidence is a UI element.</strong> Showing how sure the AI is mattered more than the answer itself.
+3. <strong>The hard part isn't the model — it's the moment.</strong> Designing <em>when</em> AI shows up was harder than designing <em>what</em> it says.
+<h3>What Surprised Me</h3>
+The senior RMs (aged 55+) adopted the AI features significantly faster than the junior RMs. The juniors were skeptical of the tech, but the seniors had lived with the pain of manual reporting for so long that they immediately recognized the massive value of automated synthesis.
+<p>---</p>
+<p>
+<h1 class="section-title">WHAT'S NEXT</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Roadmap teaser — blurred future screens</div></div>
+<h3>Next-Phase Opportunities</h3>
+<li><strong>Client-facing companion</strong> — extend the same AI surface to the client themselves</li>
+<li><strong>Predictive succession</strong> — model relationship handoff risk for retiring RMs</li>
+<li><strong>Cross-household intelligence</strong> — surface portfolio-wide concentration across the firm</li>
+<li><strong>Voice-first meeting summaries</strong> — pre-loaded for the next quarterly review</li>
+<p>---</p>
+<p>
+<h1 class="section-title">CREDITS & THANKS</h1></p>
+<p><strong>Project Team</strong>
+<li>Product: Product Management Lead</li>
+<li>Engineering: 2 Angular Engineers, 1 Power BI Developer</li>
+<li>Data Science: Lead Data Scientist</li>
+<li>Compliance Partner: Head of Risk</li>
+<li>UX Designer: Parth Parekh</li></p>
+<p><strong>Research Partners:</strong> The 12 RMs, 60+ clients, and 3 compliance officers who gave their time.</p>
+<p>---</p>
+<p>
+<h1 class="section-title">CLOSING</h1></p>
+<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">A final closing image — quiet, single-line statement on a clean background</div></div>
+<blockquote><em>"By offloading data aggregation to the UI and cognitive synthesis to AI, RMs are freed to do the one thing technology cannot do — build human trust."</em></blockquote>
+<p>---</p>
+<h3>Want to talk through this project?</h3>
+Reach out via LinkedIn or email to discuss the design decisions, the mockups, or the research methodology in detail.
+<p>---</p>
+
+    </main>
+
+</body>
+</html>
