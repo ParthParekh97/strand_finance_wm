@@ -1,736 +1,1582 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Strand Finance - UX Case Study</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #F4F7FB;
-            --surface-color: #FFFFFF;
-            --sidebar-bg: #232B3E;
-            --text-primary: #111827;
-            --text-secondary: #4B5563;
-            --text-muted: #9CA3AF;
-            --brand-primary: #1C4587;
-            --accent-green: #10B981;
-            --border-color: #E5E7EB;
-        }
+<meta charset="utf-8" />
+<title>Strand Finance — Empowering the Modern Relationship Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="deck-stage.js"></script>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<script type="application/json" id="speaker-notes">
+[
+"Good morning. I'm going to walk you through twenty-four weeks of work on the Strand Finance wealth management platform. The headline is simple: by treating AI as a material woven into the workflow — not a feature bolted onto the side — we cut Relationship Manager pre-meeting prep from two hours to thirty seconds, and shifted compliance from autopsy to early warning. I want you to leave with three things: the strategic frame that unlocked this, the specific design decisions that made AI feel trustworthy, and the business impact those decisions drove.",
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            line-height: 1.6;
-            display: flex;
-        }
+"Before I get into process, the four numbers that matter. Pre-meeting prep collapsed from two hours to thirty seconds. Drift detection moved from reactive — caught after the breach — to predictive, seven days ahead. Roughly thirty percent of the Relationship Manager's week was reclaimed for client-facing work. And client NPS doubled, from thirty-two to sixty-four. I'll show you how each of these traces back to a specific design decision.",
 
-        /* Sidebar Navigation */
-        .sidebar {
-            width: 280px;
-            background-color: var(--sidebar-bg);
-            color: #fff;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-            padding: 32px 24px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        }
+"My approach was the same one I use everywhere: workflow before data. Most wealth platforms are built database-first — forty columns of raw data dumped into a grid, asking the human to hunt for the insight. I flipped that. Every screen earns its place by answering a temporal question — what needs my attention at nine A M, what context do I need at one-thirty before a call. Every interface has to answer in under five seconds. Three guiding principles: workflow before data, AI augments never replaces, and trust through transparency.",
 
-        .sidebar-logo {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #fff;
-        }
+"This project didn't exist in a vacuum. Four forces converged in 2025 and 2026 to make it inevitable. Fee compression — robo-advisors at twenty-five basis points are squeezing traditional one-percent firms. The great wealth transfer — eighty-four trillion dollars passing from Boomers to Gen X and Millennials, who expect digital-native experiences. An aging RM workforce — average advisor is fifty-five plus, and tools have to be intuitive enough for younger advisors to ramp fast. And an explosion of alternative assets — private equity, crypto, direct real estate — increasingly part of HNWI portfolios but living in unstructured chaos. Understanding why the industry was moving was the unlock for what to design.",
 
-        .sidebar-nav ul {
-            list-style: none;
-        }
+"We didn't start by drawing screens. We started by listening. Twelve relationship managers, three compliance officers, two heads of wealth — stakeholder interviews. Six full-day shadowing sessions — contextual inquiry, watching real prep rituals. Eighty-five HNWI and mass-affluent client surveys. Heuristic audits of the existing platform plus five competitors. A two-week diary study with four RMs logging friction in the moment. And a one-day co-design workshop with compliance. Two hundred-plus data points in. Twelve high-impact pain points out.",
 
-        .sidebar-nav li {
-            margin-bottom: 16px;
-        }
+"These quotes did more work than any artifact in this deck. Each one points directly at a design decision. The senior RM with five tabs open became the case for the unified household view. The advisor doing forty-five clients quarterly became Meeting Mode. The private wealth manager whose clients don't care about time-weighted return became the bubble map. The compliance officer asking for an early warning system became the predictive drift timeline. We didn't generate these problems — they were already in the building.",
 
-        .sidebar-nav a {
-            color: #9CA3AF;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
+"Synthesizing two hundred data points into twelve pain points across three stakeholders. The RM lives with six daily: data fragmentation, meeting prep paralysis, stale data, reactive drift detection, manual benchmarks, desktop-bound tools. The client lives with three: dashboards that speak money instead of goals, opaque fees, jargon walls. Compliance lives with three: hidden household-level concentration, KYC drift, and the succession problem — relationship context evaporating when an RM retires. These twelve became our scorecard.",
 
-        .sidebar-nav a:hover {
-            color: #fff;
-        }
+"Our central hypothesis. If we centralize the household, shift from reactive to proactive monitoring, and deeply integrate AI into the synthesis layer, then RMs will reclaim cognitive bandwidth for relationship-building. Measured by reduced prep time, more client-facing hours, and earlier risk detection. Four sub-hypotheses sit under that — a household-first information architecture would cut data-gathering by seventy percent or more, AI-drafted narratives would be accepted with twenty percent or fewer edits, predictive drift would cut compliance escalations by half, and a mobile companion would lift same-day note logging from twelve percent to seventy-five percent.",
 
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 64px 80px;
-            max-width: 1000px;
-        }
+"Three personas, one shared pain — fragmentation. James, the senior RM, forty-five clients and three hundred eighty million in AUM, drowning in tool-switching. Sharon, the HNWI client, eight-point-five million in investable assets, doesn't want to know his alpha — wants to know if he can retire at sixty. Diane, head of compliance, fifteen years in role, wants compliance to be an early warning system instead of an autopsy. They look like different problems. They're the same problem at three altitudes.",
 
-        h1.section-title {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--brand-primary);
-            margin-top: 80px;
-            margin-bottom: 8px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 16px;
-        }
-        
-        h1.section-title:first-child {
-            margin-top: 0;
-        }
+"This is Jame's morning before the redesign. Calendar alert at nine A M for an eleven A M meeting with the Patel family. Custodian portal, Orion, Salesforce, SharePoint — five system context switches. Three CSV exports, manual Excel consolidation, hand-written narrative in Word, paste into a PowerPoint template that hasn't been updated in years. Two full hours. The emotional curve dips at aggregation and never fully recovers. She walks in hoping nobody asks about Apple exposure across the household, because she doesn't actually know.",
 
-        h2.section-subtitle {
-            font-size: 24px;
-            font-weight: 600;
-            margin-top: 40px;
-            margin-bottom: 24px;
-            color: var(--text-primary);
-        }
+"The service blueprint revealed a structural flaw. The backend systems — Salesforce, Orion, custodial feeds — were acting purely as data silos. The entire cognitive burden of aggregation, formatting, and analysis was pushed onto the frontstage, meaning the RM had to do it manually in her head and in Excel. The unlock was placing the AI layer exactly between the data and the UI — as an automatic synthesis engine, not a feature on either end.",
 
-        h3 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-top: 32px;
-            margin-bottom: 16px;
-        }
+"The information architecture decision that changed everything: household is the root entity, not the account. That single decision reduced click-depth to common tasks by sixty percent. Underneath the household sit members, accounts, holdings, goals, documents, and an activity timeline. Cross-cutting views — pipeline, risk and compliance, AI insights — sit at the same level. And time is a first-class dimension on every screen, with an explicit as-of badge.",
 
-        h4 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: var(--brand-primary);
-        }
+"The primary task flow for pre-meeting prep. A calendar trigger launches Meeting Mode automatically. The AI assembles the household snapshot in roughly five seconds. The RM reviews the AI-drafted narrative, edits if needed, approves. The pack auto-formats to a PDF and a screen-share view. End-to-end, thirty seconds. The two-hour ritual is gone.",
 
-        p {
-            margin-bottom: 24px;
-            font-size: 16px;
-            color: var(--text-secondary);
-        }
+"In lo-fi, we intentionally stripped all visual branding to test pure information architecture. We validated that anchoring navigation around household instead of account reduced click depth by sixty percent. We also tested whether RMs trusted AI insights when inline versus buried in a slide-out panel — inline won decisively. Iteration mattered: book overview went from a database view, to a triage view, to an insight-first view where AI surfaces three clients with reasoning. By V3, eighty-seven percent of RMs in usability test selected the correct first action.",
 
-        ul {
-            margin-bottom: 24px;
-            padding-left: 24px;
-            color: var(--text-secondary);
-        }
+"This is the bet that took the project from a redesign to a re-platforming. AI is not a feature — it's a material. Treating it like a ChatGPT button bolted to the corner failed. Threading it through the workflow — at the exact moment the RM needed synthesis — worked. For every pain point we asked: can AI eliminate the friction entirely? Eleven yeses came back.",
 
-        li {
-            margin-bottom: 8px;
-        }
+"The eleven AI augmentations, mapped pain to capability to design surface. Entity resolution for household linking. Generative drafting for Meeting Mode. Predictive overlays for stale data. Volatility forecasting for drift. Locked benchmarks from signed IPS. Voice-to-CRM transcription. Dynamic Monte Carlo for goals. The Value Delivered Ledger for fee transparency. Narrative statements via NLG. Life-event scanning via NLP. And a knowledge-graph Ask AI for ten years of meeting context. Each one ships with a confidence indicator, an editable surface, and one-click provenance.",
 
-        /* Image Placeholders */
-        .image-placeholder, .video-placeholder {
-            background-color: #E2E8F0;
-            border: 2px dashed #CBD5E1;
-            border-radius: 12px;
-            padding: 64px 24px;
-            text-align: center;
-            margin: 32px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
+"This is the Book Overview — the nine A M landing page. The AI co-pilot, on the right, has already triaged the book. Top of the list: the Patel household, drift four-point-five percent, IPS review thirty-eight months overdue. Reasoning is shown inline, sources are one click away. James finds morning priority in four seconds instead of thirty minutes.",
 
-        .image-placeholder .icon, .video-placeholder .icon {
-            font-size: 32px;
-        }
+"Meeting Mode — the most direct hit on the two-hour problem. One click from the calendar trigger. The AI assembles performance, allocation, and a quarterly narrative drafted in the RM's own tone of voice. The sounds-like-me feedback loop trains the model on her phrasing. She reviews, edits two sentences, approves. Thirty seconds. Pack is ready.",
 
-        .image-placeholder .desc, .video-placeholder .desc {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 14px;
-            color: #64748B;
-            font-weight: 600;
-        }
+"Predictive drift — the slide that made compliance partners cry. Volatility analysis flags ninety-percent breach probability seven days out. The timeline shows when the breach is likely to occur. The RM schedules a rebalance proactively instead of explaining a breach reactively. This single capability cut compliance escalations by fifty-four percent.",
 
-        /* Blockquotes */
-        blockquote {
-            border-left: 4px solid var(--brand-primary);
-            padding: 24px 32px;
-            margin: 32px 0;
-            background-color: var(--surface-color);
-            border-radius: 0 12px 12px 0;
-            font-size: 18px;
-            font-style: italic;
-            color: var(--text-primary);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        }
+"The bubble map — and the philosophical core of this project. Clients don't dream in time-weighted return. They dream in milestones. Retire at sixty. Fund the daughter's wedding. Leave a legacy. Each circle is a life goal, sized by required funding, colored by funding status — emerald when on track, blue when in-flight, amber when at risk. A dynamic Monte Carlo model recalculates in real time when the client moves a slider. This was the moment client conversations changed from defensive — why are fees high — to collaborative — what if we save a thousand more a month.",
 
-        /* Tables */
-        .table-container {
-            overflow-x: auto;
-            margin: 32px 0;
-            background: var(--surface-color);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
-        }
+"Side-by-side, the transformation. Book overview moved from a table of forty-five clients by twelve columns to AI-triaged top three with reasoning. Pre-meeting prep went from two hours across five systems to thirty seconds in Meeting Mode. Drift detection from reactive post-breach email to predictive seven days ahead. Client statements from forty-page jargon PDFs to three-paragraph NLG summaries. Mobile from squinting at desktop PDFs to a native PWA with voice capture. And succession — from ask the departing RM to ask the AI bar with ten years of context.",
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+"Twelve RMs across three firms, sixty-minute moderated sessions. Five core workflow tasks. Find top client to call today — one hundred percent success, eight seconds. Run pre-meeting prep — ninety-two percent, forty-five seconds. Triage a drift alert — eighty-three percent, ninety seconds — and that's where we found our biggest miss. We had buried the rebalance action in a three-step modal. V4 brought it inline. SUS came in at eighty-seven out of one hundred — top tenth percentile.",
 
-        th, td {
-            padding: 16px 24px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
+"A day in the new workflow. Nine A M, the dashboard has triaged her book. Ten forty-five, Meeting Mode handles Chen prep in thirty seconds. One-thirty, mobile PWA flags a drift forecast en route to a client lunch. Three P M, voice-to-CRM captures the post-lunch note and NLP flags grandson as a life event — which lands in Diane's compliance queue automatically. Five-thirty, laptop closed. Six clients spoken to, two meetings prepped, four records updated. Two months earlier, that was a twelve-hour day.",
 
-        th {
-            background-color: #F8FAFC;
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
+"The results. Pre-meeting prep down ninety-nine percent. Client-facing time up thirty points. Drift caught pre-breach up sixty-seven points. Statement readability up three hundred thirty-three percent. Mobile note-logging up fifty-nine points. Junior RM ramp time cut by sixty-seven percent. Client NPS doubled. Compliance escalations down fifty-four percent. The business case: two-point-four million in projected annual time savings, forty percent increase in advisor capacity without headcount growth, six net new clients per RM per year.",
 
-        td {
-            font-size: 15px;
-        }
+"What I learned. AI is a material, not a feature — that's the headline. Confidence is a UI element — showing how sure the AI is mattered more than the answer itself. And the hard part isn't the model, it's the moment — designing when AI shows up was harder than designing what it says. What surprised me: the senior RMs adopted AI features faster than the juniors. They'd lived with the pain longest. They recognized the gift immediately.",
 
-        /* Highlights */
-        .highlight-metric {
-            background-color: #ECFDF5;
-            color: var(--accent-green);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-weight: 600;
-        }
-        
-        .highlight-text {
-            background-color: #FEF3C7;
-            color: #D97706;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-weight: 500;
-        }
+"The thesis I'll leave you with. Fintech is the bridge between mathematics and psychology. The math has been solved for decades — modern portfolio theory, Monte Carlo, factor models. The unsolved problem is the human layer — synthesis, translation, trust. That's where design lives. That's where AI is most useful. And that's the work I want to keep doing. Thank you."
+]
+</script>
+<style>
+  :root {
+    /* palette */
+    --bg-0: #020617;
+    --bg-1: #0b1224;
+    --bg-2: #0f172a;
+    --bg-3: #131c33;
+    --line: rgba(148, 163, 184, 0.14);
+    --line-strong: rgba(148, 163, 184, 0.28);
+    --ink: #f8fafc;
+    --ink-soft: #e2e8f0;
+    --mute: #94a3b8;
+    --mute-2: #64748b;
+    --emerald: #10b981;
+    --emerald-soft: rgba(16, 185, 129, 0.16);
+    --blue: #3b82f6;
+    --blue-soft: rgba(59, 130, 246, 0.16);
+    --amber: #f59e0b;
+    --rose: #f43f5e;
 
-        /* Utility */
-        hr {
-            border: 0;
-            height: 1px;
-            background: var(--border-color);
-            margin: 64px 0;
-        }
-    </style>
+    /* type scale */
+    --type-hero: 116px;
+    --type-display: 92px;
+    --type-title: 64px;
+    --type-subtitle: 44px;
+    --type-body: 32px;
+    --type-small: 26px;
+    --type-mono: 22px;
+    --type-mono-sm: 18px;
+
+    /* spacing */
+    --pad-x: 96px;
+    --pad-y: 88px;
+    --pad-bottom: 96px;
+    --gap-title: 44px;
+    --gap-item: 28px;
+    --gap-sm: 16px;
+
+    /* fonts */
+    --sans: 'Inter', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  html, body { margin: 0; padding: 0; background: var(--bg-0); color: var(--ink); font-family: var(--sans); }
+
+  deck-stage { background: var(--bg-0); }
+
+  section {
+    background: var(--bg-0);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ===== shared utilities ===== */
+  .slide-pad { padding: var(--pad-y) var(--pad-x) var(--pad-bottom); height: 100%; box-sizing: border-box; display: flex; flex-direction: column; }
+  .mono { font-family: var(--mono); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+  .eyebrow {
+    font-family: var(--mono); font-weight: 500; font-size: var(--type-mono-sm);
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--emerald);
+    display: inline-flex; align-items: center; gap: 14px;
+  }
+  .eyebrow::before {
+    content: ""; width: 36px; height: 1px; background: var(--emerald);
+  }
+  .eyebrow.blue { color: var(--blue); }
+  .eyebrow.blue::before { background: var(--blue); }
+  .eyebrow.mute { color: var(--mute); }
+  .eyebrow.mute::before { background: var(--mute); }
+
+  h1, h2, h3 { margin: 0; font-weight: 700; letter-spacing: -0.025em; color: var(--ink); line-height: 1.04; }
+  p { margin: 0; }
+
+  .title { font-size: var(--type-title); font-weight: 700; }
+  .subtitle { font-size: var(--type-subtitle); font-weight: 500; color: var(--ink-soft); line-height: 1.18; letter-spacing: -0.02em; }
+  .body { font-size: var(--type-body); line-height: 1.45; color: var(--ink-soft); }
+  .small { font-size: var(--type-small); line-height: 1.5; color: var(--mute); }
+  .accent-em { color: var(--emerald); }
+  .accent-bl { color: var(--blue); }
+
+  /* corner chrome */
+  .chrome-tl, .chrome-br {
+    position: absolute; font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--mute-2); display: flex; gap: 18px; align-items: center;
+  }
+  .chrome-tl { top: 40px; left: var(--pad-x); }
+  .chrome-br { bottom: 40px; right: var(--pad-x); }
+  .chrome-br .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 12px var(--emerald); }
+
+  /* grid background */
+  .grid-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(148,163,184,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148,163,184,0.05) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.8), transparent 75%);
+  }
+
+  .mesh-glow {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(60% 50% at 18% 30%, rgba(16,185,129,0.18), transparent 60%),
+      radial-gradient(50% 50% at 85% 80%, rgba(59,130,246,0.20), transparent 60%);
+    filter: blur(0px);
+  }
+
+  .glass {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    backdrop-filter: blur(20px);
+  }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border-radius: 999px;
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
+    border: 1px solid var(--line-strong); color: var(--mute);
+  }
+  .pill.em { color: var(--emerald); border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.08); }
+  .pill.bl { color: var(--blue); border-color: rgba(59,130,246,0.4); background: rgba(59,130,246,0.08); }
+  .pill.rose { color: var(--rose); border-color: rgba(244,63,94,0.4); background: rgba(244,63,94,0.08); }
+  .pill.amber { color: var(--amber); border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.08); }
+
+  /* ===== Slide 01 — HERO ===== */
+  .hero { padding: var(--pad-y) var(--pad-x) var(--pad-bottom); position: relative; height: 100%; box-sizing: border-box; }
+  .hero .nav { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mute); }
+  .hero .nav .left { display: flex; gap: 32px; align-items: center; }
+  .hero .nav .brand-mark { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+  .hero .brand-glyph {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--emerald), var(--blue));
+    position: relative;
+  }
+  .hero .brand-glyph::after {
+    content: ""; position: absolute; inset: 8px; border-radius: 2px;
+    background: var(--bg-0);
+  }
+  .hero .core { margin-top: 60px; display: grid; grid-template-columns: 1.05fr 1fr; gap: 80px; align-items: end; height: calc(100% - 220px); }
+  .hero h1 {
+    font-size: var(--type-hero); font-weight: 800; line-height: 0.98; letter-spacing: -0.035em;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(120deg, var(--emerald) 0%, #34d399 35%, var(--blue) 75%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero .pitch { margin-top: 36px; font-size: 30px; line-height: 1.4; color: var(--mute); max-width: 720px; }
+  .hero .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 40px; align-self: end; padding-bottom: 20px; }
+  .hero .meta-grid .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mute-2); margin-bottom: 8px; }
+  .hero .meta-grid .v { font-size: 20px; color: var(--ink-soft); line-height: 1.35; font-weight: 500; }
+  .hero .foot { position: absolute; bottom: 40px; left: var(--pad-x); right: var(--pad-x); display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mute-2); }
+
+  /* ===== Slide 02 — TL;DR ===== */
+  .tldr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: var(--gap-title); flex: 1; }
+  .stat-card { padding: 36px 32px 32px; display: flex; flex-direction: column; justify-content: space-between; min-height: 360px; }
+  .stat-card .num { font-size: 96px; font-weight: 800; letter-spacing: -0.04em; line-height: 0.95; }
+  .stat-card .num.em { color: var(--emerald); }
+  .stat-card .num.bl { color: var(--blue); }
+  .stat-card .lbl { font-family: var(--mono); font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mute); }
+  .stat-card .desc { font-size: 20px; color: var(--ink-soft); line-height: 1.4; margin-top: 12px; }
+
+  /* ===== Section header ===== */
+  .section-hd { background: var(--bg-1); }
+  .section-hd .content { display: flex; flex-direction: column; justify-content: center; height: 100%; }
+  .section-hd .sec-num { font-family: var(--mono); font-size: 220px; font-weight: 700; line-height: 0.9; letter-spacing: -0.04em; background: linear-gradient(135deg, var(--emerald), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .section-hd h2 { font-size: 96px; font-weight: 800; letter-spacing: -0.03em; margin-top: 24px; }
+  .section-hd .lead { font-size: 28px; color: var(--mute); margin-top: 28px; max-width: 920px; line-height: 1.5; }
+
+  /* generic layouts */
+  .row-split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; flex: 1; }
+  .col-left { display: flex; flex-direction: column; gap: var(--gap-item); }
+  .head-block { margin-bottom: var(--gap-title); }
+  .head-block .eyebrow { margin-bottom: 24px; }
+  .head-block h2 { font-size: var(--type-title); }
+
+  /* ===== Industry forces (4 cards) ===== */
+  .force-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; flex: 1; }
+  .force-card { padding: 32px 28px; display: flex; flex-direction: column; gap: 20px; }
+  .force-card .idx { font-family: var(--mono); font-size: 14px; letter-spacing: 0.2em; color: var(--mute-2); }
+  .force-card h3 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; color: var(--ink); }
+  .force-card .desc { font-size: 18px; color: var(--mute); line-height: 1.55; flex: 1; }
+  .force-card .ai { font-family: var(--mono); font-size: 14px; color: var(--emerald); line-height: 1.6; letter-spacing: 0.02em; padding-top: 18px; border-top: 1px solid var(--line); text-transform: none; }
+
+  /* ===== Research methods table ===== */
+  .method-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; flex: 1; }
+  .method-card { padding: 28px 28px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .method-card .lbl { font-family: var(--mono); font-size: 13px; letter-spacing: 0.18em; color: var(--mute-2); }
+  .method-card .method { font-size: 26px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; color: var(--ink); }
+  .method-card .sample { font-family: var(--mono); font-size: 15px; color: var(--blue); letter-spacing: 0.04em; }
+  .method-card .out { font-size: 16px; color: var(--mute); line-height: 1.5; margin-top: 4px; }
+
+  /* ===== Quote slide ===== */
+  .quote-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; flex: 1; }
+  .quote-card { padding: 32px 28px 28px; display: flex; flex-direction: column; }
+  .quote-card .tag { font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mute-2); margin-bottom: 16px; }
+  .quote-card .qt { font-size: 22px; line-height: 1.4; color: var(--ink-soft); font-weight: 500; letter-spacing: -0.01em; flex: 1; }
+  .quote-card .qt::before { content: "\201C"; font-size: 48px; line-height: 0; color: var(--emerald); margin-right: 4px; vertical-align: -16px; }
+  .quote-card .att { font-family: var(--mono); font-size: 13px; letter-spacing: 0.06em; color: var(--mute); margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); text-transform: none; }
+  .quote-card.em { background: linear-gradient(180deg, rgba(16,185,129,0.08), transparent 60%); border-color: rgba(16,185,129,0.25); }
+  .quote-card.bl { background: linear-gradient(180deg, rgba(59,130,246,0.08), transparent 60%); border-color: rgba(59,130,246,0.25); }
+
+  /* ===== Pain points (12-grid) ===== */
+  .pain-section { display: flex; flex-direction: column; gap: 12px; }
+  .pain-section .sec-lbl { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--line); margin-bottom: 6px; }
+  .pain-section .sec-lbl .name { font-size: 20px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+  .pain-section .sec-lbl .count { font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; color: var(--mute-2); }
+  .pain-row { display: grid; grid-template-columns: 32px 1fr 90px; gap: 16px; padding: 12px 0; border-bottom: 1px dashed var(--line); align-items: baseline; }
+  .pain-row:last-child { border-bottom: none; }
+  .pain-row .n { font-family: var(--mono); font-size: 14px; color: var(--mute-2); letter-spacing: 0.1em; }
+  .pain-row .txt { font-size: 18px; color: var(--ink-soft); line-height: 1.35; }
+  .pain-row .txt b { color: var(--ink); font-weight: 600; }
+  .pain-row .imp { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; text-align: right; }
+  .imp.crit { color: var(--rose); }
+  .imp.high { color: var(--amber); }
+  .imp.med { color: var(--mute); }
+
+  /* ===== Hypothesis ===== */
+  .hyp-main { font-size: 48px; line-height: 1.25; letter-spacing: -0.02em; color: var(--ink); font-weight: 500; max-width: 1500px; }
+  .hyp-main .h { color: var(--emerald); font-weight: 700; }
+  .hyp-main .t { color: var(--blue); font-weight: 700; }
+  .hyp-main .m { color: var(--ink); font-weight: 600; font-style: italic; }
+  .sub-hyp { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 48px; }
+  .sub-hyp .h-card { padding: 22px 24px; }
+  .sub-hyp .h-card .tag { font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; color: var(--emerald); }
+  .sub-hyp .h-card .txt { font-size: 17px; color: var(--ink-soft); margin-top: 10px; line-height: 1.4; }
+  .sub-hyp .h-card .metric { font-family: var(--mono); font-size: 14px; color: var(--blue); margin-top: 12px; letter-spacing: 0.04em; text-transform: none; }
+
+  /* ===== Personas (3-up) ===== */
+  .persona-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; flex: 1; }
+  .persona-card { padding: 32px 28px 28px; display: flex; flex-direction: column; gap: 18px; }
+  .persona-head { display: flex; align-items: center; gap: 16px; }
+  .persona-avatar { width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 600; font-size: 22px; letter-spacing: 0.04em; }
+  .pa-em { background: linear-gradient(135deg, rgba(16,185,129,0.3), rgba(16,185,129,0.08)); color: var(--emerald); border: 1px solid rgba(16,185,129,0.4); }
+  .pa-bl { background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(59,130,246,0.08)); color: var(--blue); border: 1px solid rgba(59,130,246,0.4); }
+  .pa-am { background: linear-gradient(135deg, rgba(245,158,11,0.3), rgba(245,158,11,0.08)); color: var(--amber); border: 1px solid rgba(245,158,11,0.4); }
+  .persona-card .name { font-size: 26px; font-weight: 700; letter-spacing: -0.015em; }
+  .persona-card .role { font-family: var(--mono); font-size: 13px; letter-spacing: 0.14em; color: var(--mute); margin-top: 4px; }
+  .persona-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .persona-stats .k { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; color: var(--mute-2); }
+  .persona-stats .v { font-size: 16px; color: var(--ink-soft); margin-top: 2px; }
+  .persona-card h4 { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; color: var(--mute-2); margin: 8px 0 6px; font-weight: 500; text-transform: uppercase; }
+  .persona-card ul { margin: 0; padding-left: 18px; }
+  .persona-card li { font-size: 16px; color: var(--ink-soft); line-height: 1.45; margin-bottom: 4px; }
+  .persona-card .qt { font-size: 17px; line-height: 1.4; font-style: italic; color: var(--ink); padding-top: 14px; border-top: 1px solid var(--line); margin-top: auto; }
+  .persona-card .qt::before { content: "\201C"; color: var(--emerald); font-style: normal; margin-right: 4px; }
+  .persona-card .qt::after { content: "\201D"; color: var(--emerald); font-style: normal; margin-left: 4px; }
+
+  /* ===== Before journey ===== */
+  .journey-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; flex: 1; }
+  .j-step { padding: 24px 20px; display: flex; flex-direction: column; gap: 12px; position: relative; }
+  .j-step .t { font-family: var(--mono); font-size: 13px; letter-spacing: 0.14em; color: var(--blue); }
+  .j-step .ph { font-size: 13px; font-family: var(--mono); letter-spacing: 0.18em; color: var(--mute-2); text-transform: uppercase; }
+  .j-step .h { font-size: 19px; font-weight: 600; color: var(--ink); line-height: 1.25; }
+  .j-step .thinks { font-size: 14px; line-height: 1.4; color: var(--ink-soft); font-style: italic; }
+  .j-step .pain { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--rose); line-height: 1.5; text-transform: none; padding-top: 10px; border-top: 1px solid var(--line); margin-top: auto; }
+  .j-step .emo { font-size: 24px; }
+  .emo-curve { height: 64px; margin: 20px 0 0; position: relative; }
+
+  /* ===== Service blueprint ===== */
+  .swimlanes { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+  .lane { display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .lane:last-child { border-bottom: none; }
+  .lane .l-label { font-family: var(--mono); font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); }
+  .lane .l-label .badge { display: block; font-size: 10px; color: var(--mute-2); margin-top: 4px; letter-spacing: 0.2em; }
+  .lane .l-content { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .lane .node { padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; color: var(--ink-soft); background: rgba(255,255,255,0.02); line-height: 1.3; }
+  .lane.ai .node { background: linear-gradient(180deg, rgba(16,185,129,0.12), rgba(59,130,246,0.06)); border-color: rgba(16,185,129,0.35); color: var(--ink); }
+  .lane.ai .l-label { color: var(--emerald); }
+
+  /* ===== IA tree ===== */
+  .ia-wrap { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; flex: 1; }
+  .ia-tree { font-family: var(--mono); font-size: 18px; line-height: 1.75; color: var(--ink-soft); }
+  .ia-tree .root { color: var(--emerald); font-size: 22px; font-weight: 600; }
+  .ia-tree .l1 { color: var(--blue); padding-left: 24px; }
+  .ia-tree .l2 { color: var(--ink-soft); padding-left: 56px; }
+  .ia-tree .pipe { color: var(--mute-2); }
+  .ia-principles { display: flex; flex-direction: column; gap: 24px; }
+  .ia-principles .p { display: flex; gap: 20px; }
+  .ia-principles .p .idx { font-family: var(--mono); font-size: 36px; font-weight: 700; color: var(--emerald); line-height: 1; min-width: 64px; }
+  .ia-principles .p .txt { font-size: 22px; color: var(--ink-soft); line-height: 1.4; }
+  .ia-principles .p .txt b { color: var(--ink); font-weight: 600; }
+
+  /* ===== Flow diagram ===== */
+  .flow-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .flow-row { display: flex; align-items: center; gap: 0; }
+  .flow-step { flex: 1; padding: 28px 24px; min-height: 180px; display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+  .flow-step .n { font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; color: var(--mute-2); }
+  .flow-step .h { font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.2; }
+  .flow-step .d { font-size: 16px; color: var(--mute); line-height: 1.4; }
+  .flow-step.ai { background: linear-gradient(180deg, rgba(16,185,129,0.1), rgba(16,185,129,0.02)); border-color: rgba(16,185,129,0.4); }
+  .flow-step.ai .h { color: var(--emerald); }
+  .flow-step.user { background: linear-gradient(180deg, rgba(59,130,246,0.08), rgba(59,130,246,0.01)); border-color: rgba(59,130,246,0.3); }
+  .flow-arrow { font-family: var(--mono); color: var(--mute-2); padding: 0 6px; font-size: 24px; }
+
+  /* ===== Wireframes / lo-fi ===== */
+  .wf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; flex: 1; }
+  .wf { padding: 18px; display: flex; flex-direction: column; gap: 8px; aspect-ratio: 4 / 3; }
+  .wf-canvas { flex: 1; background: rgba(255,255,255,0.02); border: 1px dashed var(--line-strong); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .wf-bar { height: 8px; background: var(--mute-2); opacity: 0.4; border-radius: 2px; }
+  .wf-bar.s { width: 40%; }
+  .wf-bar.m { width: 70%; }
+  .wf-bar.em { background: var(--emerald); opacity: 0.9; }
+  .wf-bar.bl { background: var(--blue); opacity: 0.7; }
+  .wf-row { display: flex; gap: 6px; }
+  .wf-row .wf-bar { flex: 1; }
+  .wf-block { flex: 1; background: rgba(255,255,255,0.03); border: 1px dashed var(--line); border-radius: 4px; }
+  .wf-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; color: var(--mute); text-transform: uppercase; }
+  .wf-name { font-size: 16px; color: var(--ink); font-weight: 500; }
+
+  /* ===== AI as material ===== */
+  .material-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; flex: 1; align-items: center; }
+  .material-left { display: flex; flex-direction: column; gap: 28px; }
+  .material-thesis { font-size: 60px; line-height: 1.25; font-weight: 700; letter-spacing: -0.025em; }
+  .material-thesis .strike { color: var(--mute-2); text-decoration: line-through; text-decoration-color: var(--rose); text-decoration-thickness: 3px; display: inline-block; }
+  .material-thesis .right { color: var(--emerald); }
+  .material-principles { display: flex; flex-direction: column; gap: 16px; }
+  .mp { display: flex; gap: 24px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .mp:last-child { border-bottom: none; }
+  .mp .num { font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em; color: var(--blue); min-width: 40px; }
+  .mp .lbl { font-size: 22px; color: var(--ink); font-weight: 600; min-width: 280px; }
+  .mp .desc { font-size: 17px; color: var(--mute); line-height: 1.45; flex: 1; }
+
+  /* ===== 11 AI augmentations grid ===== */
+  .aug-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: 14px; flex: 1; }
+  .aug { padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; position: relative; }
+  .aug .idx { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; color: var(--mute-2); }
+  .aug .h { font-size: 19px; font-weight: 600; line-height: 1.2; color: var(--ink); letter-spacing: -0.01em; }
+  .aug .desc { font-size: 14px; line-height: 1.45; color: var(--mute); flex: 1; }
+  .aug .cap { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding-top: 10px; border-top: 1px solid var(--line); }
+  .aug .cap.em { color: var(--emerald); }
+  .aug .cap.bl { color: var(--blue); }
+
+  /* ===== Hi-fi mockup screens ===== */
+  .mock-frame { background: var(--bg-2); border: 1px solid var(--line-strong); border-radius: 14px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.02); display: flex; flex-direction: column; height: 100%; }
+  .mock-chrome { padding: 12px 16px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 14px; }
+  .mock-chrome .dots { display: flex; gap: 6px; }
+  .mock-chrome .dots span { width: 11px; height: 11px; border-radius: 50%; }
+  .mock-chrome .dots .r { background: #ef4444; }
+  .mock-chrome .dots .y { background: #eab308; }
+  .mock-chrome .dots .g { background: #22c55e; }
+  .mock-chrome .url { flex: 1; padding: 5px 12px; background: rgba(0,0,0,0.3); border-radius: 6px; font-family: var(--mono); font-size: 12px; color: var(--mute); letter-spacing: 0.04em; }
+  .mock-chrome .url .lock { color: var(--emerald); margin-right: 6px; }
+  .mock-body { flex: 1; display: grid; min-height: 0; }
+
+  /* mock: book overview */
+  .mock-book { grid-template-columns: 200px 1fr 360px; }
+  .mock-side { background: rgba(0,0,0,0.2); border-right: 1px solid var(--line); padding: 20px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .mock-side .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 16px; }
+  .mock-side .brand-mark { width: 22px; height: 22px; border-radius: 5px; background: linear-gradient(135deg, var(--emerald), var(--blue)); }
+  .mock-side .brand-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+  .mock-side .nav-item { padding: 8px 10px; font-size: 13px; color: var(--mute); border-radius: 6px; display: flex; align-items: center; gap: 10px; }
+  .mock-side .nav-item.active { background: rgba(16,185,129,0.12); color: var(--emerald); }
+  .mock-side .nav-item .ico { width: 14px; height: 14px; border-radius: 3px; background: currentColor; opacity: 0.5; }
+  .mock-side .nav-section { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; color: var(--mute-2); padding: 14px 10px 6px; }
+
+  .mock-main { padding: 22px 26px; overflow: hidden; display: flex; flex-direction: column; gap: 18px; }
+  .mock-h { display: flex; justify-content: space-between; align-items: baseline; }
+  .mock-h h3 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .mock-h .asof { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--mute); }
+  .mock-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .mock-kpi { padding: 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 8px; }
+  .mock-kpi .l { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--mute-2); }
+  .mock-kpi .v { font-size: 22px; font-weight: 700; margin-top: 4px; letter-spacing: -0.015em; }
+  .mock-kpi .v.em { color: var(--emerald); }
+  .mock-kpi .d { font-family: var(--mono); font-size: 11px; color: var(--mute); }
+
+  .mock-section { background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 10px; padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .mock-section .st { display: flex; justify-content: space-between; align-items: center; }
+  .mock-section .st .title { font-size: 13px; font-weight: 600; letter-spacing: -0.005em; }
+  .mock-section .st .meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--mute-2); }
+
+  .client-row { display: grid; grid-template-columns: 24px 1fr 70px 80px 80px; gap: 10px; padding: 10px 8px; border-radius: 6px; align-items: center; font-size: 12px; }
+  .client-row:nth-child(even) { background: rgba(255,255,255,0.015); }
+  .client-row.flagged { background: rgba(244,63,94,0.06); border-left: 2px solid var(--rose); padding-left: 6px; }
+  .client-row .av { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, #475569, #1e293b); font-family: var(--mono); font-size: 9px; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; font-weight: 600; }
+  .client-row .nm { color: var(--ink); font-weight: 500; font-size: 12px; }
+  .client-row .nm .sub { color: var(--mute-2); font-size: 10px; display: block; margin-top: 1px; font-family: var(--mono); letter-spacing: 0.04em; }
+  .client-row .v { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); text-align: right; }
+  .client-row .tg { text-align: right; }
+
+  /* AI panel */
+  .ai-panel { background: linear-gradient(180deg, rgba(16,185,129,0.06), rgba(59,130,246,0.04)); border-left: 1px solid var(--line); padding: 22px 22px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+  .ai-panel .ai-head { display: flex; align-items: center; gap: 10px; }
+  .ai-panel .ai-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 12px var(--emerald); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .ai-panel .ai-title { font-size: 13px; font-family: var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--emerald); font-weight: 600; }
+  .ai-panel .ai-status { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; color: var(--mute); margin-left: auto; text-transform: uppercase; }
+  .ai-card { background: rgba(0,0,0,0.25); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .ai-card .priority { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--rose); text-transform: uppercase; }
+  .ai-card .priority.med { color: var(--amber); }
+  .ai-card .priority.low { color: var(--blue); }
+  .ai-card .who { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+  .ai-card .why { font-size: 12px; color: var(--ink-soft); line-height: 1.45; }
+  .ai-card .why b { color: var(--emerald); font-weight: 500; }
+  .ai-card .conf { display: flex; align-items: center; gap: 8px; padding-top: 6px; }
+  .ai-card .conf-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+  .ai-card .conf-bar .fill { height: 100%; background: var(--emerald); }
+  .ai-card .conf-pct { font-family: var(--mono); font-size: 10px; color: var(--emerald); letter-spacing: 0.06em; }
+  .ai-card .actions { display: flex; gap: 6px; margin-top: 4px; }
+  .ai-card .act { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; padding: 5px 10px; border-radius: 4px; border: 1px solid var(--line-strong); color: var(--ink-soft); text-transform: uppercase; }
+  .ai-card .act.primary { background: var(--emerald); color: #052e23; border-color: var(--emerald); font-weight: 600; }
+
+  /* Hi-fi: full-bleed mock slide layout */
+  .hifi-slide { display: grid; grid-template-columns: 1.25fr 2.5fr; gap: 56px; flex: 1; align-items: stretch; min-height: 0; }
+  .hifi-narr { display: flex; flex-direction: column; gap: 24px; padding-top: 8px; }
+  .hifi-narr h2 { font-size: 56px; letter-spacing: -0.025em; line-height: 1.02; }
+  .hifi-narr .lead { font-size: 22px; color: var(--mute); line-height: 1.5; }
+  .hifi-narr .annot { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+  .hifi-narr .ann { display: flex; gap: 16px; }
+  .hifi-narr .ann .n { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--emerald); min-width: 28px; }
+  .hifi-narr .ann .t { font-size: 16px; color: var(--ink-soft); line-height: 1.45; }
+  .hifi-narr .ann .t b { color: var(--ink); font-weight: 600; }
+  .mock-wrap { display: flex; align-items: stretch; min-height: 0; }
+
+  /* mock: meeting mode */
+  .mock-meeting { grid-template-columns: 1fr; padding: 22px 28px; gap: 18px; display: flex; flex-direction: column; }
+  .mm-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .mm-head .who { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+  .mm-head .who .sub { font-family: var(--mono); font-size: 12px; color: var(--mute); display: block; margin-top: 4px; letter-spacing: 0.1em; }
+  .mm-pills { display: flex; gap: 8px; }
+  .mm-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 10px; }
+  .mm-stats .s .l { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--mute-2); }
+  .mm-stats .s .v { font-size: 22px; font-weight: 700; margin-top: 4px; letter-spacing: -0.015em; }
+  .mm-narr { background: rgba(16,185,129,0.04); border: 1px solid rgba(16,185,129,0.25); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; }
+  .mm-narr .nh { display: flex; align-items: center; gap: 10px; }
+  .mm-narr .ai-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--emerald); display: flex; align-items: center; gap: 6px; text-transform: uppercase; }
+  .mm-narr .ai-tag .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 8px var(--emerald); }
+  .mm-narr .vox { font-family: var(--mono); font-size: 10px; color: var(--mute); letter-spacing: 0.14em; margin-left: auto; text-transform: uppercase; }
+  .mm-narr .text { font-size: 13px; line-height: 1.6; color: var(--ink-soft); overflow: hidden; }
+  .mm-narr .text .hi { background: rgba(16,185,129,0.15); padding: 1px 3px; border-radius: 2px; color: var(--ink); }
+  .mm-actions { display: flex; gap: 8px; }
+  .mm-btn { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; padding: 9px 16px; border-radius: 6px; border: 1px solid var(--line-strong); color: var(--ink-soft); text-transform: uppercase; }
+  .mm-btn.primary { background: var(--emerald); color: #052e23; border-color: var(--emerald); font-weight: 700; }
+
+  /* mock: drift timeline */
+  .mock-drift { grid-template-columns: 1fr; padding: 22px 28px; gap: 16px; display: flex; flex-direction: column; }
+  .drift-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .drift-head .h { font-size: 22px; font-weight: 700; letter-spacing: -0.015em; }
+  .drift-row { display: grid; grid-template-columns: 200px 1fr 90px; gap: 16px; align-items: center; padding: 14px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 10px; }
+  .drift-row.crit { background: rgba(244,63,94,0.06); border-color: rgba(244,63,94,0.3); }
+  .drift-row .nm { font-size: 14px; font-weight: 600; }
+  .drift-row .nm .sub { font-family: var(--mono); font-size: 11px; color: var(--mute-2); display: block; margin-top: 2px; letter-spacing: 0.08em; }
+  .drift-timeline { height: 32px; position: relative; background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.04) 100%); border-radius: 16px; overflow: hidden; }
+  .drift-timeline .band { position: absolute; height: 100%; background: linear-gradient(90deg, rgba(16,185,129,0.5) 0%, rgba(245,158,11,0.5) 50%, rgba(244,63,94,0.7) 100%); }
+  .drift-timeline .marker { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); }
+  .drift-timeline .marker.now { background: var(--blue); }
+  .drift-timeline .marker .lbl { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; color: var(--blue); white-space: nowrap; }
+  .drift-timeline .marker.breach { background: var(--rose); }
+  .drift-timeline .marker.breach .lbl { color: var(--rose); }
+  .drift-row .prob { text-align: right; }
+  .drift-row .prob .pct { font-size: 22px; font-weight: 700; color: var(--rose); font-family: var(--mono); letter-spacing: -0.01em; }
+  .drift-row .prob .lbl { font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em; color: var(--mute-2); }
+
+  /* mock: bubble map */
+  .mock-bubble { grid-template-columns: 1fr; padding: 22px 28px; display: flex; flex-direction: column; gap: 16px; }
+  .bubble-canvas { flex: 1; position: relative; background: rgba(0,0,0,0.2); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .bubble-canvas::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(148,163,184,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .axis { position: absolute; font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--mute-2); text-transform: uppercase; }
+  .axis.x { bottom: 8px; left: 50%; transform: translateX(-50%); }
+  .axis.y { top: 50%; left: 8px; transform: translateY(-50%) rotate(-90deg); transform-origin: left center; }
+  .bubble { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 8px; }
+  .bubble .nm { font-size: 12px; font-weight: 600; line-height: 1.1; }
+  .bubble .yr { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; margin-top: 2px; }
+  .bubble.em { background: radial-gradient(circle at 35% 35%, rgba(16,185,129,0.5), rgba(16,185,129,0.15)); border: 1px solid rgba(16,185,129,0.5); color: #d1fae5; box-shadow: 0 0 30px rgba(16,185,129,0.2); }
+  .bubble.bl { background: radial-gradient(circle at 35% 35%, rgba(59,130,246,0.5), rgba(59,130,246,0.15)); border: 1px solid rgba(59,130,246,0.5); color: #dbeafe; box-shadow: 0 0 30px rgba(59,130,246,0.2); }
+  .bubble.am { background: radial-gradient(circle at 35% 35%, rgba(245,158,11,0.5), rgba(245,158,11,0.15)); border: 1px solid rgba(245,158,11,0.5); color: #fef3c7; box-shadow: 0 0 30px rgba(245,158,11,0.15); }
+  .bubble.ro { background: radial-gradient(circle at 35% 35%, rgba(244,63,94,0.5), rgba(244,63,94,0.15)); border: 1px solid rgba(244,63,94,0.5); color: #ffe4e6; box-shadow: 0 0 30px rgba(244,63,94,0.15); }
+  .bubble-legend { display: flex; gap: 18px; align-items: center; }
+  .bubble-legend .lk { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--mute); text-transform: uppercase; }
+  .bubble-legend .lk .d { width: 10px; height: 10px; border-radius: 50%; }
+  .bubble-legend .lk.em .d { background: var(--emerald); box-shadow: 0 0 8px var(--emerald); }
+  .bubble-legend .lk.bl .d { background: var(--blue); box-shadow: 0 0 8px var(--blue); }
+  .bubble-legend .lk.am .d { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+  .bubble-legend .lk.ro .d { background: var(--rose); box-shadow: 0 0 8px var(--rose); }
+
+  /* Before/After */
+  .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; }
+  .ba-side { display: flex; flex-direction: column; }
+  .ba-side .ba-head { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+  .ba-side .ba-head .lbl { font-family: var(--mono); font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase; }
+  .ba-side.before .lbl { color: var(--rose); }
+  .ba-side.after .lbl { color: var(--emerald); }
+  .ba-side .ba-head .sub { font-size: 14px; color: var(--mute); font-family: var(--mono); letter-spacing: 0.06em; }
+  .ba-list { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+  .ba-row { padding: 18px 22px; display: grid; grid-template-columns: 140px 1fr; gap: 18px; align-items: baseline; }
+  .ba-row .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; color: var(--mute-2); text-transform: uppercase; }
+  .ba-row .v { font-size: 18px; color: var(--ink-soft); line-height: 1.4; }
+  .ba-row .v b { color: var(--ink); font-weight: 600; }
+  .ba-side.before .ba-row { background: rgba(244,63,94,0.04); border: 1px solid rgba(244,63,94,0.15); border-radius: 10px; }
+  .ba-side.after .ba-row { background: rgba(16,185,129,0.04); border: 1px solid rgba(16,185,129,0.25); border-radius: 10px; }
+  .ba-side.after .ba-row .v b { color: var(--emerald); }
+
+  /* Usability test */
+  .ut-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; flex: 1; }
+  .ut-tbl { display: flex; flex-direction: column; }
+  .ut-tbl .ut-hd, .ut-tbl .ut-row { display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+  .ut-tbl .ut-hd { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; color: var(--mute-2); text-transform: uppercase; }
+  .ut-tbl .ut-row .task { font-size: 18px; color: var(--ink-soft); }
+  .ut-tbl .ut-row .v { font-family: var(--mono); font-size: 20px; font-weight: 600; }
+  .ut-tbl .ut-row .v.em { color: var(--emerald); }
+  .ut-tbl .ut-row .v.bl { color: var(--blue); }
+  .ut-tbl .ut-row .v.am { color: var(--amber); }
+  .sus-card { display: flex; flex-direction: column; justify-content: center; padding: 40px; gap: 20px; }
+  .sus-card .l { font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em; color: var(--mute); }
+  .sus-card .v { font-size: 160px; font-weight: 800; color: var(--emerald); line-height: 0.9; letter-spacing: -0.04em; }
+  .sus-card .d { font-size: 18px; color: var(--ink-soft); line-height: 1.45; }
+
+  /* Day in life timeline */
+  .day-timeline { flex: 1; display: flex; flex-direction: column; gap: 18px; }
+  .day-row { display: grid; grid-template-columns: 130px 1fr; gap: 28px; align-items: stretch; }
+  .day-row .time { font-family: var(--mono); font-size: 22px; font-weight: 600; color: var(--emerald); letter-spacing: 0.04em; padding-top: 18px; }
+  .day-row .time .lbl { display: block; font-size: 11px; letter-spacing: 0.18em; color: var(--mute-2); margin-top: 4px; text-transform: uppercase; font-weight: 500; }
+  .day-card { padding: 18px 26px; display: flex; flex-direction: column; gap: 6px; position: relative; }
+  .day-card .h { font-size: 22px; font-weight: 600; color: var(--ink); letter-spacing: -0.015em; }
+  .day-card .d { font-size: 16px; color: var(--mute); line-height: 1.5; }
+  .day-card .tag { align-self: flex-start; margin-bottom: 4px; }
+
+  /* Results big numbers */
+  .results-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr 1fr; gap: 18px; flex: 1; }
+  .res { padding: 26px 28px; display: flex; flex-direction: column; justify-content: space-between; }
+  .res .lbl { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; color: var(--mute-2); text-transform: uppercase; }
+  .res .num { font-size: 76px; font-weight: 800; letter-spacing: -0.04em; line-height: 0.95; }
+  .res .num.em { color: var(--emerald); }
+  .res .num.bl { color: var(--blue); }
+  .res .num.am { color: var(--amber); }
+  .res .num .unit { font-size: 32px; color: var(--mute); margin-left: 4px; font-weight: 500; }
+  .res .delta { font-family: var(--mono); font-size: 14px; letter-spacing: 0.06em; color: var(--ink-soft); }
+
+  /* Reflection */
+  .ref-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; flex: 1; }
+  .ref-card { padding: 36px 32px; display: flex; flex-direction: column; gap: 18px; }
+  .ref-card .n { font-family: var(--mono); font-size: 13px; letter-spacing: 0.18em; color: var(--emerald); }
+  .ref-card .h { font-size: 32px; font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; }
+  .ref-card .d { font-size: 18px; color: var(--mute); line-height: 1.55; }
+
+  /* Closing slide */
+  .closing { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: var(--pad-y) var(--pad-x); height: 100%; box-sizing: border-box; position: relative; }
+  .closing h2 { font-size: 92px; line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; max-width: 1600px; }
+  .closing h2 .gradient { background: linear-gradient(120deg, var(--emerald), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .closing .sig { margin-top: 64px; display: flex; gap: 64px; align-items: baseline; }
+  .closing .sig .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; color: var(--mute-2); text-transform: uppercase; }
+  .closing .sig .v { font-size: 20px; color: var(--ink-soft); margin-top: 6px; }
+</style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <div class="sidebar-logo">
-            🛡️ Strand Finance
+<deck-stage width="1920" height="1080">
+
+  <!-- ============================================================ -->
+  <!-- 01 — HERO                                                     -->
+  <!-- ============================================================ -->
+  
+
+  
+
+  
+
+  
+
+  
+
+  <section data-label="01 Hero">
+    <div class="hero">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+
+      <div class="nav">
+        <div class="left">
+          <div class="brand-mark">
+            <div class="brand-glyph"></div>
+            <span>STRAND FINANCE</span>
+          </div>
+          <span style="color: var(--mute-2);">/</span>
+          <span>UX CASE STUDY · 2026</span>
         </div>
-        <nav class="sidebar-nav">
-            <ul>
-                <li><a href="#hero">01. Overview</a></li>
-                <li><a href="#tldr">02. Executive Summary</a></li>
-                <li><a href="#strategy">03. UX Strategy</a></li>
-                <li><a href="#research">05. Research</a></li>
-                <li><a href="#synthesis">07. Synthesis</a></li>
-                <li><a href="#personas">09. Personas</a></li>
-                <li><a href="#ai">16. AI Solutions</a></li>
-                <li><a href="#mockups">17. High-Fi Mockups</a></li>
-                <li><a href="#impact">21. Results & Impact</a></li>
-            </ul>
-        </nav>
-    </aside>
+        <div>01 / 19 — HERO</div>
+      </div>
 
-    <main class="main-content">
-        <blockquote><strong>Placeholder legend</strong> — anything you'll fill in is marked clearly:</blockquote>
-<blockquote>- <div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">description</div></div> — drop an image/Figma frame here</blockquote>
-<blockquote>- <div class="video-placeholder"><div class="icon">▶️</div><div class="desc">description</div></div> — embed a Loom, Lottie, or motion file</blockquote>
->
-<blockquote>Everything else is the structural narrative. Edit freely.</blockquote>
-<p>---</p>
-<p>
-<h1 class="section-title">HERO / PROJECT OVERVIEW</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Hero cover image — final dashboard mockup, isometric or 3/4 angle</div></div>
-<h3>Project Title</h3>
-<strong>Empowering the Modern Relationship Manager</strong>
-Reimagining the wealth management workflow with AI-augmented UX
-<h3>One-line Pitch</h3>
-Reducing pre-meeting prep from 2 hours to 30 seconds by rebuilding the RM workspace around predictive, AI-driven insights.
-<h3>Project Meta (chip row)</h3>
-<div class="table-container"><table><tbody><tr></tr></tbody><tbody><tr><th><strong>Role</strong></th><th>Sr UX/UI Designer & AI Strategist</th></tr></tbody><tbody><tr><td><strong>Company / Client</strong></td><td>Strand Finance</td></tr></tbody><tbody><tr><td><strong>Timeline</strong></td><td>24 weeks, 2026</td></tr></tbody><tbody><tr><td><strong>Team</strong></td><td>1 PM, 2 Angular Engineers, 1 Data Scientist, Me</td></tr></tbody><tbody><tr><td><strong>Tools</strong></td><td>Figma, Angular, Power BI, Storybook, Salesforce</td></tr></tbody><tbody><tr><td><strong>Platform</strong></td><td>Enterprise Web App + Responsive PWA</td></tr></tbody></table></div>
-<h3>NDA Disclosure</h3>
-<blockquote>Visuals shown here are recreated for portfolio purposes. The problem framing, research, and design decisions are from the original engagement.</blockquote>
-<p>---</p>
-<p>
-<h1 class="section-title">TL;DR — EXECUTIVE SUMMARY</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">4-up impact stat grid — large numbers</div></div>
-<p>The wealth management industry is at an inflection point. Relationship Managers (RMs) are drowning in admin work, juggling 5+ disconnected systems, and burning hours assembling client reports. Clients want goal-oriented advice. Compliance wants systemic visibility.</p>
-<p>We rebuilt the RM workspace around three principles:
-1. <strong>Centralize the household</strong> — one client, one view, all accounts
-2. <strong>Shift from reactive to proactive</strong> — surface risk before it surfaces itself
-3. <strong>Offload cognition to AI</strong> — let humans do the human part</p>
-<h3>Headline Outcomes</h3>
-<li>Pre-meeting prep: <strong>2 hours → 30 seconds</strong> </li>
-<li>Drift detection: <strong>reactive (post-breach) → predictive (7 days out)</strong></li>
-<li>RM time freed: <strong>~30% of week reclaimed for client-facing work</strong></li>
-<li>Client Satisfaction (NPS): <strong>32 → 64 (Doubled)</strong></li>
-<p>---</p>
-<p>
-<h1 class="section-title">UX STRATEGY MINDSET</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">A diagram showing your design philosophy — e.g., 3 concentric circles: Human → Workflow → Data</div></div>
-<h3>How I Approached This Problem</h3>
-Most wealth platforms are built database-first—they dump 40 columns of raw data into a table and ask the Relationship Manager to hunt for the insight. I flipped this paradigm: I designed workflow-first. Every screen in Strand Finance was built to answer a specific temporal question: <em>What needs my attention at 9:00 AM? What context do I need at 1:30 PM before a call?</em> Every interface had to answer these questions in under 5 seconds.
-<h3>Three Guiding Principles</h3>
-1. <strong>Workflow before data.</strong> Every screen earns its place by serving a moment in the RM's day.
-2. <strong>AI augments, never replaces.</strong> AI handles the synthesis; the RM owns the relationship.
-3. <strong>Trust through transparency.</strong> Every number shows its source, its timestamp, and its confidence.
-<p>---</p>
-<p>
-<h1 class="section-title">THE CONTEXT — WHY NOW?</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Industry forces visual — 4 cards or a force-field diagram</div></div>
-<p>Before designing a single pixel, I mapped the macroeconomic forces reshaping the industry. Understanding <em>why</em> the industry is moving was the unlock for <em>what</em> to design.</p>
-<h3>1. Fee Compression</h3>
-Robo-advisors charging 0.25% are squeezing traditional 1% firms. To survive, firms need tooling that lets RMs serve more clients without sacrificing quality.
-<h3>2. The Great Wealth Transfer</h3>
-~$84T will pass from Boomers to Gen X/Millennials over the next 20 years. The next generation expects seamless digital UX. Firms that don't modernize lose those assets.
-<h3>3. Aging RM Workforce</h3>
-The average advisor is 55+. Firms need intuitive tools so younger RMs can ramp up fast.
-<h3>4. Explosion of Alternative Assets</h3>
-Private equity, crypto, direct real estate — increasingly part of HNWI portfolios, but the data is unstructured chaos.
-<blockquote>🚀 <strong>AI Opportunity:</strong> Models can ingest unstructured capital call PDFs and normalize them into the dashboard instantly.</blockquote>
-<p>---</p>
-<p>
-<h1 class="section-title">RESEARCH</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Research methodology overview — methods + sample size grid</div></div>
-<h3>Research Goals</h3>
-1. Map the actual workday of a Relationship Manager (not the assumed one)
-2. Identify high-friction moments across the household lifecycle
-3. Surface unmet needs in the client and compliance experience
-4. Validate whether AI was a fit (or a distraction)
-<h3>Methods Used</h3>
-<div class="table-container"><table><tbody><tr><td>Method</td><td>Sample</td><td>Output</td></tr></tbody><tbody><tr><td><strong>Stakeholder Interviews</strong></td><td>12 RMs, 3 Compliance Officers, 2 Heads of Wealth</td><td>Workflow themes, language patterns</td></tr></tbody><tbody><tr><td><strong>Contextual Inquiry</strong></td><td>6 shadowing sessions, full RM workday</td><td>Tool-switching map, real prep ritual</td></tr></tbody><tbody><tr><td><strong>Client Surveys</strong></td><td>85+ HNWI / mass-affluent clients</td><td>Emotional gap, fee perception</td></tr></tbody><tbody><tr><td><strong>Heuristic Audit</strong></td><td>Existing platform, 5 competitor tools</td><td>Pattern inventory</td></tr></tbody><tbody><tr><td><strong>Data Diary Study</strong></td><td>4 RMs, 2-week diary</td><td>Real friction logged in the moment</td></tr></tbody><tbody><tr><td><strong>Compliance Workshop</strong></td><td>Co-design session, 1 day</td><td>Risk surface map</td></tr></tbody></table></div>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Photo from a research session — whiteboard with sticky notes, blurred faces</div></div>
-<p>---</p>
-<p>
-<h1 class="section-title">USER INTERVIEWS — KEY QUOTES</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Quote wall — 6–9 quotes in pull-quote cards, anonymized photos</div></div>
-<h3>From the RMs</h3>
-<blockquote>"I have five tabs open just to answer one client question. By the time I find the answer, I've forgotten the question."</blockquote>
-<blockquote>— <strong>Senior RM, 14 years</strong></blockquote>
-<blockquote>"Pre-meeting prep takes me about two hours per client. I do 45 clients quarterly. You do the math. I'm essentially a highly-paid formatting machine."</blockquote>
-<blockquote>— <strong>Wealth Advisor, 8 years</strong></blockquote>
-<blockquote>"My clients don't care about TWR. They care about whether they can pay for their daughter's wedding. The dashboard speaks a language they don't care about."</blockquote>
-<blockquote>— <strong>Private Wealth Manager, 10 years</strong></blockquote>
-<h3>From the Clients</h3>
-<blockquote>"I pay a 1% AUM fee and I have no idea what they actually do for me, especially when the market is down."</blockquote>
-<blockquote>— <strong>HNWI Client, $5M AUM</strong></blockquote>
-<blockquote>"I get a 40-page statement every month. It goes straight into the shredder. Just tell me if I'm okay."</blockquote>
-<blockquote>— <strong>Mass Affluent Client, $750k AUM</strong></blockquote>
-<h3>From Compliance</h3>
-<blockquote>"We catch concentration risk after it's already a problem. We need to see it forming before the client is exposed."</blockquote>
-<blockquote>— <strong>Head of Risk & Compliance</strong></blockquote>
-<p>---</p>
-<p>
-<h1 class="section-title">SYNTHESIS — PAIN POINTS BY STAKEHOLDER</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Affinity diagram — pain points clustered by stakeholder, color-coded</div></div>
-<p>I synthesized 200+ data points into 12 high-impact pain points across three stakeholders.</p>
-<h3>A. Pain Points the RM Lives With Daily</h3>
-<div class="table-container"><table><tbody><tr><td>#</td><td>Pain</td><td>Frequency</td><td>Impact</td></tr></tbody><tbody><tr><td>1</td><td><strong>Data Fragmentation</strong> — answering basic client questions means exporting CSVs from 3 systems</td><td>Daily</td><td>Critical</td></tr></tbody><tbody><tr><td>2</td><td><strong>Meeting Prep Paralysis</strong> — 1–2 hrs per quarterly review pack</td><td>Quarterly × 45 clients</td><td>Critical</td></tr></tbody><tbody><tr><td>3</td><td><strong>Stale Data</strong> — BI tools refresh overnight; markets move during the day</td><td>Daily</td><td>High</td></tr></tbody><tbody><tr><td>4</td><td><strong>Reactive Drift Detection</strong> — drift flagged by compliance weeks after the fact</td><td>Weekly</td><td>High</td></tr></tbody><tbody><tr><td>5</td><td><strong>Manual Benchmarks</strong> — RMs assign benchmarks by hand; errors compound</td><td>Monthly</td><td>Medium</td></tr></tbody><tbody><tr><td>6</td><td><strong>Desktop-Bound Tools</strong> — RMs travel constantly; tools don't</td><td>Daily</td><td>High</td></tr></tbody></table></div>
-<h3>B. Pain Points the Client Feels (The Emotional Gap)</h3>
-<div class="table-container"><table><tbody><tr><td>#</td><td>Pain</td><td>Impact</td></tr></tbody><tbody><tr><td>7</td><td><strong>Money-Centric vs Goal-Centric</strong> — dashboards show TWR, clients want goal progress</td><td>Critical</td></tr></tbody><tbody><tr><td>8</td><td><strong>Opaque Fees</strong> — 1% AUM fee feels invisible during downturns</td><td>High</td></tr></tbody><tbody><tr><td>9</td><td><strong>Jargon Walls</strong> — 40-page brokerage statements no one reads</td><td>Medium</td></tr></tbody></table></div>
-<h3>C. Pain Points Compliance & the Firm Worry About</h3>
-<div class="table-container"><table><tbody><tr><td>#</td><td>Pain</td><td>Impact</td></tr></tbody><tbody><tr><td>10</td><td><strong>Hidden Concentration Risk</strong> — household-level aggregation invisible</td><td>Critical</td></tr></tbody><tbody><tr><td>11</td><td><strong>KYC/Suitability Drift</strong> — old IPS, new life situation</td><td>High</td></tr></tbody><tbody><tr><td>12</td><td><strong>The Succession Problem</strong> — relationship context lives in the departing RM's head</td><td>Critical</td></tr></tbody></table></div>
-<p>---</p>
-<p>
-<h1 class="section-title">HYPOTHESIS</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Hypothesis card — large typography, framed like a thesis statement</div></div>
-<h3>Core Hypothesis</h3>
-<blockquote><strong>If we</strong> centralize the household, shift from reactive to proactive monitoring, and deeply integrate AI into the synthesis layer,</blockquote>
-<blockquote><strong>then</strong> RMs will reclaim cognitive bandwidth for relationship-building,</blockquote>
-<blockquote><strong>as measured by</strong> reduced pre-meeting prep time, increased client-facing hours, and earlier risk detection.</blockquote>
-<h3>Sub-Hypotheses</h3>
-1. <strong>H1</strong> — A household-first IA will reduce data-gathering time by ≥70%
-2. <strong>H2</strong> — AI-drafted narratives will be accepted with ≤20% edits by RMs in their own voice
-3. <strong>H3</strong> — Predictive drift detection will reduce compliance escalations by ≥50%
-4. <strong>H4</strong> — A mobile companion will increase same-day note logging from 12% to 75%
-<p>---</p>
-<p>
-<h1 class="section-title">PERSONAS</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">3 persona cards in a row — photo, name, role, key data</div></div>
-<h3>Persona 01 — The Relationship Manager</h3>
-<strong>Sarah Chen</strong>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Persona photo</div></div>
-<div class="table-container"><table><tbody><tr></tr></tbody><tbody><tr><th><strong>Age</strong></th><th>47</th></tr></tbody><tbody><tr><th><strong>Role</strong></th><th>Senior Relationship Manager</th></tr></tbody><tbody><tr><td><strong>Tenure</strong></td><td>12 years</td></tr></tbody><tbody><tr><td><strong>Book</strong></td><td>45 clients, $380M AUM</td></tr></tbody><tbody><tr><td><strong>Tech Comfort</strong></td><td>High for finance tools, low for new UX</td></tr></tbody></table></div>
-<p><strong>Goals</strong>
-<li>Walk into every meeting fully prepared</li>
-<li>Spot client problems before clients do</li>
-<li>Grow her book through referrals</li>
-<li>Stay compliant without it eating her week</li></p>
-<p><strong>Frustrations</strong>
-<li>Data scattered across 5+ systems</li>
-<li>2-hour pre-meeting ritual</li>
-<li>Reactive drift detection</li>
-<li>KPI tiles that show <em>what</em> but never <em>why</em></li>
-<li>Poor mobile experience while traveling</li></p>
-<p><strong>Quote</strong>
-<blockquote>"I want to spend my time talking to my clients, not wrestling with Excel spreadsheets."</blockquote></p>
-<p>---</p>
-<h3>Persona 02 — The Client</h3>
-<strong>Sharon Aguste</strong>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Persona photo</div></div>
-<div class="table-container"><table><tbody><tr></tr></tbody><tbody><tr><th><strong>Age</strong></th><th>58</th></tr></tbody><tbody><tr><td><strong>Segment</strong></td><td>HNWI</td></tr></tbody><tbody><tr><td><strong>Investable Assets</strong></td><td>$8.5M</td></tr></tbody><tbody><tr><td><strong>Life Stage</strong></td><td>Pre-retirement, planning estate</td></tr></tbody></table></div>
-<p><strong>Goals</strong>
-<li>Know if he can retire on time</li>
-<li>Fund his daughter's wedding next year</li>
-<li>Leave a legacy without family conflict</li></p>
-<p><strong>Frustrations</strong>
-<li>Doesn't understand his statements</li>
-<li>Feels fees are opaque</li>
-<li>Wants to know "am I on track?" not "what's my TWR"</li></p>
-<p><strong>Quote</strong>
-<blockquote>"Don't just tell me my alpha. Tell me if I can afford to retire at 60."</blockquote></p>
-<p>---</p>
-<h3>Persona 03 — The Compliance Officer</h3>
-<strong>Diane Whitfield</strong>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Persona photo</div></div>
-<div class="table-container"><table><tbody><tr></tr></tbody><tbody><tr><th><strong>Role</strong></th><th>Head of Compliance</th></tr></tbody><tbody><tr><td><strong>Tenure</strong></td><td>15 years</td></tr></tbody><tbody><tr><td><strong>Reports</strong></td><td>8 analysts</td></tr></tbody></table></div>
-<p><strong>Goals</strong>
-<li>Surface systemic risk before regulators do</li>
-<li>Reduce false-positive alerts</li>
-<li>Maintain audit trail without burdening RMs</li></p>
-<p><strong>Frustrations</strong>
-<li>Concentration risk hides at the household level</li>
-<li>KYC profiles go stale</li>
-<li>Succession events expose data debt</li></p>
-<p><strong>Quote</strong>
-<blockquote>"Compliance shouldn't be an autopsy. It should be an early warning system."</blockquote></p>
-<p>---</p>
-<p>
-<h1 class="section-title">CURRENT-STATE USER JOURNEY (BEFORE)</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Full journey map — phases × actions × thoughts × emotions × pain points × opportunities</div></div>
-<h3>Journey: "Sarah preps for a quarterly review with the Patel family"</h3>
-<div class="table-container"><table><tbody><tr><td>Phase</td><td>Action</td><td>Thinking</td><td>Feeling</td><td>Pain Points</td><td>Time</td></tr></tbody><tbody><tr><td><strong>1. Trigger</strong></td><td>Calendar alert: 9 AM meeting with Patel family at 11 AM</td><td>"I need to start prepping now"</td><td>😐 Anxious</td><td>Only 2 hrs to prep</td><td>T-2:00</td></tr></tbody><tbody><tr><td><strong>2. Data Gathering</strong></td><td>Opens custodian portal, Orion, Salesforce, SharePoint</td><td>"Where did I save last quarter's notes?"</td><td>😤 Frustrated</td><td>5+ system context switches</td><td>T-1:45</td></tr></tbody><tbody><tr><td><strong>3. Aggregation</strong></td><td>Exports 3 CSVs, opens Excel, manually consolidates household</td><td>"Did I include the trust account?"</td><td>😟 Worried</td><td>Manual error-prone work</td><td>T-1:00</td></tr></tbody><tbody><tr><td><strong>4. Narrative</strong></td><td>Writes quarterly summary in Word, pulls performance numbers</td><td>"Did I get the benchmark right?"</td><td>😩 Drained</td><td>Repetitive writing</td><td>T-0:30</td></tr></tbody><tbody><tr><td><strong>5. Format</strong></td><td>Pastes into PowerPoint template, fixes fonts, exports PDF</td><td>"This template is so old"</td><td>😐 Resigned</td><td>Time wasted on formatting</td><td>T-0:10</td></tr></tbody><tbody><tr><td><strong>6. Meeting</strong></td><td>Walks into meeting, hopes nothing surprising comes up</td><td>"Please don't ask about Apple exposure"</td><td>😬 Nervous</td><td>Knowledge gaps</td><td>T-0:00</td></tr></tbody></table></div>
-<p><strong>Emotional Curve:</strong> <div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Emotion line graph — dipping low at aggregation, recovering at meeting</div></div></p>
-<p><strong>Key Opportunities Identified</strong>
-1. Eliminate the data gathering phase entirely
-2. Pre-draft the narrative with AI
-3. Make the household view default
-4. Surface household-level risk before the meeting starts</p>
-<p>---</p>
-<p>
-<h1 class="section-title">SERVICE BLUEPRINT</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Service blueprint — frontstage / backstage / systems swimlanes</div></div>
-<h3>Layers Mapped</h3>
-<li><strong>Customer Actions</strong> (Client + RM)</li>
-<li><strong>Frontstage</strong> (UI surfaces the RM/Client touches)</li>
-<li><strong>Backstage</strong> (RM internal workflows, ops team)</li>
-<li><strong>Support Systems</strong> (Custodian, Orion, Salesforce, SharePoint, Compliance engine)</li>
-<li><strong>AI Layer</strong> (new) — entity resolution, NLG, predictive drift, NLP</li>
-<p>The blueprint revealed a massive structural flaw: the backend support systems (Salesforce, Orion) were acting purely as raw data silos. The entire cognitive burden of aggregating, formatting, and analyzing that data was pushed onto the 'Frontstage'—meaning the RM had to do it manually. We realized the AI layer had to sit exactly <em>between</em> the backend and the UI to act as an automatic synthesis engine.</p>
-<p>---</p>
-<p>
-<h1 class="section-title">INFORMATION ARCHITECTURE</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">IA tree — Household → Accounts → Holdings → Activities, plus cross-cutting views</div></div>
-<h3>IA Principles</h3>
-1. <strong>Household is the root entity</strong> — not the account
-2. <strong>Views are workflows</strong> — Book Overview, Client Detail, Risk & Compliance, AI Insights
-3. <strong>Time is a first-class dimension</strong> — every screen has an "As Of" badge
-<h3>Top-Level Structure</h3>
-```
-Book (all clients)
-├── Household
-│   ├── Members (people)
-│   ├── Accounts (taxable, IRA, trust, alts)
-│   ├── Holdings (cross-account)
-│   ├── Goals
-│   ├── Documents & KYC
-│   └── Activity Timeline
-├── Pipeline (prospects)
-├── Risk & Compliance
-└── AI Insights (cross-household intelligence)
-```
-<p>---</p>
-<p>
-<h1 class="section-title">USER FLOW / FLOWCHART</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Flowchart — primary task flow for "Pre-meeting prep with AI assist"</div></div>
-<h3>Flow 01 — Pre-Meeting Prep</h3>
-```
-Calendar trigger
-   ↓
-"Meeting Mode" launches automatically
-   ↓
-AI assembles household snapshot (5s)
-   ↓
-RM reviews AI-drafted narrative
-   ↓
-RM edits/approves narrative
-   ↓
-Pack auto-formats → PDF + screen-share view
-   ↓
-RM enters meeting prepared
-```
-<h3>Flow 02 — Drift Alert Triage</h3>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Second flowchart for drift alert workflow</div></div>
-<h3>Flow 03 — Voice-to-CRM Post-Meeting</h3>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Third flowchart for mobile voice capture</div></div>
-<p>---</p>
-<p>
-<h1 class="section-title">LOW-FIDELITY WIREFRAMES</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">6–8 lo-fi wireframes — grayscale, annotated</div></div>
-<h3>Key Screens Wireframed</h3>
-1. <strong>Book Overview</strong> — daily RM landing page
-2. <strong>Household Detail</strong> — single client deep-dive
-3. <strong>Meeting Mode</strong> — focused review surface
-4. <strong>Risk & Compliance</strong> — predictive drift dashboard
-5. <strong>AI Insights Panel</strong> — cross-page slide-out
-6. <strong>Mobile Companion</strong> — on-the-go view
-<h3>Wireframe Annotations</h3>
-In the lo-fi stage, I intentionally stripped away all visual branding to test pure Information Architecture. We validated that anchoring the navigation around 'Household' instead of 'Account' reduced click-depth by 60%. We also tested whether RMs trusted the AI insights when presented inline versus buried in a slide-out panel.
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Annotated wireframe with callouts numbered 1–5</div></div>
-<p>---</p>
-<p>
-<h1 class="section-title">DESIGN ITERATIONS</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Iteration grid — V1 → V2 → V3 side-by-side for one key screen</div></div>
-<h3>Iteration 01 — The Book Overview Problem</h3>
-<strong>V1 — The Database View</strong>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">V1 mockup</div></div>
-<li>A table of all 45 clients with 12 columns</li>
-<li><strong>Why it failed:</strong> RMs scanned for 30 seconds, gave up, opened Excel anyway</li>
-<p><strong>V2 — The Triage View</strong>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">V2 mockup</div></div>
-<li>Clients grouped by "needs attention today"</li>
-<li><strong>Why it improved:</strong> RMs found their morning priority in 4 seconds</li>
-<li><strong>What still broke:</strong> No "why" attached to the priority</li></p>
-<p><strong>V3 — The Insight-First View (Final)</strong>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">V3 mockup</div></div>
-<li>AI surfaces top 3 clients with reasoning ("Patel drift 4.5%, IPS review 38 months overdue")</li>
-<li><strong>Validation:</strong> 87% of RMs in usability test selected the correct first action</li></p>
-<h3>Iteration 02 — The Goal Translation Problem</h3>
-<strong>V1 — The Raw Numbers</strong>
-<li>Showed raw TWR and benchmark side-by-side.</li>
-<li><strong>Why it failed:</strong> Clients felt anxious during market downturns, even if they were technically outperforming the benchmark.</li>
-<p><strong>V2 — The Progress Bar</strong>
-<li>Added a simple "Goals Progress" bar.</li>
-<li><strong>Why it improved:</strong> It shifted the focus away from the market, but it lacked tangible context about the future.</li></p>
-<p><strong>V3 — Dynamic Monte Carlo (Final)</strong>
-<li>Sliders showing "Probability of Success" for specific life goals (e.g., "Retire at 60").</li>
-<li><strong>Validation:</strong> Instantly changed client conversations from defensive ("why are fees high?") to collaborative ("what if we save $1k more a month?").</li></p>
-<h3>Iteration 03 — Risk Triage</h3>
-<strong>V1 — The Modal Trap</strong>
-<li>An alert modal popped up for mandate drift.</li>
-<li><strong>Why it failed:</strong> It interrupted the RM's workflow and forced them to deal with it immediately.</li>
-<p><strong>V2 — Dedicated Predictive Timeline (Final)</strong>
-<li>We built a dedicated predictive timeline showing exactly <em>when</em> the breach would likely occur, allowing the RM to schedule a rebalance proactively.</li></p>
-<p>---</p>
-<p>
-<h1 class="section-title">AI SOLUTIONS IN DESIGN</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">AI augmentation map — pain points → AI capability → design surface</div></div>
-<p>This is where the project went beyond a typical redesign. For every pain point, we asked: <em>can AI eliminate the friction entirely?</em></p>
-<h3>The 11 AI Augmentations</h3>
-<h4>1. Unified Household View</h4>
-<strong>Problem:</strong> Accounts scattered, household relationships ambiguous
-<strong>AI:</strong> Entity Resolution AI auto-maps external accounts to households via naming, address, tax ID
-<strong>Design Surface:</strong> "Linked accounts" suggestion drawer with confidence score
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Screenshot of the entity resolution UI</div></div>
-<h4>2. Meeting Mode</h4>
-<strong>Problem:</strong> 2-hour prep, manual narrative writing
-<strong>AI:</strong> Generative AI drafts the quarterly summary in the RM's specific tone of voice
-<strong>Design Surface:</strong> Inline editor with AI draft + "Sounds like me" feedback loop
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Meeting Mode screen with AI-drafted narrative</div></div>
-<h4>3. Predictive Market Impact</h4>
-<strong>Problem:</strong> Stale data when RM is talking to client mid-day
-<strong>AI:</strong> Overlays simulated "estimated current impact" based on live indices
-<strong>Design Surface:</strong> Subtle ghost overlay on stale numbers with confidence band
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-<h4>4. Predictive Drift Detection</h4>
-<strong>Problem:</strong> Drift caught after breach
-<strong>AI:</strong> Volatility analysis flags 90% breach probability 7 days out
-<strong>Design Surface:</strong> "Forecast Drift" widget with timeline indicator
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-<h4>5. Auto-Applied Benchmarks</h4>
-<strong>Problem:</strong> Manual benchmark assignment errors
-<strong>AI:</strong> System locks blended benchmark from signed IPS
-<strong>Design Surface:</strong> Locked badge with IPS provenance link
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-<h4>6. Voice-to-CRM</h4>
-<strong>Problem:</strong> Notes never logged after client lunches
-<strong>AI:</strong> Transcription + action item extraction + CRM auto-log
-<strong>Design Surface:</strong> Mobile floating record button with live transcript
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-<h4>7. Dynamic Monte Carlo</h4>
-<strong>Problem:</strong> "What if I buy a $2M vacation home?"
-<strong>AI:</strong> Real-time goal projection recalc
-<strong>Design Surface:</strong> Slider + live progress bar update
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-<h4>8. Value Delivered Ledger</h4>
-<strong>Problem:</strong> Clients don't see the value of the fee
-<strong>AI:</strong> Auto-scans trade logs to quantify tax-loss harvesting savings
-<strong>Design Surface:</strong> "Value Delivered This Year" client-facing card
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-<h4>9. Narrative Statements (NLG)</h4>
-<strong>Problem:</strong> 40-page jargon walls
-<strong>AI:</strong> Generates 3-paragraph TL;DR tuned to client literacy
-<strong>Design Surface:</strong> "Plain English" toggle on statements
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-<h4>10. NLP Life Event Scanning</h4>
-<strong>Problem:</strong> KYC profiles go stale
-<strong>AI:</strong> Scans meeting notes for life event keywords → prompts KYC refresh
-<strong>Design Surface:</strong> Soft nudge banner in Client Detail header
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-<h4>11. Ask AI (Knowledge Graph)</h4>
-<strong>Problem:</strong> Succession kills relationship context
-<strong>AI:</strong> LLM queries 10 years of meeting notes
-<strong>Design Surface:</strong> Command-K-style "Ask about this household" bar
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-<h3>Design Principles for AI Integration</h3>
-1. <strong>Show confidence, not just answers</strong> — every AI output has a visible confidence indicator
-2. <strong>Always editable</strong> — AI never finalizes; the RM does
-3. <strong>Provenance is one click away</strong> — "where did this number come from?" always answerable
-4. <strong>No hallucinated specificity</strong> — AI says "approximately" when it's approximating
-<p>---</p>
-<p>
-<h1 class="section-title">HIGH-FIDELITY MOCKUPS</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">6–10 hero mockups — full-bleed, polished, light+dark mode pairs</div></div>
-<h3>Final Screens</h3>
-<p><strong>01. Book Overview</strong>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Full mockup</div></div>
-The morning landing page. AI-triaged insights at the top, a macro performance chart for the book, and prioritized client flags to start the day proactively.</p>
-<p><strong>02. Household Detail</strong>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-The drillthrough hub. Bookmarks seamlessly toggle between Performance, Allocation, and Risk views without ever losing client context.</p>
-<p><strong>03. Meeting Mode</strong>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-One-click quarterly review generation with AI-drafted commentary written precisely in the RM's tone of voice.</p>
-<p><strong>04. Risk & Compliance</strong>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-A triage matrix using conditional formatting to instantly highlight accounts predicting mandate drift or KYC expiration.</p>
-<p><strong>05. AI Insights Panel</strong>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-A persistent, cross-page contextual side panel acting as the RM's intelligent co-pilot, reasoning over the current visible data.</p>
-<p><strong>06. Portfolio Analytics</strong>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-A Ghostfolio-inspired deep dive using interactive donut charts and an edge-to-edge area chart for historical time-weighted return.</p>
-<p><strong>07. Goal-Centric Client View</strong>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div>
-Translating raw performance into tangible life milestones to bridge the emotional gap between the client and their money.</p>
-<p>---</p>
-<p>
-<h1 class="section-title">BEFORE / AFTER COMPARISON</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Side-by-side slider — old platform vs new, for 4 key screens</div></div>
-<h3>The Transformation, Screen by Screen</h3>
-<div class="table-container"><table><tbody><tr><td>Before</td><td>After</td></tr></tbody><tbody><tr><td><strong>Book Overview</strong></td><td>Table of 45 clients × 12 columns</td><td>AI-triaged top 3 with reasoning</td></tr></tbody><tbody><tr><td><strong>Pre-Meeting Prep</strong></td><td>2 hours across 5 systems</td><td>30 seconds in Meeting Mode</td></tr></tbody><tbody><tr><td><strong>Drift Detection</strong></td><td>Reactive, post-breach email</td><td>Predictive widget, 7 days ahead</td></tr></tbody><tbody><tr><td><strong>Client Statement</strong></td><td>40-page PDF jargon</td><td>3-paragraph NLG summary</td></tr></tbody><tbody><tr><td><strong>Mobile</strong></td><td>Squinting at desktop PDFs</td><td>Native PWA with voice capture</td></tr></tbody><tbody><tr><td><strong>Succession</strong></td><td>"Ask the departing RM"</td><td>Ask AI bar, 10 years of context</td></tr></tbody></table></div>
-<h3>Before / After — RM Workday</h3>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Two timeline visualizations — Sarah's day before vs after</div></div>
-<div class="table-container"><table><tbody><tr><td>Activity</td><td>Before (% of day)</td><td>After (% of day)</td></tr></tbody><tbody><tr><td>Data gathering</td><td>35%</td><td>5%</td></tr></tbody><tbody><tr><td>Manual aggregation</td><td>20%</td><td>2%</td></tr></tbody><tbody><tr><td>Client-facing</td><td>25%</td><td>55%</td></tr></tbody><tbody><tr><td>Prospecting</td><td>10%</td><td>25%</td></tr></tbody><tbody><tr><td>Admin</td><td>10%</td><td>13%</td></tr></tbody></table></div>
-<p>---</p>
-<p>
-<h1 class="section-title">USABILITY TESTING</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Testing setup photo — moderated session screenshot</div></div>
-<h3>Test Methodology</h3>
-<li><strong>Participants:</strong> 12 RMs across 3 wealth firms</li>
-<li><strong>Format:</strong> Moderated remote, 60 min each</li>
-<li><strong>Tasks:</strong> 5 core workflow tasks</li>
-<li><strong>Metrics:</strong> Task success, time-on-task, SUS, qualitative</li>
-<h3>Key Findings</h3>
-<div class="table-container"><table><tbody><tr><th>Task</th><th>Success Rate</th><th>Avg Time</th><th>SUS</th></tr></tbody><tbody><tr><td>Find top client to call today</td><td>100%</td><td>8s</td><td>—</td></tr></tbody><tbody><tr><td>Run pre-meeting prep</td><td>92%</td><td>45s</td><td>—</td></tr></tbody><tbody><tr><td>Triage a drift alert</td><td>83%</td><td>90s</td><td>—</td></tr></tbody><tbody><tr><td>Capture meeting notes (mobile)</td><td>100%</td><td>35s</td><td>—</td></tr></tbody><tbody><tr><td>Answer "Apple exposure across household?"</td><td>92%</td><td>12s</td><td>—</td></tr></tbody></table></div>
-<p><strong>SUS Score:</strong> 87 / 100 — top 10th percentile</p>
-<h3>What Failed</h3>
-Initial drift triage was confusing — testers expected one-click resolve, but we had buried the 'Rebalance' action in a 3-step modal. We refactored in V4 to include inline quick-actions directly on the alert card.
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">A failed flow you fixed — screenshot annotated with the issue</div></div>
-<p>---</p>
-<p>
-<h1 class="section-title">FINAL SOLUTION WALKTHROUGH</h1></p>
-<div class="video-placeholder"><div class="icon">▶️</div><div class="desc">60-second screen recording of the full RM workflow</div></div>
-<h3>A Day in the New Workflow</h3>
-<p><strong>9:00 AM — Sarah opens her dashboard</strong>
-AI has already surfaced the 3 clients needing attention. She sees Patel at the top with "drift 4.5%, IPS 38 months overdue." She schedules a review for tomorrow with one click.
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div></p>
-<p><strong>10:45 AM — Meeting prep for the Chen family</strong>
-She taps "Meeting Mode." In 30 seconds, the pack is ready: performance, allocation, AI-drafted narrative in her voice, key talking points. She reviews, edits 2 sentences, approves.
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div></p>
-<p><strong>1:30 PM — On the road to a client lunch</strong>
-She opens the mobile PWA. The drift forecast for one of her UHNWI clients shows a 92% breach probability in 5 days. She makes a note to call.
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div></p>
-<p><strong>3:00 PM — Post-lunch voice note</strong>
-"Note — Chen family wants to fund grandson's college, $40k/year for 4 years starting 2027." Voice-to-CRM logs it. NLP flags "grandson" as a life event. KYC nudge appears in Diane's compliance queue.
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">High-Fidelity Mockup Placeholder</div></div></p>
-<p><strong>5:30 PM — End of day</strong>
-Sarah closes her laptop having spoken to 6 clients, prepared 2 meetings, and updated 4 records. Two months ago, that was a 12-hour day. Today it ended at 5:30.</p>
-<p>---</p>
-<p>
-<h1 class="section-title">RESULTS / IMPACT</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Big-number stat grid — 4–6 hero metrics</div></div>
-<h3>Quantitative Outcomes</h3>
-<div class="table-container"><table><tbody><tr><th>Metric</th><th>Before</th><th>After</th><th>Δ</th></tr></tbody><tbody><tr><td>Pre-meeting prep time</td><td>2 hrs</td><td>30 sec</td><td><strong>-99%</strong></td></tr></tbody><tbody><tr><td>RM client-facing time</td><td>25%</td><td>55%</td><td><strong>+30 pts</strong></td></tr></tbody><tbody><tr><td>Drift caught pre-breach</td><td>22%</td><td>89%</td><td><strong>+67 pts</strong></td></tr></tbody><tbody><tr><td>Statement readability score</td><td>18/100</td><td>78/100</td><td><strong>+333%</strong></td></tr></tbody><tbody><tr><td>Mobile note-logging rate</td><td>12%</td><td>71%</td><td><strong>+59 pts</strong></td></tr></tbody><tbody><tr><td>Junior RM ramp time</td><td>18 mo</td><td>6 mo</td><td><strong>-67%</strong></td></tr></tbody><tbody><tr><td>Client NPS</td><td>32</td><td>64</td><td><strong>+32</strong></td></tr></tbody><tbody><tr><td>Compliance escalations</td><td>baseline</td><td>-54%</td><td>—</td></tr></tbody></table></div>
-<h3>Qualitative Outcomes</h3>
-<blockquote>"This is the first software I've used in 12 years that gives me time back instead of taking it."</blockquote>
-<blockquote>— <strong>Senior RM</strong></blockquote>
-<blockquote>"For the first time, my statement actually reads like a human being wrote it to me."</blockquote>
-<blockquote>— <strong>HNWI Client</strong></blockquote>
-<blockquote>"We're finally playing offense instead of defense on suitability risk."</blockquote>
-<blockquote>— <strong>Compliance Officer</strong></blockquote>
-<h3>Business Impact</h3>
-<li><strong>$2.4M</strong> projected annual time savings across the RM cohort</li>
-<li><strong>40%</strong> increase in advisor capacity without headcount growth</li>
-<li><strong>6</strong> net new clients per RM per year (vs baseline)</li>
-<p>---</p>
-<p>
-<h1 class="section-title">REFLECTION & LEARNINGS</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">A personal note — maybe a photo of the team or a handwritten note from a user</div></div>
-<h3>What I'd Do Differently</h3>
-<li><em>"I underestimated how much resistance there would be to AI-drafted narratives. RMs needed a 'sounds like me' feedback loop before they'd trust it. I'd build that earlier."</em></li>
-<li><em>"The mobile companion launched 6 weeks late because we tried to feature-match the desktop. Mobile should have been scoped as 'high-level metrics only' from day one."</em></li>
-<h3>What I Learned About AI in UX</h3>
-1. <strong>AI is a material, not a feature.</strong> Treating it like a "ChatGPT button" failed. Threading it through the workflow worked.
-2. <strong>Confidence is a UI element.</strong> Showing how sure the AI is mattered more than the answer itself.
-3. <strong>The hard part isn't the model — it's the moment.</strong> Designing <em>when</em> AI shows up was harder than designing <em>what</em> it says.
-<h3>What Surprised Me</h3>
-The senior RMs (aged 55+) adopted the AI features significantly faster than the junior RMs. The juniors were skeptical of the tech, but the seniors had lived with the pain of manual reporting for so long that they immediately recognized the massive value of automated synthesis.
-<p>---</p>
-<p>
-<h1 class="section-title">WHAT'S NEXT</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">Roadmap teaser — blurred future screens</div></div>
-<h3>Next-Phase Opportunities</h3>
-<li><strong>Client-facing companion</strong> — extend the same AI surface to the client themselves</li>
-<li><strong>Predictive succession</strong> — model relationship handoff risk for retiring RMs</li>
-<li><strong>Cross-household intelligence</strong> — surface portfolio-wide concentration across the firm</li>
-<li><strong>Voice-first meeting summaries</strong> — pre-loaded for the next quarterly review</li>
-<p>---</p>
-<p>
-<h1 class="section-title">CREDITS & THANKS</h1></p>
-<p><strong>Project Team</strong>
-<li>Product: Product Management Lead</li>
-<li>Engineering: 2 Angular Engineers, 1 Power BI Developer</li>
-<li>Data Science: Lead Data Scientist</li>
-<li>Compliance Partner: Head of Risk</li>
-<li>UX Designer: Parth Parekh</li></p>
-<p><strong>Research Partners:</strong> The 12 RMs, 60+ clients, and 3 compliance officers who gave their time.</p>
-<p>---</p>
-<p>
-<h1 class="section-title">CLOSING</h1></p>
-<div class="image-placeholder"><div class="icon">🖼️</div><div class="desc">A final closing image — quiet, single-line statement on a clean background</div></div>
-<blockquote><em>"By offloading data aggregation to the UI and cognitive synthesis to AI, RMs are freed to do the one thing technology cannot do — build human trust."</em></blockquote>
-<p>---</p>
-<h3>Want to talk through this project?</h3>
-Reach out via LinkedIn or email to discuss the design decisions, the mockups, or the research methodology in detail.
-<p>---</p>
+      <div class="core">
+        <div>
+          <div style="font-family: var(--mono); font-size: 18px; letter-spacing: 0.24em; color: var(--emerald); margin-bottom: 32px;">EMPOWERING THE MODERN RELATIONSHIP MANAGER</div>
+          <h1>From two hours<br/>to thirty seconds</h1>
+         </div>
 
-    </main>
+        <div class="meta-grid">
+          <div>
+            <div class="k">ROLE</div>
+            <div class="v">Senior UX/UI Designer & AI Strategist</div>
+          </div>
+          <div>
+            <div class="k">CLIENT</div>
+            <div class="v">Strand Finance — Private Wealth</div>
+          </div>
+          <div>
+            <div class="k">TIMELINE</div>
+            <div class="v">24 weeks · 2026</div>
+          </div>
+          <div>
+            <div class="k">TEAM</div>
+            <div class="v">1 Product Manager · 2 Software Engineers · 1 Power BI Developer 1 Data Scientist · Me (UX Designer and AI Strategist )</div>
+          </div>
+          <div>
+            <div class="k">PLATFORM</div>
+            <div class="v">Enterprise Web + Responsive PWA</div>
+          </div>
+          <div>
+            <div class="k">TOOLS</div>
+            <div class="v">Figma · Angular · Power BI · SAAS </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="foot">
+        <span>STATUS: <span style="color: var(--emerald);">SHIPPED · Q1 2026</span></span>
+        <span>PARTH PAREKH · DESIGN LEADERSHIP REVIEW</span>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="02 Solution Preview">
+    <div class="slide-pad">
+      <div class="chrome-tl">02 / OVERVIEW</div>
+      <div class="chrome-br"><span class="dot"></span><span>THE SOLUTION AT A GLANCE</span></div>
+
+      <div class="head-block" style="margin-bottom: 32px;">
+        <div class="eyebrow blue">EXECUTIVE PREVIEW</div>
+        <h2 class="title" style="margin-top: 18px;">A unified command center for the modern RM.</h2>
+      </div>
+
+      <div class="mock-wrap" style="flex: 1; display: flex; align-items: center; justify-content: center;">
+        <div class="mock-frame glass" style="width: 85%; transform: perspective(1000px) rotateX(2deg);">
+          <div class="mock-chrome">
+            <div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="url">strand.finance / rm / command-center</div>
+            <span class="mono" style="font-size: 11px; color: var(--mute-2); letter-spacing: 0.14em;">PREVIEW MODE</span>
+          </div>
+          <div class="mock-body" style="height: 620px; overflow-y: auto; scrollbar-width: none;">
+            <img src="mockups/final_book_.png" style="width:100%; display:block;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="03 Strategy">
+    <div class="slide-pad">
+      <div class="chrome-tl">03 / STRATEGY</div>
+      <div class="chrome-br"><span class="dot"></span><span>DESIGN PHILOSOPHY</span></div>
+
+      <div class="head-block">
+        <div class="eyebrow blue">UX STRATEGY</div>
+        <h2 class="title" style="margin-top: 18px;">Workflow before data. Every screen earns its place.</h2>
+      </div>
+
+      <div class="row-split" style="align-items: start;">
+
+
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <div class="glass" style="padding: 28px 32px;">
+            <div class="mono" style="font-size: 14px; color: var(--emerald); letter-spacing: 0.16em;">PRINCIPLE 01</div>
+            <div style="font-size: 28px; font-weight: 600; margin-top: 8px; letter-spacing: -0.015em;">Workflow before data.</div>
+            <div style="font-size: 17px; color: var(--mute); margin-top: 8px; line-height: 1.5;">Every screen earns its place by serving a moment in the RM's day.</div>
+          </div>
+          <div class="glass" style="padding: 28px 32px;">
+            <div class="mono" style="font-size: 14px; color: var(--blue); letter-spacing: 0.16em;">PRINCIPLE 02</div>
+            <div style="font-size: 28px; font-weight: 600; margin-top: 8px; letter-spacing: -0.015em;">AI augments, never replaces.</div>
+            <div style="font-size: 17px; color: var(--mute); margin-top: 8px; line-height: 1.5;">AI handles synthesis. The RM owns the relationship.</div>
+          </div>
+          <div class="glass" style="padding: 28px 32px;">
+            <div class="mono" style="font-size: 14px; color: var(--emerald); letter-spacing: 0.16em;">PRINCIPLE 03</div>
+            <div style="font-size: 28px; font-weight: 600; margin-top: 8px; letter-spacing: -0.015em;">Trust through transparency.</div>
+            <div style="font-size: 17px; color: var(--mute); margin-top: 8px; line-height: 1.5;">Every number shows its source, its timestamp, and its confidence.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="04 Context">
+    <div class="slide-pad">
+      <div class="chrome-tl">04 / CONTEXT</div>
+      <div class="chrome-br"><span class="dot"></span><span>WHY NOW</span></div>
+
+      <div class="head-block">
+        <div class="eyebrow">INDUSTRY CONTEXT</div>
+        <h2 class="title" style="margin-top: 18px;">Four forces reshaping wealth management.</h2>
+            </div>
+
+      <div class="force-grid">
+        <div class="force-card glass">
+          <div class="idx">FORCE 01</div>
+          <h3>Fee compression.</h3>
+          <div class="desc">Robo-advisors at 25 bps are squeezing traditional 1% firms. Survival means serving more clients without sacrificing quality.</div>
+          <div class="ai">→ AI lifts capacity per RM by ~40%.</div>
+        </div>
+        <div class="force-card glass">
+          <div class="idx">FORCE 02</div>
+          <h3>The Great Wealth Transfer.</h3>
+          <div class="desc">~$84T passing from Boomers to Gen X and Millennials over 20 years. The next generation expects native digital experiences.</div>
+          <div class="ai">→ Mobile-first PWA is table stakes.</div>
+        </div>
+        <div class="force-card glass">
+          <div class="idx">FORCE 03</div>
+          <h3>An aging RM workforce.</h3>
+          <div class="desc">The average advisor is 55+. Tools must be intuitive enough that younger RMs can ramp up in months, not years.</div>
+          <div class="ai">→ Ramp time cut from 18mo → 6mo.</div>
+        </div>
+        <div class="force-card glass">
+          <div class="idx">FORCE 04</div>
+          <h3>Alternative-asset explosion.</h3>
+          <div class="desc">Private equity, crypto, direct real estate — now part of HNWI portfolios, but the data is unstructured chaos.</div>
+          <div class="ai">→ AI normalizes capital-call PDFs in seconds.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="05 Research">
+    <div class="slide-pad">
+      <div class="chrome-tl">05 / RESEARCH</div>
+      <div class="chrome-br"><span class="dot"></span><span>200+ DATA POINTS</span></div>
+
+      <div class="head-block">
+        <div class="eyebrow blue">METHODOLOGY</div>
+        <h2 class="title" style="margin-top: 18px;">Six methods. 100+ participants. Twelve pain points out.</h2>
+      </div>
+
+      <div class="method-grid">
+        <div class="method-card glass">
+          <div class="lbl">METHOD 01</div>
+          <div class="method">Stakeholder Interviews</div>
+          <div class="sample">12 RMs · 3 Compliance · 2 Heads of Wealth</div>
+          <div class="out">Workflow themes, vocabulary, mental models.</div>
+        </div>
+        <div class="method-card glass">
+          <div class="lbl">METHOD 02</div>
+          <div class="method">Contextual Inquiry</div>
+          <div class="sample">6 full-day shadowing sessions</div>
+          <div class="out">Tool-switching map, real prep rituals observed in situ.</div>
+        </div>
+        <div class="method-card glass">
+          <div class="lbl">METHOD 03</div>
+          <div class="method">Client Surveys</div>
+          <div class="sample">85+ HNWI & mass-affluent clients</div>
+          <div class="out">Emotional gap, fee perception, statement comprehension.</div>
+        </div>
+        <div class="method-card glass">
+          <div class="lbl">METHOD 04</div>
+          <div class="method">Heuristic Audit</div>
+          <div class="sample">Incumbent platform + 5 competitors</div>
+          <div class="out">Pattern inventory, density baselines, IA comparison.</div>
+        </div>
+        <div class="method-card glass">
+          <div class="lbl">METHOD 05</div>
+          <div class="method">Data Diary Study</div>
+          <div class="sample">4 RMs · 2-week structured diary</div>
+          <div class="out">Friction logged in the moment, time-of-day patterns.</div>
+        </div>
+        <div class="method-card glass">
+          <div class="lbl">METHOD 06</div>
+          <div class="method">Compliance Workshop</div>
+          <div class="sample">Co-design · 1-day intensive</div>
+          <div class="out">Risk surface map, false-positive failure modes.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="06 Synthesis">
+    <div class="slide-pad">
+      <div class="chrome-tl">06 / SYNTHESIS</div>
+      <div class="chrome-br"><span class="dot"></span><span>VOICE OF USER · PAIN POINTS</span></div>
+
+      <div class="head-block">
+        <div class="eyebrow">RESEARCH SYNTHESIS</div>
+        <h2 class="title" style="margin-top: 18px;">The three friction points that defined the project.</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; flex: 1; align-items: start;">
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+           <div class="quote-card glass em" style="padding: 32px;">
+            <div class="qt" style="font-size: 24px;">Pre-meeting prep takes me two hours. I do 45 clients quarterly. I am a highly-paid formatting machine.</div>
+            <div class="att">SENIOR RELATIONSHIP MANAGER</div>
+          </div>
+          <div class="quote-card glass bl" style="padding: 32px;">
+            <div class="qt" style="font-size: 24px;">I get a 40-page statement every month. It goes straight to the shredder. Just tell me if I am okay.</div>
+            <div class="att">HNWI CLIENT</div>
+          </div>
+        </div>
+
+        <div class="pain-section" style="background: rgba(255,255,255,0.02); padding: 40px; border-radius: 24px; border: 1px solid var(--line);">
+          <div class="sec-lbl" style="border: none; margin-bottom: 24px;"><span class="name" style="font-size: 28px; color: var(--emerald);">Top 3 Strategic Pain Points</span></div>
+          
+          <div class="pain-row" style="padding: 24px 0; border-color: var(--line-strong);">
+            <div class="n" style="font-size: 18px;">01</div>
+            <div class="txt" style="font-size: 22px;"><b>Prep Paralysis.</b> 90+ hours per quarter spent on manual data aggregation across 5 silos.</div>
+            <div class="imp crit">CRITICAL</div>
+          </div>
+          
+          <div class="pain-row" style="padding: 24px 0; border-color: var(--line-strong);">
+            <div class="n" style="font-size: 18px;">02</div>
+            <div class="txt" style="font-size: 22px;"><b>Reactive Drift.</b> Concentration risks and IPS breaches are caught weeks too late by compliance.</div>
+            <div class="imp crit">CRITICAL</div>
+          </div>
+
+          <div class="pain-row" style="padding: 24px 0; border: none;">
+            <div class="n" style="font-size: 18px;">03</div>
+            <div class="txt" style="font-size: 22px;"><b>The Trust Gap.</b> Jargon-heavy reporting leaves clients asking: "What am I actually paying for?"</div>
+            <div class="imp high">HIGH</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="07 Personas">
+    <div class="slide-pad">
+      <div class="chrome-tl">07 / PERSONAS</div>
+      <div class="chrome-br"><span class="dot"></span><span>THE TRI-FOLD STAKEHOLDER</span></div>
+
+      <div class="head-block">
+        <div class="eyebrow">PERSONAS</div>
+        <h2 class="title" style="margin-top: 18px;">Three roles. One shared pain: fragmentation.</h2>
+      </div>
+
+      <div class="persona-grid">
+        <div class="persona-card glass">
+          <div class="persona-head">
+            <div class="persona-avatar pa-em">SC</div>
+            <div>
+              <div class="name">Jameson W</div>
+              <div class="role">SR RELATIONSHIP MANAGER · 12Y</div>
+            </div>
+          </div>
+          <div class="persona-stats">
+            <div><div class="k">AGE</div><div class="v">47</div></div>
+            <div><div class="k">BOOK</div><div class="v">45 clients</div></div>
+            <div><div class="k">AUM</div><div class="v">$380M</div></div>
+            <div><div class="k">TECH</div><div class="v">High / Wary</div></div>
+          </div>
+          <div>
+            <h4>GOALS</h4>
+            <ul><li>Walk into every meeting fully prepared</li><li>Spot client problems before clients do</li><li>Grow her book through referrals</li></ul>
+          </div>
+          <div>
+            <h4>FRUSTRATIONS</h4>
+            <ul><li>Data scattered across 5+ systems</li><li>2-hour pre-meeting ritual</li><li>Reactive drift detection</li></ul>
+          </div>
+          <p class="qt">I want to spend time talking to my clients, not wrestling with spreadsheets.</p>
+        </div>
+
+        <div class="persona-card glass">
+          <div class="persona-head">
+            <div class="persona-avatar pa-bl">SA</div>
+            <div>
+              <div class="name">Sharon Aguste</div>
+              <div class="role">HNWI CLIENT · PRE-RETIREMENT</div>
+            </div>
+          </div>
+          <div class="persona-stats">
+            <div><div class="k">AGE</div><div class="v">58</div></div>
+            <div><div class="k">SEGMENT</div><div class="v">HNWI</div></div>
+            <div><div class="k">ASSETS</div><div class="v">$8.5M</div></div>
+            <div><div class="k">STAGE</div><div class="v">Pre-retire</div></div>
+          </div>
+          <div>
+            <h4>GOALS</h4>
+            <ul><li>Know if he can retire on time</li><li>Fund daughter's wedding next year</li><li>Leave a legacy without family conflict</li></ul>
+          </div>
+          <div>
+            <h4>FRUSTRATIONS</h4>
+            <ul><li>Doesn't understand his statements</li><li>Fees feel opaque</li><li>Wants "am I on track?" not TWR</li></ul>
+          </div>
+          <p class="qt">Don't tell me my alpha. Tell me if I can afford to retire at 60.</p>
+        </div>
+
+        <div class="persona-card glass">
+          <div class="persona-head">
+            <div class="persona-avatar pa-am">DW</div>
+            <div>
+              <div class="name">Diane Whitfield</div>
+              <div class="role">HEAD OF COMPLIANCE · 15Y</div>
+            </div>
+          </div>
+          <div class="persona-stats">
+            <div><div class="k">REPORTS</div><div class="v">8 analysts</div></div>
+            <div><div class="k">TENURE</div><div class="v">15 years</div></div>
+            <div><div class="k">SCOPE</div><div class="v">Firm-wide</div></div>
+            <div><div class="k">TECH</div><div class="v">Medium</div></div>
+          </div>
+          <div>
+            <h4>GOALS</h4>
+            <ul><li>Surface systemic risk before regulators do</li><li>Reduce false-positive alerts</li><li>Audit trail without burdening RMs</li></ul>
+          </div>
+          <div>
+            <h4>FRUSTRATIONS</h4>
+            <ul><li>Concentration risk hides at household level</li><li>KYC profiles go stale</li><li>Succession exposes data debt</li></ul>
+          </div>
+          <p class="qt">Compliance shouldn't be an autopsy. It should be an early warning system.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="08 Before Journey">
+    <div class="slide-pad">
+      <div class="chrome-tl">08 / JOURNEY</div>
+      <div class="chrome-br"><span class="dot"></span><span>BEFORE THE REDESIGN</span></div>
+
+      <div class="head-block">
+        <div class="eyebrow blue">CURRENT-STATE JOURNEY</div>
+        <h2 class="title" style="margin-top: 18px;">Jame's two-hour prep ritual, step by step.</h2>
+      </div>
+
+      <div class="journey-grid">
+        <div class="j-step glass">
+          <div class="t">T −2:00</div>
+          <div class="ph">01 · TRIGGER</div>
+          <div class="h">Calendar alert</div>
+          <div class="thinks">"I need to start prepping now."</div>
+          <div class="emo">😐</div>
+          <div class="pain">2 hrs to prep · context-switch starts</div>
+        </div>
+        <div class="j-step glass">
+          <div class="t">T −1:45</div>
+          <div class="ph">02 · GATHER</div>
+          <div class="h">Open 5 systems</div>
+          <div class="thinks">"Where did I save last quarter's notes?"</div>
+          <div class="emo">😤</div>
+          <div class="pain">5+ tool context switches</div>
+        </div>
+        <div class="j-step glass">
+          <div class="t">T −1:00</div>
+          <div class="ph">03 · AGGREGATE</div>
+          <div class="h">Export 3 CSVs</div>
+          <div class="thinks">"Did I include the trust account?"</div>
+          <div class="emo">😟</div>
+          <div class="pain">Manual, error-prone consolidation</div>
+        </div>
+        <div class="j-step glass">
+          <div class="t">T −0:30</div>
+          <div class="ph">04 · WRITE</div>
+          <div class="h">Draft narrative</div>
+          <div class="thinks">"Did I get the benchmark right?"</div>
+          <div class="emo">😩</div>
+          <div class="pain">Repetitive writing fatigue</div>
+        </div>
+        <div class="j-step glass">
+          <div class="t">T −0:10</div>
+          <div class="ph">05 · FORMAT</div>
+          <div class="h">PowerPoint hell</div>
+          <div class="thinks">"This template is so old."</div>
+          <div class="emo">😐</div>
+          <div class="pain">Time spent on fonts, not insight</div>
+        </div>
+        <div class="j-step glass">
+          <div class="t">T  0:00</div>
+          <div class="ph">06 · MEETING</div>
+          <div class="h">Enter unprepared</div>
+          <div class="thinks">"Please don't ask about Apple."</div>
+          <div class="emo">😬</div>
+          <div class="pain">Knowledge gaps surface live</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 28px; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 13px; letter-spacing: 0.14em; color: var(--mute);">
+        <span>EMOTIONAL CURVE</span>
+        <svg viewBox="0 0 1200 60" style="flex: 1; height: 36px; margin: 0 32px;">
+          <path d="M0,20 Q120,10 200,30 T400,40 T600,48 T800,42 T1000,30 T1200,28" fill="none" stroke="url(#emograd)" stroke-width="2.5"/>
+          <defs>
+            <linearGradient id="emograd" x1="0" x2="1">
+              <stop offset="0" stop-color="#3b82f6"/>
+              <stop offset="0.5" stop-color="#f43f5e"/>
+              <stop offset="1" stop-color="#f59e0b"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span>DIP AT AGGREGATION</span>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="9 Flow">
+    <div class="slide-pad">
+      <div class="chrome-tl">09 / FLOW</div>
+      <div class="chrome-br"><span class="dot"></span><span>PRE-MEETING PREP · 30s</span></div>
+
+      <div class="head-block">
+        <div class="eyebrow">PRIMARY TASK FLOW</div>
+        <h2 class="title" style="margin-top: 18px;">Two hours, compressed into seven steps.</h2>
+      </div>
+
+      <div class="flow-wrap">
+        <div class="flow-row">
+          <div class="flow-step glass user">
+            <div class="n">01 · TRIGGER</div>
+            <div class="h">Calendar event fires</div>
+            <div class="d">RM gets a 30-min pre-meeting nudge.</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step glass">
+            <div class="n">02 · LAUNCH</div>
+            <div class="h">Meeting Mode opens</div>
+            <div class="d">Auto-routed to the right household.</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step glass ai">
+            <div class="n">03 · ASSEMBLE</div>
+            <div class="h">AI builds snapshot · 5s</div>
+            <div class="d">Performance + allocation + flags.</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step glass ai">
+            <div class="n">04 · DRAFT</div>
+            <div class="h">Narrative in RM's voice</div>
+            <div class="d">Tone matched to historical writing.</div>
+          </div>
+        </div>
+
+        <div class="flow-row" style="margin-top: 24px;">
+          <div class="flow-step glass user">
+            <div class="n">05 · REVIEW</div>
+            <div class="h">RM scans, edits 1–2 lines</div>
+            <div class="d">"Sounds like me" feedback loop.</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step glass user">
+            <div class="n">06 · APPROVE</div>
+            <div class="h">One click confirms</div>
+            <div class="d">Locks the version for audit.</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step glass">
+            <div class="n">07 · PACKAGE</div>
+            <div class="h">PDF + screen-share</div>
+            <div class="d">Auto-formatted for the meeting.</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step glass" style="background: linear-gradient(180deg, rgba(16,185,129,0.18), rgba(59,130,246,0.08)); border-color: rgba(16,185,129,0.5);">
+            <div class="n" style="color: var(--emerald);">08 · OUTCOME</div>
+            <div class="h" style="color: var(--emerald);">RM enters prepared</div>
+            <div class="d">End-to-end: ~30 seconds.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="10 AI as Material">
+    <div class="slide-pad">
+      <div class="chrome-tl">10 / AI STRATEGY</div>
+      <div class="chrome-br"><span class="dot"></span><span>THE STRATEGIC BET</span></div>
+
+      <div class="head-block">
+        <div class="eyebrow">AI INTEGRATION</div>
+      </div>
+
+      <div class="material-grid">
+        <div class="material-left">
+          <h2 class="material-thesis"><span class="strike">AI as a feature.</span><br/><span class="right">AI as a material.</span></h2>
+          <p class="body" style="font-size: 24px;">Treating AI like a "ChatGPT button" failed. Threading it through the workflow — at the exact moment the RM needed synthesis — worked. For every pain point we asked one question: <span class="accent-em">can AI eliminate the friction entirely?</span></p>
+        </div>
+
+        <div class="material-principles glass" style="padding: 36px 40px;">
+          <div class="mono" style="font-size: 14px; letter-spacing: 0.18em; color: var(--mute); margin-bottom: 8px;">FOUR PRINCIPLES FOR AI IN UX</div>
+          <div class="mp">
+            <div class="num">01</div>
+            <div class="lbl">Show confidence, not just answers.</div>
+          </div>
+          <div class="mp">
+            <div class="num">02</div>
+            <div class="lbl">Always editable.</div>
+           </div>
+          <div class="mp">
+            <div class="num">03</div>
+            <div class="lbl">Provenance, one click away.</div>
+          </div>
+          <div class="mp">
+            <div class="num">04</div>
+            <div class="lbl">No hallucinated specificity.</div>
+           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="11 AI Augmentations">
+    <div class="slide-pad">
+      <div class="chrome-tl">11 / AI AUGMENTATIONS</div>
+      <div class="chrome-br"><span class="dot"></span><span>11 INTEGRATIONS</span></div>
+
+      <div class="head-block">
+        <div class="eyebrow blue">AI SOLUTIONS</div>
+        <h2 class="title" style="margin-top: 18px;">Eleven pain points. Eleven AI augmentations.</h2>
+      </div>
+
+      <div class="aug-grid">
+        <div class="aug glass">
+          <div class="idx">A · 01</div>
+          <div class="h">Unified household view</div>
+          <div class="desc">Entity-resolution AI auto-maps external accounts to households via name, address, tax ID.</div>
+          <div class="cap em">ENTITY RESOLUTION</div>
+        </div>
+        <div class="aug glass">
+          <div class="idx">A · 02</div>
+          <div class="h">Meeting Mode</div>
+          <div class="desc">GenAI drafts the quarterly summary in the RM's specific tone of voice.</div>
+          <div class="cap em">NLG · TONE TRANSFER</div>
+        </div>
+        <div class="aug glass">
+          <div class="idx">A · 03</div>
+          <div class="h">Predictive market impact</div>
+          <div class="desc">Overlays simulated "estimated current impact" based on live indices.</div>
+          <div class="cap bl">PROBABILISTIC OVERLAY</div>
+        </div>
+        <div class="aug glass">
+          <div class="idx">A · 04</div>
+          <div class="h">Predictive drift detection</div>
+          <div class="desc">Volatility analysis flags 90% breach probability 7 days out.</div>
+          <div class="cap bl">FORECAST · 7D HORIZON</div>
+        </div>
+        <div class="aug glass">
+          <div class="idx">A · 05</div>
+          <div class="h">Auto-applied benchmarks</div>
+          <div class="desc">System locks blended benchmark from the signed IPS.</div>
+          <div class="cap em">PROVENANCE LOCK</div>
+        </div>
+        <div class="aug glass">
+          <div class="idx">A · 06</div>
+          <div class="h">Voice-to-CRM</div>
+          <div class="desc">Mobile transcription + action-item extraction + auto-log.</div>
+          <div class="cap em">ASR · NLP</div>
+        </div>
+        <div class="aug glass">
+          <div class="idx">A · 07</div>
+          <div class="h">Dynamic Monte Carlo</div>
+          <div class="desc">Real-time goal projection recalc as the client moves sliders.</div>
+          <div class="cap bl">SIMULATION · LIVE</div>
+        </div>
+        <div class="aug glass">
+          <div class="idx">A · 08</div>
+          <div class="h">Value Delivered Ledger</div>
+          <div class="desc">Auto-scans trade logs to quantify tax-loss harvesting savings.</div>
+          <div class="cap em">FEE TRANSPARENCY</div>
+        </div>
+        <div class="aug glass">
+          <div class="idx">A · 09</div>
+          <div class="h">Narrative statements</div>
+          <div class="desc">Generates 3-paragraph TL;DR tuned to client literacy level.</div>
+          <div class="cap em">NLG · PLAIN ENGLISH</div>
+        </div>
+        <div class="aug glass">
+          <div class="idx">A · 10</div>
+          <div class="h">Life-event scanning</div>
+          <div class="desc">Scans meeting notes for life-event keywords → prompts KYC refresh.</div>
+          <div class="cap bl">NLP · COMPLIANCE</div>
+        </div>
+        <div class="aug glass">
+          <div class="idx">A · 11</div>
+          <div class="h">Ask AI · knowledge graph</div>
+          <div class="desc">LLM queries 10 years of meeting notes. Beats the succession problem.</div>
+          <div class="cap em">RAG · LLM</div>
+        </div>
+        <div class="aug" style="background: linear-gradient(135deg, rgba(16,185,129,0.16), rgba(59,130,246,0.12)); border: 1px solid rgba(16,185,129,0.4); display: flex; align-items: center; justify-content: center; text-align: center;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; color: var(--emerald);">RESULT</div>
+            <div style="font-size: 56px; font-weight: 800; color: var(--ink); letter-spacing: -0.03em; margin-top: 8px;">11 / 11</div>
+            <div style="font-size: 14px; color: var(--mute); margin-top: 8px; line-height: 1.4;">Pain points resolved<br/>via threaded AI.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="12 Book Overview">
+    <div class="slide-pad" style="padding-right: 0;">
+      <div class="chrome-tl">12 / HI-FI · BOOK OVERVIEW</div>
+      <div class="chrome-br" style="right: 96px;"><span class="dot"></span><span>THE 9AM LANDING PAGE</span></div>
+
+      <div class="hifi-slide">
+        <div class="hifi-narr">
+          <div class="eyebrow">AI CO-PILOT · CAUGHT A RISK</div>
+          <h2>From two hours to thirty seconds.</h2>
+       
+
+        </div>
+
+        <div class="mock-wrap" style="padding-right: 96px;">
+          <div class="mock-frame">
+            <div class="mock-chrome">
+              <div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+              <div class="url"><span class="lock">●</span>strand.finance / book / overview</div>
+              <span class="mono" style="font-size: 11px; color: var(--mute-2); letter-spacing: 0.14em;">AS OF 09:02 ET</span>
+            </div>
+            <div class="mock-body" style="overflow-y: auto; display: block; max-height: 800px; scrollbar-width: none; -ms-overflow-style: none;">
+              <style>.mock-body::-webkit-scrollbar { display: none; }</style>
+              <img src="mockups/dashboard-v2.png" style="width:100%; display:block;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="13 Meeting Mode">
+    <div class="slide-pad" style="padding-right: 0;">
+
+      <div class="chrome-tl">13 / HI-FI · MEETING MODE</div>
+      <div class="chrome-br" style="right: 96px;"><span class="dot"></span><span>7-DAY HORIZON</span></div>
+
+      <div class="hifi-slide">
+        <div class="hifi-narr">
+          <div class="eyebrow">PHASE 1 SOLUTION · COMPLIANCE</div>
+          <h2>Compliance shifts from autopsy to early warning.</h2>
+      
+          <div class="annot">
+            <div class="ann"><div class="n">01</div><div class="t"><b>Forecast horizon, visualized.</b> Today is the blue line. The breach is the red line. The space between is the action window.</div></div>
+            <div class="ann"><div class="n">02</div><div class="t"><b>Probability, not certainty.</b> The model says 92% — and shows the band, never a single number.</div></div>
+            <div class="ann"><div class="n">03</div><div class="t"><b>Inline action.</b> "Rebalance" sits on the row. No modal. No three-step trap.</div></div>
+            <div class="ann"><div class="n">04</div><div class="t"><b>Impact: compliance escalations −54%.</b></div></div>
+          </div>
+        </div>
+
+        <div class="mock-wrap" style="padding-right: 96px;">
+          <div class="mock-frame">
+            <div class="mock-chrome">
+              <div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+              <div class="url"><span class="lock">●</span>strand.finance / risk / drift-forecast</div>
+              <span class="mono" style="font-size: 11px; color: var(--mute-2); letter-spacing: 0.14em;">7D FORECAST</span>
+            </div>
+            <div class="mock-body" style="overflow-y: auto; display: block; max-height: 800px; scrollbar-width: none; -ms-overflow-style: none;">
+              <img src="mockups/trust-mandate.png" style="width:100%; display:block;">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      
+    </div>
+  </section>
+
+  <section data-label="14 Predictive Drift">
+    <div class="slide-pad" style="padding-right: 0;">
+      <div class="chrome-tl">14 / HI-FI · DRIFT FORECAST</div>
+      <div class="chrome-br" style="right: 96px;"><span class="dot"></span><span>30s PREP</span></div>
+
+      <div class="hifi-slide">
+        <div class="hifi-narr">
+          <div class="eyebrow blue">PHASE 1 SOLUTION · ACTION</div>
+          <h2> The Co-Pilot already triaged your morning.</h2>
+      
+          <div class="annot">
+          
+          </div>
+        </div>
+
+        <div class="mock-wrap" style="padding-right: 96px;">
+          <div class="mock-frame">
+            <div class="mock-chrome">
+              <div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+              <div class="url"><span class="lock">●</span>strand.finance / households / patel / meeting-mode</div>
+              <span class="mono" style="font-size: 11px; color: var(--mute-2); letter-spacing: 0.14em;">DRAFT v3 · 09:14 ET</span>
+            </div>
+            <div class="mock-body" style="overflow-y: auto; display: block; max-height: 800px; scrollbar-width: none; -ms-overflow-style: none;">
+              <img src="mockups/report-generator.png" style="width:100%; display:block;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="15 Company View">
+    <div class="slide-pad">
+      <div class="chrome-tl">15 / SCALE</div>
+      <div class="chrome-br"><span class="dot"></span><span>RM COMMAND CENTER</span></div>
+
+      <div class="head-block">
+        <div class="eyebrow blue">CONSOLIDATED VIEW</div>
+        <h2 class="title" style="margin-top: 18px;">From individual accounts to a firm-wide command center.</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; flex: 1;">
+        <div class="mock-frame glass">
+          <div class="mock-chrome">
+            <div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="url">strand.finance / rm / dashboard</div>
+          </div>
+          <div class="mock-body" style="height: 520px; overflow-y: auto;">
+            <img src="mockups/final_book_.png" style="width:100%;">
+          </div>
+          <div style="padding: 20px; border-top: 1px solid var(--line);">
+            <div class="mono" style="font-size: 11px; color: var(--emerald);">01 · AGGREGATE PERFORMANCE</div>
+            <div style="font-size: 14px; color: var(--mute); margin-top: 4px;">Macro view of all managed assets vs benchmarks.</div>
+          </div>
+        </div>
+
+        <div class="mock-frame glass">
+          <div class="mock-chrome">
+            <div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="url">strand.finance / rm / performance</div>
+          </div>
+          <div class="mock-body" style="height: 520px; overflow-y: auto;">
+            <img src="mockups/portfolio-performance.png" style="width:100%;">
+          </div>
+          <div style="padding: 20px; border-top: 1px solid var(--line);">
+            <div class="mono" style="font-size: 11px; color: var(--blue);">02 · DEEP DIVE ANALYTICS</div>
+            <div style="font-size: 14px; color: var(--mute); margin-top: 4px;">Historical outperformance tracking and volatility profiling.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="16 User Flow">
+    <div class="slide-pad">
+      <div class="chrome-tl">16 / FLOW</div>
+      <div class="chrome-br"><span class="dot"></span><span>REBALANCING WORKFLOW</span></div>
+
+      <div class="head-block">
+        <div class="eyebrow blue">DETAILED USER FLOW</div>
+        <h2 class="title" style="margin-top: 18px;">From breach detection to client confirmation.</h2>
+      </div>
+
+      <div class="mock-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; flex: 1;">
+        <div class="mock-card glass" style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 18px; border: 1px solid var(--line);">
+          <div class="m-img" style="height: 440px; overflow: hidden; border-radius: 12px; border: 1px solid var(--line);">
+            <img src="mockups/userflow-1.png" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <div class="m-txt" style="margin-top: 16px; padding: 4px;">
+            <div class="mono" style="font-size: 11px; color: var(--emerald); letter-spacing: 0.1em;">STEP 01</div>
+            <div style="font-weight: 600; margin-top: 4px; font-size: 18px;">Detect & Analyze</div>
+            <div style="font-size: 14px; color: var(--mute); margin-top: 6px; line-height: 1.4;">System flags mandate breach; AI provides immediate impact analysis.</div>
+          </div>
+        </div>
+
+        <div class="mock-card glass" style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 18px; border: 1px solid var(--line);">
+          <div class="m-img" style="height: 440px; overflow: hidden; border-radius: 12px; border: 1px solid var(--line);">
+            <img src="mockups/userflow-2.png" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <div class="m-txt" style="margin-top: 16px; padding: 4px;">
+            <div class="mono" style="font-size: 11px; color: var(--blue); letter-spacing: 0.1em;">STEP 02</div>
+            <div style="font-weight: 600; margin-top: 4px; font-size: 18px;">Execute Strategy</div>
+            <div style="font-size: 14px; color: var(--mute); margin-top: 6px; line-height: 1.4;">One-click rebalancing plan across multiple holdings.</div>
+          </div>
+        </div>
+
+        <div class="mock-card glass" style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 18px; border: 1px solid var(--line);">
+          <div class="m-img" style="height: 440px; overflow: hidden; border-radius: 12px; border: 1px solid var(--line);">
+            <img src="mockups/userflow-3.png" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <div class="m-txt" style="margin-top: 16px; padding: 4px;">
+            <div class="mono" style="font-size: 11px; color: var(--rose); letter-spacing: 0.1em;">STEP 03</div>
+            <div style="font-weight: 600; margin-top: 4px; font-size: 18px;">Success State</div>
+            <div style="font-size: 14px; color: var(--mute); margin-top: 6px; line-height: 1.4;">Visual confirmation of mandate compliance.</div>
+          </div>
+        </div>
+
+        <div class="mock-card glass" style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 18px; border: 1px solid var(--line);">
+          <div class="m-img" style="height: 440px; overflow: hidden; border-radius: 12px; border: 1px solid var(--line);">
+            <img src="mockups/userflow-4.png" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <div class="m-txt" style="margin-top: 16px; padding: 4px;">
+            <div class="mono" style="font-size: 11px; color: var(--emerald); letter-spacing: 0.1em;">STEP 04</div>
+            <div style="font-weight: 600; margin-top: 4px; font-size: 18px;">Client Notification</div>
+            <div style="font-size: 14px; color: var(--mute); margin-top: 6px; line-height: 1.4;">AI drafts personalized email with attached trade reports.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="17 Before After">
+    <div class="slide-pad">
+      <div class="chrome-tl">17 / TRANSFORMATION</div>
+      <div class="chrome-br"><span class="dot"></span><span>SCREEN BY SCREEN</span></div>
+
+      <div class="head-block">
+        <div class="eyebrow">BEFORE / AFTER</div>
+        <h2 class="title" style="margin-top: 18px;">The transformation, in one table.</h2>
+      </div>
+
+      <div class="ba-grid">
+        <div class="ba-side before">
+          <div class="ba-head"><span class="lbl">● BEFORE</span><span class="sub">LEGACY PLATFORM · 2024</span></div>
+          <div class="ba-list">
+            <div class="ba-row"><div class="k">BOOK OVERVIEW</div><div class="v">Table of 45 clients × 12 columns. RM scans, gives up, opens Excel.</div></div>
+            <div class="ba-row"><div class="k">PREP</div><div class="v"><b>2 hours</b> across 5 systems. Manual CSV exports. Word + PowerPoint.</div></div>
+            <div class="ba-row"><div class="k">DRIFT</div><div class="v">Reactive. Post-breach email from compliance, weeks late.</div></div>
+            <div class="ba-row"><div class="k">STATEMENTS</div><div class="v"><b>40-page</b> PDF of jargon. Most clients shred them unopened.</div></div>
+            <div class="ba-row"><div class="k">MOBILE</div><div class="v">Desktop PDFs squinted at on a phone.</div></div>
+            <div class="ba-row"><div class="k">SUCCESSION</div><div class="v">"Ask the departing RM." Context evaporates on the last day.</div></div>
+          </div>
+        </div>
+
+        <div class="ba-side after">
+          <div class="ba-head"><span class="lbl">● AFTER</span><span class="sub">STRAND · 2026</span></div>
+          <div class="ba-list">
+            <div class="ba-row"><div class="k">BOOK OVERVIEW</div><div class="v">AI-triaged <b>top 3 households</b> with reasoning, confidence, and inline action.</div></div>
+            <div class="ba-row"><div class="k">PREP</div><div class="v"><b>30 seconds</b> in Meeting Mode. Tone-matched narrative ready to ship.</div></div>
+            <div class="ba-row"><div class="k">DRIFT</div><div class="v">Predictive widget. <b>7 days</b> ahead. 92% confidence, inline rebalance.</div></div>
+            <div class="ba-row"><div class="k">STATEMENTS</div><div class="v"><b>3-paragraph</b> NLG summary tuned to client literacy. Plain English toggle.</div></div>
+            <div class="ba-row"><div class="k">MOBILE</div><div class="v">Native PWA with voice-to-CRM. <b>71%</b> same-day note logging.</div></div>
+            <div class="ba-row"><div class="k">SUCCESSION</div><div class="v">Ask AI bar. <b>10 years</b> of notes queryable on day one.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="18 Usability">
+    <div class="slide-pad">
+      <div class="chrome-tl">18 / USABILITY</div>
+      <div class="chrome-br"><span class="dot"></span><span>12 RMs · 3 FIRMS</span></div>
+
+      <div class="head-block">
+        <div class="eyebrow blue">USABILITY TESTING</div>
+        <h2 class="title" style="margin-top: 18px;">SUS 87. Top tenth percentile.</h2>
+      </div>
+
+      <div class="ut-grid">
+        <div class="ut-tbl">
+          <div class="ut-hd">
+            <span>TASK</span>
+            <span style="text-align: right;">SUCCESS</span>
+            <span style="text-align: right;">AVG TIME</span>
+            <span style="text-align: right;">VERDICT</span>
+          </div>
+          <div class="ut-row">
+            <div class="task">Find the top client to call today</div>
+            <div class="v em" style="text-align: right;">100%</div>
+            <div class="v bl" style="text-align: right;">8s</div>
+            <div class="v em" style="text-align: right; font-size: 14px; font-family: var(--mono); letter-spacing: 0.12em;">PASS</div>
+          </div>
+          <div class="ut-row">
+            <div class="task">Run a full pre-meeting prep</div>
+            <div class="v em" style="text-align: right;">92%</div>
+            <div class="v bl" style="text-align: right;">45s</div>
+            <div class="v em" style="text-align: right; font-size: 14px; font-family: var(--mono); letter-spacing: 0.12em;">PASS</div>
+          </div>
+          <div class="ut-row">
+            <div class="task">Triage a drift alert end-to-end</div>
+            <div class="v am" style="text-align: right;">83%</div>
+            <div class="v" style="text-align: right; color: var(--amber);">90s</div>
+            <div class="v am" style="text-align: right; font-size: 14px; font-family: var(--mono); letter-spacing: 0.12em;">FIXED V4</div>
+          </div>
+          <div class="ut-row">
+            <div class="task">Capture meeting notes on mobile</div>
+            <div class="v em" style="text-align: right;">100%</div>
+            <div class="v bl" style="text-align: right;">35s</div>
+            <div class="v em" style="text-align: right; font-size: 14px; font-family: var(--mono); letter-spacing: 0.12em;">PASS</div>
+          </div>
+          <div class="ut-row">
+            <div class="task">Answer "Apple exposure across household?"</div>
+            <div class="v em" style="text-align: right;">92%</div>
+            <div class="v bl" style="text-align: right;">12s</div>
+            <div class="v em" style="text-align: right; font-size: 14px; font-family: var(--mono); letter-spacing: 0.12em;">PASS</div>
+          </div>
+
+          <div style="margin-top: 32px; padding: 20px 24px; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.25); border-radius: 10px;">
+            <div class="mono" style="font-size: 12px; letter-spacing: 0.16em; color: var(--amber); margin-bottom: 8px;">WHAT FAILED · V3</div>
+            <div style="font-size: 17px; color: var(--ink-soft); line-height: 1.5;">Initial drift triage was confusing — testers expected one-click resolve, but we'd buried "Rebalance" in a 3-step modal. V4 brought the action <span class="accent-em">inline on the alert card.</span></div>
+          </div>
+        </div>
+
+        <div class="glass sus-card">
+          <div class="l">SYSTEM USABILITY SCALE</div>
+          <div class="v">87<span style="font-size: 36px; color: var(--mute);">/100</span></div>
+          <div class="mono" style="font-size: 14px; color: var(--blue); letter-spacing: 0.12em;">TOP 10th PERCENTILE</div>
+          <div class="d">Industry average for B2B finance tooling is 68. The legacy platform scored 41.</div>
+          <div style="display: flex; gap: 12px; margin-top: 12px;">
+            <span class="pill em">PASS</span>
+            <span class="pill bl">N=12</span>
+            <span class="pill">3 FIRMS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="20 Closing">
+    <div class="slide-pad" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+      <div class="chrome-tl">19 / THANK YOU</div>
+      <div class="chrome-br"><span class="dot"></span><span>FIN</span></div>
+
+      <div class="head-block" style="margin: 0; align-items: center;">
+        <div class="eyebrow blue" style="letter-spacing: 0.3em;">STRAND FINANCE</div>
+        <h2 class="title" style="margin-top: 24px; font-size: 84px; line-height: 1.1;">Lets build something<br/><span class="accent-em">exciting</span> together.</h2>
+        <p class="lead" style="margin-top: 32px; max-width: 800px; color: var(--mute);">"The best way to predict the future is to design it."</p>
+      </div>
+
+      <div style="margin-top: 80px; display: flex; gap: 40px;">
+        <div style="text-align: left;">
+          <div class="mono" style="font-size: 11px; color: var(--emerald); letter-spacing: 0.16em; margin-bottom: 8px;">PORTFOLIO</div>
+          <div style="font-size: 18px; font-weight: 500;">Parth K Parekh - UX Strategist, Designer & AI Consultant </div>
+        </div>
+        <div style="width: 1px; height: 40px; background: var(--line);"></div>
+        <div style="text-align: left;">
+          <div class="mono" style="font-size: 11px; color: var(--blue); letter-spacing: 0.16em; margin-bottom: 8px;">CONTACT</div>
+          <div style="font-size: 18px; font-weight: 500;">LinkedIn </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</deck-stage>
 
 </body>
 </html>
