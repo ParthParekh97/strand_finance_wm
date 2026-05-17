@@ -3,7 +3,7 @@
 **Live Links:**
 *   [Slide Deck Presentation](https://parthparekh97.github.io/strand_finance_wm/#1)
 *   [Continuous Scrolling View of Presentation ](https://parthparekh97.github.io/strand_finance_wm/Strand%20Finance%20Case%20Study%20(Scrolling).html)
-* [Live Prototype Link] (https://erase-visa-66779715.figma.site/)
+* [Live Prototype Link](https://erase-visa-66779715.figma.site/)
 
 ## Overview
 This repository contains a comprehensive UX/UI Case Study detailing a 24-week project to redesign the Strand Finance private wealth management platform. 
