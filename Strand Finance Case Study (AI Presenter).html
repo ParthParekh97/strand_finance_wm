@@ -1382,6 +1382,37 @@ document.addEventListener("DOMContentLoaded", () => {
     captionsOverlay.style.pointerEvents = "none";
   }
   
+  let activeUtterance = null; // Global reference to prevent early garbage collection bug
+
+  // Premium, Luxurious Custom Smooth Scrolling Animation
+  function smoothScrollTo(element, duration = 1600) {
+    if (!element) return;
+    const targetY = element.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight - element.offsetHeight) / 2;
+    const startY = window.pageYOffset;
+    const difference = targetY - startY;
+    let start = null;
+
+    // Smooth Ease-In-Out Cubic Curve
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    }
+
+    function step(timestamp) {
+      if (!start) start = timestamp;
+      const progress = timestamp - start;
+      const percent = Math.min(progress / duration, 1);
+      const ease = easeInOutCubic(percent);
+      
+      window.scrollTo(0, startY + difference * ease);
+
+      if (percent < 1) {
+        window.requestAnimationFrame(step);
+      }
+    }
+
+    window.requestAnimationFrame(step);
+  }
+
   function playSlide(index) {
     if (index < 0 || index >= sections.length) {
       pausePresentation();
@@ -1391,22 +1422,26 @@ document.addEventListener("DOMContentLoaded", () => {
     currentSlideIndex = index;
     updateHUD();
     
-    // Smooth scroll current slide to center of viewport
-    sections[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Smooth scroll current slide elegantly to center of viewport
+    smoothScrollTo(sections[index], 1600);
     
     const noteText = notes[index] || "";
     showCaptions(noteText);
     
     if (autoAdvanceTimeout) clearTimeout(autoAdvanceTimeout);
     window.speechSynthesis.cancel();
+    activeUtterance = null;
     
     if (isAudioOn) {
-      const utterance = new SpeechSynthesisUtterance(noteText);
-      const voice = getBestVoice();
-      if (voice) utterance.voice = voice;
-      utterance.rate = 0.95; // highly professional speed
+      // Clean speech text for TTS engine to avoid system-level parsing/crash bugs on special characters
+      const cleanSpeechText = noteText.replace(/%/g, ' percent ').replace(/—/g, ', ').replace(/–/g, ', ');
       
-      utterance.onend = () => {
+      activeUtterance = new SpeechSynthesisUtterance(cleanSpeechText);
+      const voice = getBestVoice();
+      if (voice) activeUtterance.voice = voice;
+      activeUtterance.rate = 0.95; // highly professional speaking speed
+      
+      activeUtterance.onend = () => {
         if (isPlaying) {
           autoAdvanceTimeout = setTimeout(() => {
             nextSlide();
@@ -1414,12 +1449,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       };
       
-      utterance.onerror = (e) => {
+      activeUtterance.onerror = (e) => {
         console.warn("Speech error, falling back to timer:", e);
         fallbackTimer(noteText);
       };
       
-      window.speechSynthesis.speak(utterance);
+      window.speechSynthesis.speak(activeUtterance);
     } else {
       fallbackTimer(noteText);
     }
@@ -1442,6 +1477,7 @@ document.addEventListener("DOMContentLoaded", () => {
     isPlaying = false;
     if (autoAdvanceTimeout) clearTimeout(autoAdvanceTimeout);
     window.speechSynthesis.cancel();
+    activeUtterance = null;
     hideCaptions();
     updateHUD();
   }
@@ -1452,7 +1488,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isPlaying) {
         playSlide(currentSlideIndex);
       } else {
-        sections[currentSlideIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        smoothScrollTo(sections[currentSlideIndex], 1600);
         updateHUD();
       }
     } else {
@@ -1466,7 +1502,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isPlaying) {
         playSlide(currentSlideIndex);
       } else {
-        sections[currentSlideIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        smoothScrollTo(sections[currentSlideIndex], 1600);
         updateHUD();
       }
     }
