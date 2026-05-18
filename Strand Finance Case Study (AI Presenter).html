@@ -1205,6 +1205,7 @@
         <div class="eyebrow blue" style="letter-spacing: 0.3em;">STRAND FINANCE</div>
         <h2 class="title" style="margin-top: 24px; font-size: 84px; line-height: 1.1;">Lets build something<br/><span class="accent-em">exciting</span> together.</h2>
         <p class="lead" style="margin-top: 32px; max-width: 800px; color: var(--mute);">"The best way to predict the future is to design it."</p>
+        <p style="margin-top: 24px; max-width: 750px; font-size: 18px; line-height: 1.6; color: #a3b3cc; font-weight: 400;">If you want to know more and detailed process about this project, email Parth to schedule for an intro call and he is happy to guide you through his process.</p>
       </div>
 
       
@@ -1221,6 +1222,13 @@
           <span class="mono" style="font-size: 14px; color: #fff; letter-spacing: 0.1em; font-weight: 600;">PORTFOLIO</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         </a>
+      </div>
+      <div style="margin-top: 20px;">
+        <button onclick="copyEmail(this)" class="glass" style="background: none; outline: none; border: 1px solid var(--amber); border-radius: 50px; display: inline-flex; align-items: center; gap: 16px; padding: 20px 40px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+          <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 15px var(--amber); transition: all 0.3s;"></div>
+          <span class="mono email-btn-text" style="font-size: 14px; color: #fff; letter-spacing: 0.1em; font-weight: 600; transition: all 0.3s;">mr.parekhparth@gmail.com</span>
+          <svg class="email-btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: all 0.3s;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        </button>
       </div>
 
 
@@ -1656,6 +1664,38 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial HUD setup
   updateHUD();
 });
+</script>
+
+<script>
+function copyEmail(btn) {
+  navigator.clipboard.writeText("mr.parekhparth@gmail.com").then(() => {
+    const textNode = btn.querySelector('.email-btn-text');
+    const iconNode = btn.querySelector('.email-btn-icon');
+    const dotNode = btn.querySelector('div');
+    
+    const originalText = textNode.innerText;
+    textNode.innerText = "✓ EMAIL COPIED!";
+    textNode.style.color = "var(--emerald)";
+    btn.style.borderColor = "var(--emerald)";
+    
+    dotNode.style.background = "var(--emerald)";
+    dotNode.style.boxShadow = "0 0 15px var(--emerald)";
+    
+    const originalIcon = iconNode.innerHTML;
+    iconNode.innerHTML = `<polyline points="20 6 9 17 4 12"></polyline>`;
+    iconNode.setAttribute('stroke', 'var(--emerald)');
+    
+    setTimeout(() => {
+      textNode.innerText = originalText;
+      textNode.style.color = "#fff";
+      btn.style.borderColor = "var(--amber)";
+      dotNode.style.background = "var(--amber)";
+      dotNode.style.boxShadow = "0 0 15px var(--amber)";
+      iconNode.innerHTML = originalIcon;
+      iconNode.setAttribute('stroke', 'var(--amber)');
+    }, 2500);
+  });
+}
 </script>
 
 </body>
