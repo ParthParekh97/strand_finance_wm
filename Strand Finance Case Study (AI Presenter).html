@@ -21,7 +21,7 @@
   "Predictive drift detection flags volatility seven days before an investment policy breach occurs, successfully cutting compliance escalations by fifty-four percent.",
   "Our Client Bubble Map converts defensive fee discussions into collaborative milestones, running real-time Monte Carlo simulations to keep client life goals on track.",
   "Advisors achieved a ninety-two percent success rate on core tasks, giving the system a SUS score of eighty-seven, placing it in the top tenth percentile of enterprise software.",
-  "Ultimately, designing AI as a collaborative partner ensures the human connection in wealth management remains stronger than ever. If you want to know more about this design process in a detailed overview, feel free to connect with Parth on the email ID provided—you can easily click and copy his email ID directly in the footer below. Thank you so much for your time."
+  "Ultimately, wealth management is about trust, synthesis, and translation. Designing AI as a collaborative material makes that human connection stronger. Thank you."
 ]
 </script>
 <style>
@@ -1240,7 +1240,7 @@
         <div style="width: 1px; height: 40px; background: var(--line);"></div>
         <div style="text-align: left;">
           <div class="mono" style="font-size: 11px; color: var(--blue); letter-spacing: 0.16em; margin-bottom: 8px;">CONTACT</div>
-          <div style="font-size: 18px; font-weight: 500; cursor: pointer; color: #fff; transition: all 0.2s;" onclick="copyEmailText(this)" onmouseover="this.style.color='var(--blue)'" onmouseout="this.style.color='#fff'">mr.parekhparth@gmail.com</div>
+          <div style="font-size: 18px; font-weight: 500;">LinkedIn </div>
         </div>
       </div>
     </div>
@@ -1520,6 +1520,9 @@ document.addEventListener("DOMContentLoaded", () => {
       };
       
       activeUtterance.onerror = (e) => {
+        if (e.error === 'interrupted' || e.error === 'canceled') {
+          return;
+        }
         console.warn("Speech error, falling back to timer:", e);
         fallbackTimer(noteText);
       };
@@ -1572,6 +1575,11 @@ document.addEventListener("DOMContentLoaded", () => {
     activeFallbackTimeouts.forEach(t => clearTimeout(t));
     activeFallbackTimeouts = [];
     
+    if (activeUtterance) {
+      activeUtterance.onboundary = null;
+      activeUtterance.onend = null;
+      activeUtterance.onerror = null;
+    }
     window.speechSynthesis.cancel();
     activeUtterance = null;
     hideCaptions();
@@ -1694,18 +1702,6 @@ function copyEmail(btn) {
       iconNode.innerHTML = originalIcon;
       iconNode.setAttribute('stroke', 'var(--amber)');
     }, 2500);
-  });
-}
-
-function copyEmailText(el) {
-  navigator.clipboard.writeText("mr.parekhparth@gmail.com").then(() => {
-    const originalText = el.innerText;
-    el.innerText = "✓ EMAIL COPIED!";
-    el.style.color = "var(--emerald)";
-    setTimeout(() => {
-      el.innerText = originalText;
-      el.style.color = "#fff";
-    }, 2000);
   });
 }
 </script>
