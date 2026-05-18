@@ -1283,6 +1283,20 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const notes = JSON.parse(document.getElementById('speaker-notes').textContent);
+  
+  // Dynamic Greeting based on System Local Time
+  const now = new Date();
+  const hour = now.getHours();
+  let greeting = "Good morning";
+  if (hour >= 12 && hour < 16) {
+    greeting = "Good afternoon";
+  } else if (hour >= 16 || hour < 6) {
+    greeting = "Good evening";
+  }
+  if (notes && notes.length > 0) {
+    notes[0] = notes[0].replace("Good morning", greeting);
+  }
+
   const sections = Array.from(document.querySelectorAll('section'));
   
   const hudPlayBtn = document.getElementById('hud-play-btn');
