@@ -1327,6 +1327,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let isCCOn = true; // Closed Captions On by default
   let autoAdvanceTimeout = null;
   let activeFallbackTimeouts = []; // Track phrase segmented timeouts
+  let activeSegmentText = ""; // Track the currently active clause text for instant CC toggling
   let voices = [];
   
   // Load premium synthesis voices
@@ -1460,10 +1461,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Segment the caption by major punctuation so we show text phrase-by-phrase
     const segments = noteText.split(/(?<=[.?!—])\s+/);
+    activeSegmentText = segments[0] || "";
     
     // Initialize first segment on CC ON, else hide it
     if (isCCOn && segments.length > 0) {
-      showCaptions(segments[0]);
+      showCaptions(activeSegmentText);
     } else {
       hideCaptions();
     }
@@ -1490,6 +1492,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             cumulativeLength += segments[i].length + 1; // offset whitespace split
           }
+          
+          activeSegmentText = activeSegment;
           
           if (isCCOn) {
             showCaptions(activeSegment);
@@ -1532,6 +1536,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const segDuration = totalDuration * ratio;
       
       const timeoutId = setTimeout(() => {
+        activeSegmentText = seg;
         if (isCCOn) {
           showCaptions(seg);
         } else {
@@ -1621,9 +1626,8 @@ document.addEventListener("DOMContentLoaded", () => {
     isCCOn = !isCCOn;
     updateHUD();
     if (isCCOn) {
-      if (isPlaying) {
-        // Redraw current active segment/sentence dynamically
-        playSlide(currentSlideIndex);
+      if (isPlaying && activeSegmentText) {
+        showCaptions(activeSegmentText);
       }
     } else {
       hideCaptions();
