@@ -1315,12 +1315,30 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
   function getBestVoice() {
-    const preferredKeywords = ['premium', 'natural', 'google', 'samantha', 'daniel', 'karen', 'moira'];
-    for (let keyword of preferredKeywords) {
-      const match = voices.find(v => v.name.toLowerCase().includes(keyword) && v.lang.startsWith('en'));
+    // 1. First priority: Male Indian English voice (e.g. Rishi, Hemant, Ravi)
+    const maleIndianMatch = voices.find(v => {
+      const name = v.name.toLowerCase();
+      const lang = v.lang.toLowerCase().replace('_', '-');
+      return lang.startsWith('en-in') && (name.includes('rishi') || name.includes('hemant') || name.includes('ravi') || name.includes('male'));
+    });
+    if (maleIndianMatch) return maleIndianMatch;
+
+    // 2. Second priority: Any Indian English voice (e.g. Veena, Heera, Google India)
+    const anyIndianMatch = voices.find(v => v.lang.toLowerCase().replace('_', '-').startsWith('en-in'));
+    if (anyIndianMatch) return anyIndianMatch;
+
+    // 3. Third priority: Standard English male voices
+    const maleKeywords = ['daniel', 'david', 'george', 'male', 'guy', 'sir'];
+    for (let kw of maleKeywords) {
+      const match = voices.find(v => v.name.toLowerCase().includes(kw) && v.lang.toLowerCase().startsWith('en'));
       if (match) return match;
     }
-    return voices.find(v => v.lang.startsWith('en')) || null;
+
+    // 4. Default premium English fallbacks
+    const premiumMatch = voices.find(v => v.name.toLowerCase().includes('premium') && v.lang.toLowerCase().startsWith('en'));
+    if (premiumMatch) return premiumMatch;
+
+    return voices.find(v => v.lang.toLowerCase().startsWith('en')) || null;
   }
   
   function updateHUD() {
