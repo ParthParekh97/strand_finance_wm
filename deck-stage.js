@@ -520,6 +520,107 @@
       ::slotted([data-deck-skip]) { display: none !important; }
       .overlay, .tapzones, .rail, .rail-resize, .ctxmenu, .confirm-backdrop { display: none !important; }
     }
+
+    /* Zoom styles for slot content images */
+    ::slotted(section) img {
+      cursor: zoom-in;
+      transition: filter 0.2s ease;
+    }
+    ::slotted(section) img:hover {
+      filter: brightness(1.06);
+    }
+
+    /* Lightbox Overlay */
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 11, 14, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 2147483647;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+    }
+    .lightbox-overlay[data-open] {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 24px;
+      right: 32px;
+      font-size: 48px;
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      transition: color 0.2s;
+      line-height: 1;
+      z-index: 2147483647;
+    }
+    .lightbox-close:hover {
+      color: #fff;
+    }
+    .lightbox-controls {
+      position: absolute;
+      bottom: 32px;
+      display: flex;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      z-index: 2147483647;
+    }
+    .lightbox-controls .zoom-btn {
+      background: transparent;
+      border: 0;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 20px;
+      font-family: inherit;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s, color 0.2s;
+    }
+    .lightbox-controls .zoom-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+    .lightbox-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: grab;
+      position: relative;
+    }
+    .lightbox-wrapper:active {
+      cursor: grabbing;
+    }
+    .lightbox-img {
+      max-width: 90%;
+      max-height: 85%;
+      object-fit: contain;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transform-origin: center center;
+      transition: transform 0.15s cubic-bezier(0.1, 0.8, 0.3, 1);
+      will-change: transform;
+    }
   `;
 
   class DeckStage extends HTMLElement {
@@ -578,6 +679,33 @@
       // the rail code, not its runtime.
       this._railEnabled = false;
       // Initial collection + layout happens via slotchange, which fires on mount.
+
+      // Click listener to trigger lightbox
+      this.addEventListener('click', (e) => {
+        const path = e.composedPath();
+        const img = path.find(el => el.tagName === 'IMG');
+        if (img) {
+          const isInteractive = path.some(el => {
+            if (!el.tagName) return false;
+            return el.tagName === 'BUTTON' || el.tagName === 'A' || 
+              (el.classList && (el.classList.contains('btn') || el.classList.contains('zoom-btn') || el.classList.contains('lightbox-close')));
+          });
+          if (!isInteractive) {
+            let parent = img.parentElement;
+            let insideSlide = false;
+            while (parent) {
+              if (parent.tagName === 'SECTION') {
+                insideSlide = true;
+                break;
+              }
+              parent = parent.parentElement;
+            }
+            if (insideSlide) {
+              this._openLightbox(img.src);
+            }
+          }
+        }
+      });
     }
 
     _enableRail() {
@@ -917,7 +1045,121 @@
         this._deleteSlide(i);
       });
 
-      this._root.append(style, rail, resize, stage, tapzones, overlay, menu, confirm);
+      // Lightbox modal for image zooming
+      const lightbox = document.createElement('div');
+      lightbox.id = 'deck-lightbox';
+      lightbox.className = 'lightbox-overlay export-hidden';
+      lightbox.setAttribute('data-noncommentable', '');
+      lightbox.innerHTML = `
+        <span class="lightbox-close">&times;</span>
+        <div class="lightbox-controls">
+          <button class="zoom-btn" id="deck-zoom-in" type="button" title="Zoom In">+</button>
+          <button class="zoom-btn" id="deck-zoom-out" type="button" title="Zoom Out">-</button>
+          <button class="zoom-btn" id="deck-zoom-reset" type="button" title="Reset Zoom">1:1</button>
+        </div>
+        <div class="lightbox-wrapper">
+          <img class="lightbox-img" src="" alt="Enlarged view">
+        </div>
+      `;
+
+      const lbImg = lightbox.querySelector('.lightbox-img');
+      const lbWrapper = lightbox.querySelector('.lightbox-wrapper');
+      
+      const updateTransform = () => {
+        lbImg.style.transform = `translate(${this._zoomX}px, ${this._zoomY}px) scale(${this._zoomScale})`;
+      };
+      
+      lightbox.querySelector('.lightbox-close').addEventListener('click', () => this._closeLightbox());
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox || e.target === lbWrapper) {
+          this._closeLightbox();
+        }
+      });
+      
+      lightbox.querySelector('#deck-zoom-in').addEventListener('click', () => {
+        this._zoomScale = Math.min(6, this._zoomScale + 0.3);
+        updateTransform();
+      });
+      lightbox.querySelector('#deck-zoom-out').addEventListener('click', () => {
+        this._zoomScale = Math.max(0.5, this._zoomScale - 0.3);
+        updateTransform();
+      });
+      lightbox.querySelector('#deck-zoom-reset').addEventListener('click', () => {
+        this._zoomScale = 1;
+        this._zoomX = 0;
+        this._zoomY = 0;
+        updateTransform();
+      });
+      
+      lbWrapper.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = -e.deltaY;
+        const factor = delta > 0 ? 1.15 : 0.85;
+        this._zoomScale = Math.max(0.5, Math.min(6, this._zoomScale * factor));
+        updateTransform();
+      }, { passive: false });
+      
+      const dragStart = (clientX, clientY) => {
+        this._zoomIsDragging = true;
+        this._zoomStartX = clientX - this._zoomX;
+        this._zoomStartY = clientY - this._zoomY;
+      };
+      
+      const dragMove = (clientX, clientY) => {
+        if (!this._zoomIsDragging) return;
+        this._zoomX = clientX - this._zoomStartX;
+        this._zoomY = clientY - this._zoomStartY;
+        updateTransform();
+      };
+      
+      const dragEnd = () => {
+        this._zoomIsDragging = false;
+      };
+      
+      lbWrapper.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        dragStart(e.clientX, e.clientY);
+      });
+      
+      window.addEventListener('mousemove', (e) => {
+        if (this._zoomIsDragging) {
+          dragMove(e.clientX, e.clientY);
+        }
+      });
+      
+      window.addEventListener('mouseup', () => {
+        dragEnd();
+      });
+      
+      lbWrapper.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          dragStart(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      });
+      
+      lbWrapper.addEventListener('touchmove', (e) => {
+        if (this._zoomIsDragging && e.touches.length === 1) {
+          e.preventDefault();
+          dragMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+      
+      lbWrapper.addEventListener('touchend', () => {
+        dragEnd();
+      });
+      
+      lbWrapper.addEventListener('dblclick', () => {
+        if (this._zoomScale > 1.1) {
+          this._zoomScale = 1;
+          this._zoomX = 0;
+          this._zoomY = 0;
+        } else {
+          this._zoomScale = 2.2;
+        }
+        updateTransform();
+      });
+
+      this._root.append(style, rail, resize, stage, tapzones, overlay, menu, confirm, lightbox);
       this._canvas = canvas;
       this._slot = slot;
       this._overlay = overlay;
@@ -1229,6 +1471,15 @@
       // Ignore when the user is typing.
       const t = e.target;
       if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      
+      // Close lightbox on escape
+      if (this._lightboxOpen) {
+        if (e.key === 'Escape') {
+          this._closeLightbox();
+          e.preventDefault();
+        }
+        return;
+      }
       // Confirm dialog swallows nav keys while open; Escape cancels. Enter
       // is left to the focused button's native activation so Tab→Cancel
       // →Enter activates Cancel, not the window-level confirm path.
@@ -1701,6 +1952,33 @@
     next() { this._advance(1, 'api'); }
     prev() { this._advance(-1, 'api'); }
     reset() { this._go(0, 'api'); }
+
+    _openLightbox(src) {
+      const lb = this._root.querySelector('#deck-lightbox');
+      if (!lb) return;
+      const img = lb.querySelector('.lightbox-img');
+      img.src = src;
+      
+      this._zoomScale = 1;
+      this._zoomX = 0;
+      this._zoomY = 0;
+      this._zoomIsDragging = false;
+      this._zoomStartX = 0;
+      this._zoomStartY = 0;
+      
+      img.style.transform = 'translate(0px, 0px) scale(1)';
+      lb.setAttribute('data-open', '');
+      document.body.style.overflow = 'hidden';
+      this._lightboxOpen = true;
+    }
+    
+    _closeLightbox() {
+      const lb = this._root.querySelector('#deck-lightbox');
+      if (!lb) return;
+      lb.removeAttribute('data-open');
+      document.body.style.overflow = '';
+      this._lightboxOpen = false;
+    }
   }
 
   if (!customElements.get('deck-stage')) {
