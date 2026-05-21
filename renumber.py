@@ -31,15 +31,35 @@ def renumber_file(filepath):
             if "HERO" in rest or "HERO" in sep:
                 return prefix + idx_str + f" / {total_str} — HERO"
             else:
-                return prefix + idx_str + sep + rest
+                clean_rest = re.sub(r'^[ —\-–·•\s]+', '', rest).strip()
+                return prefix + idx_str + " / " + clean_rest
             
-        part = re.sub(r'(<div class="chrome-tl">)([0-9\.]+(?:\s*/\s*[0-9]+)?)(\s*(?:/|—)\s*)([^<]*)', replace_chrome, part, count=1)
+        part = re.sub(r'(<div class="chrome-tl">)([0-9\.]+(?:\s*/\s*[0-9]+)?)(\s*(?:/|—|–|-)\s*)([^<]*)', replace_chrome, part, count=1)
         
         new_parts.append(part)
         
     with open(filepath, 'w') as f:
         f.write('<section data-label="'.join(new_parts))
 
-renumber_file('/Users/parthparekh/Desktop/StrandFinance_WM/case-study-deck/Strand Finance Case Study.html')
-renumber_file('/Users/parthparekh/Desktop/StrandFinance_WM/case-study-deck/Strand Finance Case Study (Scrolling).html')
-renumber_file('/Users/parthparekh/Desktop/StrandFinance_WM/case-study-deck/Strand Finance Case Study (Concise).html')
+import os
+
+files_to_renumber = [
+    'Strand Finance Case Study.html',
+    'Strand Finance Case Study (Scrolling).html',
+    'Strand Finance Case Study (AI Presenter).html',
+    'Strand Finance Case Study (Concise).html',
+    'Strand Finance Interview deck.html',
+    'Strand Finance Interview (Scrolling).html'
+]
+
+dirs = [
+    '/Users/parthparekh/Desktop/StrandFinance_WM/case-study-deck',
+    '/Users/parthparekh/Desktop/StrandFinance_WM/scratch/deploy_repo'
+]
+
+for d in dirs:
+    for f in files_to_renumber:
+        path = os.path.join(d, f)
+        if os.path.exists(path):
+            renumber_file(path)
+            print(f"Renumbered: {path}")
