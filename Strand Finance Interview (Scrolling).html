@@ -10,57 +10,21 @@
 
 <script type="application/json" id="speaker-notes">
 [
-"Good morning. I'm going to walk you through twenty-four weeks of work on the Strand Finance wealth management platform. The headline is simple: by treating AI as a material woven into the workflow — not a feature bolted onto the side — we cut Relationship Manager pre-meeting prep from two hours to under couple of minutes, and shifted compliance from autopsy to early warning. I want you to leave with three things: the strategic frame that unlocked this, the specific design decisions that made AI feel trustworthy, and the business impact those decisions drove.",
-
-"Before I get into process, the four numbers that matter. Pre-meeting prep collapsed from two hours to under couple of minutes. Drift detection moved from reactive — caught after the breach — to predictive, seven days ahead. Roughly thirty percent of the Relationship Manager's week was reclaimed for client-facing work. And client NPS doubled, from thirty-two to sixty-four. I'll show you how each of these traces back to a specific design decision.",
-
-"My approach was the same one I use everywhere: workflow before data. Most wealth platforms are built database-first — forty columns of raw data dumped into a grid, asking the human to hunt for the insight. I flipped that. Every screen earns its place by answering a temporal question — what needs my attention at nine A M, what context do I need at one-thirty before a call. Every interface has to answer in under five seconds. Three guiding principles: workflow before data, AI augments never replaces, and trust through transparency.",
-
-"This project didn't exist in a vacuum. Four forces converged in 2025 and 2026 to make it inevitable. Fee compression — robo-advisors at twenty-five basis points are squeezing traditional one-percent firms. The great wealth transfer — eighty-four trillion dollars passing from Boomers to Gen X and Millennials, who expect digital-native experiences. An aging RM workforce — average advisor is fifty-five plus, and tools have to be intuitive enough for younger advisors to ramp fast. And an explosion of alternative assets — private equity, crypto, direct real estate — increasingly part of HNWI portfolios but living in unstructured chaos. Understanding why the industry was moving was the unlock for what to design.",
-
-"We didn't start by drawing screens. We started by listening. Twelve relationship managers, three compliance officers, two heads of wealth — stakeholder interviews. Six full-day shadowing sessions — contextual inquiry, watching real prep rituals. Eighty-five HNWI and mass-affluent client surveys. Heuristic audits of the existing platform plus five competitors. A two-week diary study with four RMs logging friction in the moment. And a one-day co-design workshop with compliance. Two hundred-plus data points in. Twelve high-impact pain points out.",
-
-"These quotes did more work than any artifact in this deck. Each one points directly at a design decision. The senior RM with five tabs open became the case for the unified household view. The advisor doing forty-five clients quarterly became Meeting Mode. The private wealth manager whose clients don't care about time-weighted return became the bubble map. The compliance officer asking for an early warning system became the predictive drift timeline. We didn't generate these problems — they were already in the building.",
-
-"Synthesizing two hundred data points into twelve pain points across three stakeholders. The RM lives with six daily: data fragmentation, meeting prep paralysis, stale data, reactive drift detection, manual benchmarks, desktop-bound tools. The client lives with three: dashboards that speak money instead of goals, opaque fees, jargon walls. Compliance lives with three: hidden household-level concentration, KYC drift, and the succession problem — relationship context evaporating when an RM retires. These twelve became our scorecard.",
-
-"Our central hypothesis. If we centralize the household, shift from reactive to proactive monitoring, and deeply integrate AI into the synthesis layer, then RMs will reclaim cognitive bandwidth for relationship-building. Measured by reduced prep time, more client-facing hours, and earlier risk detection. Four sub-hypotheses sit under that — a household-first information architecture would cut data-gathering by seventy percent or more, AI-drafted narratives would be accepted with twenty percent or fewer edits, predictive drift would cut compliance escalations by half, and a mobile companion would lift same-day note logging from twelve percent to seventy-five percent.",
-
-"Three personas, one shared pain — fragmentation. James, the senior RM, forty-five clients and three hundred eighty million in AUM, drowning in tool-switching. Sharon, the HNWI client, eight-point-five million in investable assets, doesn't want to know his alpha — wants to know if he can retire at sixty. Diane, head of compliance, fifteen years in role, wants compliance to be an early warning system instead of an autopsy. They look like different problems. They're the same problem at three altitudes.",
-
-"This is Jame's morning before the redesign. Calendar alert at nine A M for an eleven A M meeting with the Patel family. Custodian portal, Orion, Salesforce, SharePoint — five system context switches. Three CSV exports, manual Excel consolidation, hand-written narrative in Word, paste into a PowerPoint template that hasn't been updated in years. Two full hours. The emotional curve dips at aggregation and never fully recovers. She walks in hoping nobody asks about Apple exposure across the household, because she doesn't actually know.",
-
-"The service blueprint revealed a structural flaw. The backend systems — Salesforce, Orion, custodial feeds — were acting purely as data silos. The entire cognitive burden of aggregation, formatting, and analysis was pushed onto the frontstage, meaning the RM had to do it manually in her head and in Excel. The unlock was placing the AI layer exactly between the data and the UI — as an automatic synthesis engine, not a feature on either end.",
-
-"The information architecture decision that changed everything: household is the root entity, not the account. That single decision reduced click-depth to common tasks by sixty percent. Underneath the household sit members, accounts, holdings, goals, documents, and an activity timeline. Cross-cutting views — pipeline, risk and compliance, AI insights — sit at the same level. And time is a first-class dimension on every screen, with an explicit as-of badge.",
-
-"The primary task flow for pre-meeting prep. A calendar trigger launches Meeting Mode automatically. The AI assembles the household snapshot in roughly five seconds. The RM reviews the AI-drafted narrative, edits if needed, approves. The pack auto-formats to a PDF and a screen-share view. End-to-end, under couple of minutes. The two-hour ritual is gone.",
-
-"In lo-fi, we intentionally stripped all visual branding to test pure information architecture. We validated that anchoring navigation around household instead of account reduced click depth by sixty percent. We also tested whether RMs trusted AI insights when inline versus buried in a slide-out panel — inline won decisively. Iteration mattered: book overview went from a database view, to a triage view, to an insight-first view where AI surfaces three clients with reasoning. By V3, eighty-seven percent of RMs in usability test selected the correct first action.",
-
-"This is the bet that took the project from a redesign to a re-platforming. AI is not a feature — it's a material. Treating it like a ChatGPT button bolted to the corner failed. Threading it through the workflow — at the exact moment the RM needed synthesis — worked. For every pain point we asked: can AI eliminate the friction entirely? Eleven yeses came back.",
-
-"The eleven AI augmentations, mapped pain to capability to design surface. Entity resolution for household linking. Generative drafting for Meeting Mode. Predictive overlays for stale data. Volatility forecasting for drift. Locked benchmarks from signed IPS. Voice-to-CRM transcription. Dynamic Monte Carlo for goals. The Value Delivered Ledger for fee transparency. Narrative statements via NLG. Life-event scanning via NLP. And a knowledge-graph Ask AI for ten years of meeting context. Each one ships with a confidence indicator, an editable surface, and one-click provenance.",
-
-"This is the Book Overview — the nine A M landing page. The AI co-pilot, on the right, has already triaged the book. Top of the list: the Patel household, drift four-point-five percent, IPS review thirty-eight months overdue. Reasoning is shown inline, sources are one click away. James finds morning priority in four seconds instead of thirty minutes.",
-
-"Meeting Mode — the most direct hit on the two-hour problem. One click from the calendar trigger. The AI assembles performance, allocation, and a quarterly narrative drafted in the RM's own tone of voice. The sounds-like-me feedback loop trains the model on her phrasing. She reviews, edits two sentences, approves. Under couple of minutes. Pack is ready.",
-
-"Predictive drift — the slide that made compliance partners cry. Volatility analysis flags ninety-percent breach probability seven days out. The timeline shows when the breach is likely to occur. The RM schedules a rebalance proactively instead of explaining a breach reactively. This single capability cut compliance escalations by fifty-four percent.",
-
-"The bubble map — and the philosophical core of this project. Clients don't dream in time-weighted return. They dream in milestones. Retire at sixty. Fund the daughter's wedding. Leave a legacy. Each circle is a life goal, sized by required funding, colored by funding status — emerald when on track, blue when in-flight, amber when at risk. A dynamic Monte Carlo model recalculates in real time when the client moves a slider. This was the moment client conversations changed from defensive — why are fees high — to collaborative — what if we save a thousand more a month.",
-
-"Side-by-side, the transformation. Book overview moved from a table of forty-five clients by twelve columns to AI-triaged top three with reasoning. Pre-meeting prep went from two hours across five systems to under couple of minutes in Meeting Mode. Drift detection from reactive post-breach email to predictive seven days ahead. Client statements from forty-page jargon PDFs to three-paragraph NLG summaries. Mobile from squinting at desktop PDFs to a native PWA with voice capture. And succession — from ask the departing RM to ask the AI bar with ten years of context.",
-
-"Twelve RMs across three firms, sixty-minute moderated sessions. Five core workflow tasks. Find top client to call today — one hundred percent success, eight seconds. Run pre-meeting prep — ninety-two percent, forty-five seconds. Triage a drift alert — eighty-three percent, ninety seconds — and that's where we found our biggest miss. We had buried the rebalance action in a three-step modal. V4 brought it inline. SUS came in at eighty-seven out of one hundred — top tenth percentile.",
-
-"A day in the new workflow. Nine A M, the dashboard has triaged her book. Ten forty-five, Meeting Mode handles Chen prep in under couple of minutes. One-thirty, mobile PWA flags a drift forecast en route to a client lunch. Three P M, voice-to-CRM captures the post-lunch note and NLP flags grandson as a life event — which lands in Diane's compliance queue automatically. Five-thirty, laptop closed. Six clients spoken to, two meetings prepped, four records updated. Two months earlier, that was a twelve-hour day.",
-
-"The results. Pre-meeting prep down ninety-nine percent. Client-facing time up thirty points. Drift caught pre-breach up sixty-seven points. Statement readability up three hundred thirty-three percent. Mobile note-logging up fifty-nine points. Junior RM ramp time cut by sixty-seven percent. Client NPS doubled. Compliance escalations down fifty-four percent. The business case: two-point-four million in projected annual time savings, forty percent increase in advisor capacity without headcount growth, six net new clients per RM per year.",
-
-"What I learned. AI is a material, not a feature — that's the headline. Confidence is a UI element — showing how sure the AI is mattered more than the answer itself. And the hard part isn't the model, it's the moment — designing when AI shows up was harder than designing what it says. What surprised me: the senior RMs adopted AI features faster than the juniors. They'd lived with the pain longest. They recognized the gift immediately.",
-
-"The thesis I'll leave you with. Fintech is the bridge between mathematics and psychology. The math has been solved for decades — modern portfolio theory, Monte Carlo, factor models. The unsolved problem is the human layer — synthesis, translation, trust. That's where design lives. That's where AI is most useful. And that's the work I want to keep doing. Thank you."
+  "Good morning. I'm going to walk you through twenty-four weeks of work on the Strand Finance wealth management platform. The headline is simple: by treating AI as a material woven into the workflow — not a feature bolted onto the side — we cut Relationship Manager pre-meeting prep from two hours to under couple of minutes, and shifted compliance from autopsy to early warning. I want you to leave with three things: the strategic frame that unlocked this, the specific design decisions that made AI feel trustworthy, and the business impact those decisions drove.",
+  "Before I get into process, the four numbers that matter. Pre-meeting prep collapsed from two hours to under couple of minutes. Drift detection moved from reactive — caught after the breach — to predictive, seven days ahead. Roughly thirty percent of the Relationship Manager's week was reclaimed for client-facing work. And client NPS doubled, from thirty-two to sixty-four. I'll show you how each of these traces back to a specific design decision.",
+  "My approach was the same one I use everywhere: workflow before data. Most wealth platforms are built database-first — forty columns of raw data dumped into a grid, asking the human to hunt for the insight. I flipped that. Every screen earns its place by answering a temporal question — what needs my attention at nine A M, what context do I need at one-thirty before a call. Every interface has to answer in under five seconds. Three guiding principles: workflow before data, AI augments never replaces, and trust through transparency.",
+  "These quotes did more work than any artifact in this deck. Each one points directly at a design decision. The senior RM with five tabs open became the case for the unified household view. The advisor doing forty-five clients quarterly became Meeting Mode. The private wealth manager whose clients don't care about time-weighted return became the bubble map. The compliance officer asking for an early warning system became the predictive drift timeline. We didn't generate these problems — they were already in the building.",
+  "Synthesizing two hundred data points into twelve pain points across three stakeholders. The RM lives with six daily: data fragmentation, meeting prep paralysis, stale data, reactive drift detection, manual benchmarks, desktop-bound tools. The client lives with three: dashboards that speak money instead of goals, opaque fees, jargon walls. Compliance lives with three: hidden household-level concentration, KYC drift, and the succession problem — relationship context evaporating when an RM retires. These twelve became our scorecard.",
+  "This is Jame's morning before the redesign. Calendar alert at nine A M for an eleven A M meeting with the Patel family. Custodian portal, Orion, Salesforce, SharePoint — five system context switches. Three CSV exports, manual Excel consolidation, hand-written narrative in Word, paste into a PowerPoint template that hasn't been updated in years. Two full hours. The emotional curve dips at aggregation and never fully recovers. She walks in hoping nobody asks about Apple exposure across the household, because she doesn't actually know.",
+  "This is the bet that took the project from a redesign to a re-platforming. AI is not a feature — it's a material. Treating it like a ChatGPT button bolted to the corner failed. Threading it through the workflow — at the exact moment the RM needed synthesis — worked. For every pain point we asked: can AI eliminate the friction entirely? Eleven yeses came back.",
+  "In lo-fi, we intentionally stripped all visual branding to test pure information architecture. We validated that anchoring navigation around household instead of account reduced click depth by sixty percent. We also tested whether RMs trusted AI insights when inline versus buried in a slide-out panel — inline won decisively. Iteration mattered: book overview went from a database view, to a triage view, to an insight-first view where AI surfaces three clients with reasoning. By V3, eighty-seven percent of RMs in usability test selected the correct first action.",
+  "This is the Book Overview — the nine A M landing page. The AI co-pilot, on the right, has already triaged the book. Top of the list: the Patel household, drift four-point-five percent, IPS review thirty-eight months overdue. Reasoning is shown inline, sources are one click away. James finds morning priority in four seconds instead of thirty minutes.",
+  "Predictive drift — the slide that made compliance partners cry. Volatility analysis flags ninety-percent breach probability seven days out. The timeline shows when the breach is likely to occur. The RM schedules a rebalance proactively instead of explaining a breach reactively. This single capability cut compliance escalations by fifty-four percent.",
+  "Meeting Mode — the most direct hit on the two-hour problem. One click from the calendar trigger. The AI assembles performance, allocation, and a quarterly narrative drafted in the RM's own tone of voice. The sounds-like-me feedback loop trains the model on her phrasing. She reviews, edits two sentences, approves. Under couple of minutes. Pack is ready.",
+  "The bubble map — and the philosophical core of this project. Clients don't dream in time-weighted return. They dream in milestones. Retire at sixty. Fund the daughter's wedding. Leave a legacy. Each circle is a life goal, sized by required funding, colored by funding status — emerald when on track, blue when in-flight, amber when at risk. A dynamic Monte Carlo model recalculates in real time when the client moves a slider. This was the moment client conversations changed from defensive — why are fees high — to collaborative — what if we save a thousand more a month.",
+  "Twelve RMs across three firms, sixty-minute moderated sessions. Five core workflow tasks. Find top client to call today — one hundred percent success, eight seconds. Run pre-meeting prep — ninety-two percent, forty-five seconds. Triage a drift alert — eighty-three percent, ninety seconds — and that's where we found our biggest miss. We had buried the rebalance action in a three-step modal. V4 brought it inline. SUS came in at eighty-seven out of one hundred — top tenth percentile.",
+  "What I learned. AI is a material, not a feature — that's the headline. Confidence is a UI element — showing how sure the AI is mattered more than the answer itself. And the hard part isn't the model, it's the moment — designing when AI shows up was harder than designing what it says. What surprised me: the senior RMs adopted AI features faster than the juniors. They'd lived with the pain longest. They recognized the gift immediately.",
+  "The thesis I'll leave you with. Fintech is the bridge between mathematics and psychology. The math has been solved for decades — modern portfolio theory, Monte Carlo, factor models. The unsolved problem is the human layer — synthesis, translation, trust. That's where design lives. That's where AI is most useful. And that's the work I want to keep doing. Thank you."
 ]
 </script>
 <style>
@@ -664,7 +628,7 @@
           <span class="mono" style="font-size: 11px; color: #fff; letter-spacing: 0.1em; font-weight: 600;">LAUNCH AI PRESENTER</span>
         </a>
       </div>
-       <div class="chrome-tl">01 / 25 — HERO</div>
+       <div class="chrome-tl">01 / 15 — HERO</div>
 
       <div class="core">
          <div>
@@ -710,7 +674,7 @@
 
   <section data-label="02 Solution Preview">
     <div class="slide-pad">
-      <div class="chrome-tl">02 / OVERVIEW</div>
+      <div class="chrome-tl">02 / 15 — OVERVIEW</div>
       <div class="chrome-br"><span class="dot"></span><span>THE SOLUTION AT A GLANCE</span></div>
 
       <div class="head-block" style="margin-bottom: 32px;">
@@ -751,7 +715,7 @@
   
   <section data-label="03 Strategy">
     <div class="slide-pad">
-      <div class="chrome-tl">03 / STRATEGY</div>
+      <div class="chrome-tl">03 / 15 — STRATEGY</div>
       <div class="chrome-br"><span class="dot"></span><span>DESIGN PHILOSOPHY</span></div>
 
       <div class="head-block">
@@ -802,60 +766,9 @@
 
 
 
-  <section data-label="05 Research">
+  <section data-label="04 Synthesis">
     <div class="slide-pad">
-      <div class="chrome-tl">05 / RESEARCH</div>
-      <div class="chrome-br"><span class="dot"></span><span>200+ DATA POINTS</span></div>
-
-      <div class="head-block">
-        <div class="eyebrow blue">METHODOLOGY</div>
-        <h2 class="title" style="margin-top: 18px;">Six methods. 100+ participants. Twelve pain points out.</h2>
-      </div>
-
-      <div class="method-grid">
-        <div class="method-card glass">
-          <div class="lbl">METHOD 01</div>
-          <div class="method">Stakeholder Interviews</div>
-          <div class="sample">12 RMs · 3 Compliance · 2 Heads of Wealth</div>
-          <div class="out">Workflow themes, vocabulary, mental models.</div>
-        </div>
-        <div class="method-card glass">
-          <div class="lbl">METHOD 02</div>
-          <div class="method">Contextual Inquiry</div>
-          <div class="sample">6 full-day shadowing sessions</div>
-          <div class="out">Tool-switching map, real prep rituals observed in situ.</div>
-        </div>
-        <div class="method-card glass">
-          <div class="lbl">METHOD 03</div>
-          <div class="method">Client Surveys</div>
-          <div class="sample">85+ HNWI & mass-affluent clients</div>
-          <div class="out">Emotional gap, fee perception, statement comprehension.</div>
-        </div>
-        <div class="method-card glass">
-          <div class="lbl">METHOD 04</div>
-          <div class="method">Heuristic Audit</div>
-          <div class="sample">Incumbent platform + 5 competitors</div>
-          <div class="out">Pattern inventory, density baselines, IA comparison.</div>
-        </div>
-        <div class="method-card glass">
-          <div class="lbl">METHOD 05</div>
-          <div class="method">Data Diary Study</div>
-          <div class="sample">4 RMs · 2-week structured diary</div>
-          <div class="out">Friction logged in the moment, time-of-day patterns.</div>
-        </div>
-        <div class="method-card glass">
-          <div class="lbl">METHOD 06</div>
-          <div class="method">Compliance Workshop</div>
-          <div class="sample">Co-design · 1-day intensive</div>
-          <div class="out">Risk surface map, false-positive failure modes.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section data-label="06 Synthesis">
-    <div class="slide-pad">
-      <div class="chrome-tl">06 / SYNTHESIS</div>
+      <div class="chrome-tl">04 / 15 — SYNTHESIS</div>
       <div class="chrome-br"><span class="dot"></span><span>VOICE OF USER · PAIN POINTS</span></div>
 
       <div class="head-block">
@@ -902,9 +815,9 @@
     </div>
   </section>
 
-  <section data-label="07 Personas">
+  <section data-label="05 Personas">
     <div class="slide-pad">
-      <div class="chrome-tl">07 / PERSONAS</div>
+      <div class="chrome-tl">05 / 15 — PERSONAS</div>
       <div class="chrome-br"><span class="dot"></span><span>THE TRI-FOLD STAKEHOLDER</span></div>
 
       <div class="head-block">
@@ -991,9 +904,9 @@
     </div>
   </section>
 
-  <section data-label="08 Before Journey">
+  <section data-label="06 Before Journey">
     <div class="slide-pad">
-      <div class="chrome-tl">08 / JOURNEY</div>
+      <div class="chrome-tl">06 / 15 — JOURNEY</div>
       <div class="chrome-br"><span class="dot"></span><span>BEFORE THE REDESIGN</span></div>
 
       <div class="head-block">
@@ -1071,9 +984,9 @@
 
 
 
-  <section data-label="10 AI as Material">
+  <section data-label="07 AI as Material">
     <div class="slide-pad">
-      <div class="chrome-tl">10 / AI STRATEGY</div>
+      <div class="chrome-tl">07 / 15 — AI STRATEGY</div>
       <div class="chrome-br"><span class="dot"></span><span>THE STRATEGIC BET</span></div>
 
       <div class="head-block">
@@ -1112,9 +1025,9 @@
 
 
 
-  <section data-label="12 Iteration to Hi-Fi">
+  <section data-label="08 Iteration to Hi-Fi">
     <div class="slide-pad">
-      <div class="chrome-tl">12 / EVOLUTION</div>
+      <div class="chrome-tl">08 / 15 — EVOLUTION</div>
       <div class="chrome-br"><span class="dot"></span><span>WIREFRAME TO HI-FI</span></div>
 
       <div class="head-block">
@@ -1137,9 +1050,9 @@
     </div>
   </section>
 
-  <section data-label="13 Book Overview">
+  <section data-label="09 Book Overview">
     <div class="slide-pad" style="padding-right: 0;">
-      <div class="chrome-tl">13 / HI-FI · BOOK OVERVIEW</div>
+      <div class="chrome-tl">09 / 15 — HI-FI · BOOK OVERVIEW</div>
       <div class="chrome-br" style="right: 96px;"><span class="dot"></span><span>CLICK ME TO VIEW THE DESIGN CRITIQUE OF LANDING PAGE</span></div>
 
       <div class="hifi-slide">
@@ -1167,10 +1080,10 @@
     </div>
   </section>
 
-  <section data-label="14 Predictive Drift">
+  <section data-label="10 Predictive Drift">
     <div class="slide-pad" style="padding-right: 0;">
 
-      <div class="chrome-tl">14 / HI-FI · DRIFT FORECAST</div>
+      <div class="chrome-tl">10 / 15 — HI-FI · DRIFT FORECAST</div>
       <div class="chrome-br" style="right: 96px;"><span class="dot"></span><span>7-DAY HORIZON</span></div>
 
       <div class="hifi-slide">
@@ -1204,9 +1117,9 @@
     </div>
   </section>
 
-  <section data-label="15 Meeting Mode">
+  <section data-label="11 Meeting Mode">
     <div class="slide-pad" style="padding-right: 0;">
-      <div class="chrome-tl">15 / HI-FI · MEETING MODE</div>
+      <div class="chrome-tl">11 / 15 — HI-FI · MEETING MODE</div>
       <div class="chrome-br" style="right: 96px;"><span class="dot"></span><span><5 MIN PREP</span></div>
 
       <div class="hifi-slide">
@@ -1235,9 +1148,9 @@
     </div>
   </section>
 
-  <section data-label="16 Company View">
+  <section data-label="12 Company View">
     <div class="slide-pad">
-      <div class="chrome-tl">16 / SCALE</div>
+      <div class="chrome-tl">12 / 15 — SCALE</div>
       <div class="chrome-br"><span class="dot"></span><span>RM COMMAND CENTER</span></div>
 
       <div class="head-block">
@@ -1284,53 +1197,10 @@
  
  
 
- 
- 
 
-  <section data-label="22 Before After">
+  <section data-label="13 Usability">
     <div class="slide-pad">
-      <div class="chrome-tl">22 / TRANSFORMATION</div>
-      <div class="chrome-br"><span class="dot"></span><span>SCREEN BY SCREEN</span></div>
-
-      <div class="head-block">
-        <div class="eyebrow">BEFORE / AFTER</div>
-        <h2 class="title" style="margin-top: 18px;">The transformation, in one table.</h2>
-      </div>
-
-      <div class="ba-grid">
-        <div class="ba-side before">
-          <div class="ba-head"><span class="lbl">● BEFORE</span><span class="sub">LEGACY PLATFORM · 2024</span></div>
-          <div class="ba-list">
-            <div class="ba-row"><div class="k">BOOK OVERVIEW</div><div class="v">Table of 45 clients × 12 columns. RM scans, gives up, opens Excel.</div></div>
-            <div class="ba-row"><div class="k">PREP</div><div class="v"><b>2 hours</b> across 5 systems. Manual CSV exports. Word + PowerPoint.</div></div>
-            <div class="ba-row"><div class="k">DRIFT</div><div class="v">Reactive. Post-breach email from compliance, weeks late.</div></div>
-            <div class="ba-row"><div class="k">STATEMENTS</div><div class="v"><b>40-page</b> PDF of jargon. Most clients shred them unopened.</div></div>
-            <div class="ba-row"><div class="k">MOBILE</div><div class="v">Desktop PDFs squinted at on a phone.</div></div>
-            <div class="ba-row"><div class="k">SUCCESSION</div><div class="v">"Ask the departing RM." Context evaporates on the last day.</div></div>
-          </div>
-        </div>
-
-        <div class="ba-side after">
-          <div class="ba-head"><span class="lbl">● AFTER</span><span class="sub">STRAND · 2026</span></div>
-          <div class="ba-list">
-            <div class="ba-row"><div class="k">BOOK OVERVIEW</div><div class="v">AI-triaged <b>top 3 households</b> with reasoning, confidence, and inline action.</div></div>
-            <div class="ba-row"><div class="k">PREP</div><div class="v"><b>under couple of minutes</b> in Meeting Mode. Tone-matched narrative ready to ship.</div></div>
-            <div class="ba-row"><div class="k">DRIFT</div><div class="v">Predictive widget. <b>7 days</b> ahead. 92% confidence, inline rebalance.</div></div>
-            <div class="ba-row"><div class="k">STATEMENTS</div><div class="v"><b>3-paragraph</b> NLG summary tuned to client literacy. Plain English toggle.</div></div>
-            <div class="ba-row"><div class="k">MOBILE</div><div class="v">Native PWA with voice-to-CRM. <b>71%</b> same-day note logging.</div></div>
-            <div class="ba-row"><div class="k">SUCCESSION</div><div class="v">Ask AI bar. <b>10 years</b> of notes queryable on day one.</div></div>
-          </div>
-        </div>
-      </div>
-      <div style="font-size: 11px; font-style: italic; color: var(--mute-2); width: 100%; margin-top: 16px; text-align: right;">
-        Outcomes shown reflect a combination of measured results from the original engagement and modeled projections based on competitive benchmarking.
-      </div>
-    </div>
-  </section>
-
-  <section data-label="23 Usability">
-    <div class="slide-pad">
-      <div class="chrome-tl">23 / USABILITY</div>
+      <div class="chrome-tl">13 / 15 — USABILITY</div>
       <div class="chrome-br"><span class="dot"></span><span>12 RMs · 3 FIRMS</span></div>
 
       <div class="head-block">
@@ -1398,9 +1268,9 @@
     </div>
   </section>
 
-  <section data-label="24 Methodology & Tech">
+  <section data-label="14 Methodology & Tech">
     <div class="slide-pad">
-      <div class="chrome-tl">24 / METHODOLOGY & TECH</div>
+      <div class="chrome-tl">14 / 15 — METHODOLOGY & TECH</div>
       <div class="chrome-br"><span class="dot"></span><span>DESIGN TO DEVELOPMENT</span></div>
 
       <div class="head-block">
@@ -1446,9 +1316,9 @@
     </div>
   </section>
 
-  <section data-label="25 Closing">
+  <section data-label="15 Closing">
     <div class="slide-pad" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-      <div class="chrome-tl">25 / THANK YOU</div>
+      <div class="chrome-tl">15 / 15 — THANK YOU</div>
       <div class="chrome-br"><span class="dot"></span><span>FIN</span></div>
 
       <div class="head-block" style="margin: 0; align-items: center;">
