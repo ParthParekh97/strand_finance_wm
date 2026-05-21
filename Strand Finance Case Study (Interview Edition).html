@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Strand Finance — Interview Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="deck-stage.js"></script>
+
+<script type="application/json" id="speaker-notes">
+[
+  "Good morning. I'm going to walk you through a focused edition of the Strand Finance wealth management platform. Today, we will discuss how design decisions condensed pre-meeting prep from two hours to under a single minute.",
+  "Before we dive in, please note that while the core research, interaction patterns, and design decisions are based on real outcomes from the engagement, the visuals and specific values shown have been recreated for portfolio presentation under NDA.",
+  "Our design was anchored around Jameson, a Sr. Relationship Manager handling $380M in AUM. He spent two hours consolidating metrics across five legacy systems for every meeting, dragging him away from client-facing work.",
+  "Here is Jameson's legacy workflow. Five tool switches, manual Excel consolidation, and PowerPoint deck building. This error-prone ritual consumed over ninety hours per quarter per book, creating high cognitive load.",
+  "Three primary friction points emerged: first, prep paralysis from fragmented data; second, reactive drift detection leading to compliance breaches; and third, the trust gap from opaque, jargon-heavy reports.",
+  "To address these, we established three design principles: workflow before data (focusing on temporal questions), AI as an assistant to augment the human, and trust through confidence scores and source transparency.",
+  "This is the Morning Command Center. AI triages Jameson's book, surfacing priorities inline. Note the clean typography, clear visual hierarchy, and Power BI integrated report at the bottom for compliance metrics.",
+  "When Jameson clicks a client like Lydia Chen, he's shown a tax-loss harvesting opportunity. AI does the complex synthesis, but the RM retains full ownership, launching the action wizard manually.",
+  "The Client Portfolio view displays the entire book. Standardized health flags, segment filter chips, and clear advisor continuity ensure Jameson is always in control and can triage his book in seconds.",
+  "Once actions are approved, AI drafts the communication summaries. Jameson reviews and clicks to send, creating a transparent, chronological audit trail for compliance.",
+  "Rather than a bolted-on chatbot, AI is threaded as a design material. We implemented five key integrations: household mapping, meeting narrative drafting, predictive drift, TLH ledger, and LLM-powered notes query.",
+  "For engineering handoff, the designs map directly to Power BI native visuals with custom JSON themes, and the front-end components are built in Angular using atomic standalone modules and Storybook.",
+  "The results speak for themselves: prep time down to under a minute, predictive drift detection, plain-English summaries, and a PWA mobile app. Thank you, and I look forward to building something exciting together."
+]
+</script>
+
+<style>
+
+  :root {
+    /* palette */
+    --bg-0: #020617;
+    --bg-1: #0b1224;
+    --bg-2: #0f172a;
+    --bg-3: #131c33;
+    --line: rgba(148, 163, 184, 0.14);
+    --line-strong: rgba(148, 163, 184, 0.28);
+    --ink: #f8fafc;
+    --ink-soft: #e2e8f0;
+    --mute: #94a3b8;
+    --mute-2: #64748b;
+    --emerald: #10b981;
+    --emerald-soft: rgba(16, 185, 129, 0.16);
+    --blue: #3b82f6;
+    --blue-soft: rgba(59, 130, 246, 0.16);
+    --amber: #f59e0b;
+    --rose: #f43f5e;
+
+    /* type scale */
+    --type-hero: 64px;
+    --type-display: 72px;
+    --type-title: 48px;
+    --type-subtitle: 32px;
+    --type-body: 24px;
+    --type-small: 20px;
+    --type-mono: 18px;
+    --type-mono-sm: 14px;
+
+    /* spacing */
+    --pad-x: 96px;
+    --pad-y: 88px;
+    --pad-bottom: 96px;
+    --gap-title: 44px;
+    --gap-item: 28px;
+    --gap-sm: 16px;
+
+    /* fonts */
+    --sans: 'Inter', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  html, body { margin: 0; padding: 0; background: var(--bg-0); color: var(--ink); font-family: var(--sans); }
+
+  deck-stage { background: var(--bg-0); }
+
+  section {
+    background: var(--bg-0);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ===== shared utilities ===== */
+  .slide-pad { padding: var(--pad-y) var(--pad-x) var(--pad-bottom); height: 100%; box-sizing: border-box; display: flex; flex-direction: column; }
+  .mono { font-family: var(--mono); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+  .eyebrow {
+    font-family: var(--mono); font-weight: 500; font-size: var(--type-mono-sm);
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--emerald);
+    display: inline-flex; align-items: center; gap: 14px;
+  }
+  .eyebrow::before {
+    content: ""; width: 36px; height: 1px; background: var(--emerald);
+  }
+  .eyebrow.blue { color: var(--blue); }
+  .eyebrow.blue::before { background: var(--blue); }
+  .eyebrow.mute { color: var(--mute); }
+  .eyebrow.mute::before { background: var(--mute); }
+
+  h1, h2, h3 { margin: 0; font-weight: 700; letter-spacing: -0.025em; color: var(--ink); line-height: 1.04; }
+  p { margin: 0; }
+
+  .title { font-size: var(--type-title); font-weight: 700; }
+  .subtitle { font-size: var(--type-subtitle); font-weight: 500; color: var(--ink-soft); line-height: 1.18; letter-spacing: -0.02em; }
+  .body { font-size: var(--type-body); line-height: 1.45; color: var(--ink-soft); }
+  .small { font-size: var(--type-small); line-height: 1.5; color: var(--mute); }
+  .accent-em { color: var(--emerald); }
+  .accent-bl { color: var(--blue); }
+
+  /* corner chrome */
+  .chrome-tl, .chrome-br {
+    position: absolute; font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--mute-2); display: flex; gap: 18px; align-items: center;
+  }
+  .chrome-tl { top: 40px; left: var(--pad-x); }
+  .chrome-br { bottom: 40px; right: var(--pad-x); }
+  .chrome-br .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 12px var(--emerald); }
+
+  /* grid background */
+  .grid-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(148,163,184,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148,163,184,0.05) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.8), transparent 75%);
+  }
+
+  .mesh-glow {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(60% 50% at 18% 30%, rgba(16,185,129,0.18), transparent 60%),
+      radial-gradient(50% 50% at 85% 80%, rgba(59,130,246,0.20), transparent 60%);
+    filter: blur(0px);
+  }
+
+  .glass {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    backdrop-filter: blur(20px);
+  }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border-radius: 999px;
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
+    border: 1px solid var(--line-strong); color: var(--mute);
+  }
+  .pill.em { color: var(--emerald); border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.08); }
+  .pill.bl { color: var(--blue); border-color: rgba(59,130,246,0.4); background: rgba(59,130,246,0.08); }
+  .pill.rose { color: var(--rose); border-color: rgba(244,63,94,0.4); background: rgba(244,63,94,0.08); }
+  .pill.amber { color: var(--amber); border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.08); }
+
+  /* ===== Slide 01 — HERO ===== */
+  .hero { padding: var(--pad-y) var(--pad-x) var(--pad-bottom); position: relative; height: 100%; box-sizing: border-box; }
+  .hero .nav { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mute); }
+  .hero .nav .left { display: flex; gap: 32px; align-items: center; }
+  .hero .nav .brand-mark { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+  .hero .brand-glyph {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--emerald), var(--blue));
+    position: relative;
+  }
+  .hero .brand-glyph::after {
+    content: ""; position: absolute; inset: 8px; border-radius: 2px;
+    background: var(--bg-0);
+  }
+  .hero .core { margin-top: 60px; display: grid; grid-template-columns: 1.05fr 1fr; gap: 80px; align-items: end; height: calc(100% - 220px); }
+  .hero h1 {
+    font-size: var(--type-hero); font-weight: 800; line-height: 0.98; letter-spacing: -0.035em;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(120deg, var(--emerald) 0%, #34d399 35%, var(--blue) 75%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero .pitch { margin-top: 36px; font-size: 30px; line-height: 1.4; color: var(--mute); max-width: 720px; }
+  .hero .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 40px; align-self: end; padding-bottom: 20px; }
+  .hero .meta-grid .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mute-2); margin-bottom: 8px; }
+  .hero .meta-grid .v { font-size: 20px; color: var(--ink-soft); line-height: 1.35; font-weight: 500; }
+  .hero .foot { position: absolute; bottom: 40px; left: var(--pad-x); right: var(--pad-x); display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mute-2); }
+
+  /* ===== Slide 02 — TL;DR ===== */
+  .tldr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: var(--gap-title); flex: 1; }
+  .stat-card { padding: 36px 32px 32px; display: flex; flex-direction: column; justify-content: space-between; min-height: 360px; }
+  .stat-card .num { font-size: 96px; font-weight: 800; letter-spacing: -0.04em; line-height: 0.95; }
+  .stat-card .num.em { color: var(--emerald); }
+  .stat-card .num.bl { color: var(--blue); }
+  .stat-card .lbl { font-family: var(--mono); font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mute); }
+  .stat-card .desc { font-size: 20px; color: var(--ink-soft); line-height: 1.4; margin-top: 12px; }
+
+  /* ===== Section header ===== */
+  .section-hd { background: var(--bg-1); }
+  .section-hd .content { display: flex; flex-direction: column; justify-content: center; height: 100%; }
+  .section-hd .sec-num { font-family: var(--mono); font-size: 220px; font-weight: 700; line-height: 0.9; letter-spacing: -0.04em; background: linear-gradient(135deg, var(--emerald), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .section-hd h2 { font-size: 96px; font-weight: 800; letter-spacing: -0.03em; margin-top: 24px; }
+  .section-hd .lead { font-size: 28px; color: var(--mute); margin-top: 28px; max-width: 920px; line-height: 1.5; }
+
+  /* generic layouts */
+  .row-split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; flex: 1; }
+  .col-left { display: flex; flex-direction: column; gap: var(--gap-item); }
+  .head-block { margin-bottom: var(--gap-title); }
+  .head-block .eyebrow { margin-bottom: 24px; }
+  .head-block h2 { font-size: var(--type-title); }
+
+  /* ===== Industry forces (4 cards) ===== */
+  .force-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; flex: 1; }
+  .force-card { padding: 32px 28px; display: flex; flex-direction: column; gap: 20px; }
+  .force-card .idx { font-family: var(--mono); font-size: 14px; letter-spacing: 0.2em; color: var(--mute-2); }
+  .force-card h3 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; color: var(--ink); }
+  .force-card .desc { font-size: 18px; color: var(--mute); line-height: 1.55; flex: 1; }
+  .force-card .ai { font-family: var(--mono); font-size: 14px; color: var(--emerald); line-height: 1.6; letter-spacing: 0.02em; padding-top: 18px; border-top: 1px solid var(--line); text-transform: none; }
+
+  /* ===== Research methods table ===== */
+  .method-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; flex: 1; }
+  .method-card { padding: 28px 28px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .method-card .lbl { font-family: var(--mono); font-size: 13px; letter-spacing: 0.18em; color: var(--mute-2); }
+  .method-card .method { font-size: 26px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; color: var(--ink); }
+  .method-card .sample { font-family: var(--mono); font-size: 15px; color: var(--blue); letter-spacing: 0.04em; }
+  .method-card .out { font-size: 16px; color: var(--mute); line-height: 1.5; margin-top: 4px; }
+
+  /* ===== Quote slide ===== */
+  .quote-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; flex: 1; }
+  .quote-card { padding: 32px 28px 28px; display: flex; flex-direction: column; }
+  .quote-card .tag { font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mute-2); margin-bottom: 16px; }
+  .quote-card .qt { font-size: 22px; line-height: 1.4; color: var(--ink-soft); font-weight: 500; letter-spacing: -0.01em; flex: 1; }
+  .quote-card .qt::before { content: "\201C"; font-size: 48px; line-height: 0; color: var(--emerald); margin-right: 4px; vertical-align: -16px; }
+  .quote-card .att { font-family: var(--mono); font-size: 13px; letter-spacing: 0.06em; color: var(--mute); margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); text-transform: none; }
+  .quote-card.em { background: linear-gradient(180deg, rgba(16,185,129,0.08), transparent 60%); border-color: rgba(16,185,129,0.25); }
+  .quote-card.bl { background: linear-gradient(180deg, rgba(59,130,246,0.08), transparent 60%); border-color: rgba(59,130,246,0.25); }
+
+  /* ===== Pain points (12-grid) ===== */
+  .pain-section { display: flex; flex-direction: column; gap: 12px; }
+  .pain-section .sec-lbl { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--line); margin-bottom: 6px; }
+  .pain-section .sec-lbl .name { font-size: 20px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+  .pain-section .sec-lbl .count { font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; color: var(--mute-2); }
+  .pain-row { display: grid; grid-template-columns: 32px 1fr 90px; gap: 16px; padding: 12px 0; border-bottom: 1px dashed var(--line); align-items: baseline; }
+  .pain-row:last-child { border-bottom: none; }
+  .pain-row .n { font-family: var(--mono); font-size: 14px; color: var(--mute-2); letter-spacing: 0.1em; }
+  .pain-row .txt { font-size: 18px; color: var(--ink-soft); line-height: 1.35; }
+  .pain-row .txt b { color: var(--ink); font-weight: 600; }
+  .pain-row .imp { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; text-align: right; }
+  .imp.crit { color: var(--rose); }
+  .imp.high { color: var(--amber); }
+  .imp.med { color: var(--mute); }
+
+  /* ===== Hypothesis ===== */
+  .hyp-main { font-size: 48px; line-height: 1.25; letter-spacing: -0.02em; color: var(--ink); font-weight: 500; max-width: 1500px; }
+  .hyp-main .h { color: var(--emerald); font-weight: 700; }
+  .hyp-main .t { color: var(--blue); font-weight: 700; }
+  .hyp-main .m { color: var(--ink); font-weight: 600; font-style: italic; }
+  .sub-hyp { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 48px; }
+  .sub-hyp .h-card { padding: 22px 24px; }
+  .sub-hyp .h-card .tag { font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; color: var(--emerald); }
+  .sub-hyp .h-card .txt { font-size: 17px; color: var(--ink-soft); margin-top: 10px; line-height: 1.4; }
+  .sub-hyp .h-card .metric { font-family: var(--mono); font-size: 14px; color: var(--blue); margin-top: 12px; letter-spacing: 0.04em; text-transform: none; }
+
+  /* ===== Personas (3-up) ===== */
+  .persona-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; flex: 1; }
+  .persona-card { padding: 32px 28px 28px; display: flex; flex-direction: column; gap: 18px; }
+  .persona-head { display: flex; align-items: center; gap: 16px; }
+  .persona-avatar { width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 600; font-size: 22px; letter-spacing: 0.04em; }
+  .pa-em { background: linear-gradient(135deg, rgba(16,185,129,0.3), rgba(16,185,129,0.08)); color: var(--emerald); border: 1px solid rgba(16,185,129,0.4); }
+  .pa-bl { background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(59,130,246,0.08)); color: var(--blue); border: 1px solid rgba(59,130,246,0.4); }
+  .pa-am { background: linear-gradient(135deg, rgba(245,158,11,0.3), rgba(245,158,11,0.08)); color: var(--amber); border: 1px solid rgba(245,158,11,0.4); }
+  .persona-card .name { font-size: 26px; font-weight: 700; letter-spacing: -0.015em; }
+  .persona-card .role { font-family: var(--mono); font-size: 13px; letter-spacing: 0.14em; color: var(--mute); margin-top: 4px; }
+  .persona-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .persona-stats .k { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; color: var(--mute-2); }
+  .persona-stats .v { font-size: 16px; color: var(--ink-soft); margin-top: 2px; }
+  .persona-card h4 { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; color: var(--mute-2); margin: 8px 0 6px; font-weight: 500; text-transform: uppercase; }
+  .persona-card ul { margin: 0; padding-left: 18px; }
+  .persona-card li { font-size: 16px; color: var(--ink-soft); line-height: 1.45; margin-bottom: 4px; }
+  .persona-card .qt { font-size: 17px; line-height: 1.4; font-style: italic; color: var(--ink); padding-top: 14px; border-top: 1px solid var(--line); margin-top: auto; }
+  .persona-card .qt::before { content: "\201C"; color: var(--emerald); font-style: normal; margin-right: 4px; }
+  .persona-card .qt::after { content: "\201D"; color: var(--emerald); font-style: normal; margin-left: 4px; }
+
+  /* ===== Before journey ===== */
+  .journey-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; flex: 1; }
+  .j-step { padding: 24px 20px; display: flex; flex-direction: column; gap: 12px; position: relative; }
+  .j-step .t { font-family: var(--mono); font-size: 13px; letter-spacing: 0.14em; color: var(--blue); }
+  .j-step .ph { font-size: 13px; font-family: var(--mono); letter-spacing: 0.18em; color: var(--mute-2); text-transform: uppercase; }
+  .j-step .h { font-size: 19px; font-weight: 600; color: var(--ink); line-height: 1.25; }
+  .j-step .thinks { font-size: 14px; line-height: 1.4; color: var(--ink-soft); font-style: italic; }
+  .j-step .pain { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--rose); line-height: 1.5; text-transform: none; padding-top: 10px; border-top: 1px solid var(--line); margin-top: auto; }
+  .j-step .emo { font-size: 24px; }
+  .emo-curve { height: 64px; margin: 20px 0 0; position: relative; }
+
+  /* ===== Service blueprint ===== */
+  .swimlanes { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+  .lane { display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .lane:last-child { border-bottom: none; }
+  .lane .l-label { font-family: var(--mono); font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); }
+  .lane .l-label .badge { display: block; font-size: 10px; color: var(--mute-2); margin-top: 4px; letter-spacing: 0.2em; }
+  .lane .l-content { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .lane .node { padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; color: var(--ink-soft); background: rgba(255,255,255,0.02); line-height: 1.3; }
+  .lane.ai .node { background: linear-gradient(180deg, rgba(16,185,129,0.12), rgba(59,130,246,0.06)); border-color: rgba(16,185,129,0.35); color: var(--ink); }
+  .lane.ai .l-label { color: var(--emerald); }
+
+  /* ===== IA tree ===== */
+  .ia-wrap { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; flex: 1; }
+  .ia-tree { font-family: var(--mono); font-size: 18px; line-height: 1.75; color: var(--ink-soft); }
+  .ia-tree .root { color: var(--emerald); font-size: 22px; font-weight: 600; }
+  .ia-tree .l1 { color: var(--blue); padding-left: 24px; }
+  .ia-tree .l2 { color: var(--ink-soft); padding-left: 56px; }
+  .ia-tree .pipe { color: var(--mute-2); }
+  .ia-principles { display: flex; flex-direction: column; gap: 24px; }
+  .ia-principles .p { display: flex; gap: 20px; }
+  .ia-principles .p .idx { font-family: var(--mono); font-size: 36px; font-weight: 700; color: var(--emerald); line-height: 1; min-width: 64px; }
+  .ia-principles .p .txt { font-size: 22px; color: var(--ink-soft); line-height: 1.4; }
+  .ia-principles .p .txt b { color: var(--ink); font-weight: 600; }
+
+  /* ===== Flow diagram ===== */
+  .flow-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .flow-row { display: flex; align-items: center; gap: 0; }
+  .flow-step { flex: 1; padding: 28px 24px; min-height: 180px; display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+  .flow-step .n { font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; color: var(--mute-2); }
+  .flow-step .h { font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.2; }
+  .flow-step .d { font-size: 16px; color: var(--mute); line-height: 1.4; }
+  .flow-step.ai { background: linear-gradient(180deg, rgba(16,185,129,0.1), rgba(16,185,129,0.02)); border-color: rgba(16,185,129,0.4); }
+  .flow-step.ai .h { color: var(--emerald); }
+  .flow-step.user { background: linear-gradient(180deg, rgba(59,130,246,0.08), rgba(59,130,246,0.01)); border-color: rgba(59,130,246,0.3); }
+  .flow-arrow { font-family: var(--mono); color: var(--mute-2); padding: 0 6px; font-size: 24px; }
+
+  /* ===== Wireframes / lo-fi ===== */
+  .wf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; flex: 1; }
+  .wf { padding: 18px; display: flex; flex-direction: column; gap: 8px; aspect-ratio: 4 / 3; }
+  .wf-canvas { flex: 1; background: rgba(255,255,255,0.02); border: 1px dashed var(--line-strong); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .wf-bar { height: 8px; background: var(--mute-2); opacity: 0.4; border-radius: 2px; }
+  .wf-bar.s { width: 40%; }
+  .wf-bar.m { width: 70%; }
+  .wf-bar.em { background: var(--emerald); opacity: 0.9; }
+  .wf-bar.bl { background: var(--blue); opacity: 0.7; }
+  .wf-row { display: flex; gap: 6px; }
+  .wf-row .wf-bar { flex: 1; }
+  .wf-block { flex: 1; background: rgba(255,255,255,0.03); border: 1px dashed var(--line); border-radius: 4px; }
+  .wf-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; color: var(--mute); text-transform: uppercase; }
+  .wf-name { font-size: 16px; color: var(--ink); font-weight: 500; }
+
+  /* ===== AI as material ===== */
+  .material-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; flex: 1; align-items: center; }
+  .material-left { display: flex; flex-direction: column; gap: 28px; }
+  .material-thesis { font-size: 60px; line-height: 1.25; font-weight: 700; letter-spacing: -0.025em; }
+  .material-thesis .strike { color: var(--mute-2); text-decoration: line-through; text-decoration-color: var(--rose); text-decoration-thickness: 3px; display: inline-block; }
+  .material-thesis .right { color: var(--emerald); }
+  .material-principles { display: flex; flex-direction: column; gap: 16px; }
+  .mp { display: flex; gap: 24px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .mp:last-child { border-bottom: none; }
+  .mp .num { font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em; color: var(--blue); min-width: 40px; }
+  .mp .lbl { font-size: 22px; color: var(--ink); font-weight: 600; min-width: 280px; }
+  .mp .desc { font-size: 17px; color: var(--mute); line-height: 1.45; flex: 1; }
+
+  /* ===== 11 AI augmentations grid ===== */
+  .aug-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: 14px; flex: 1; }
+  .aug { padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; position: relative; }
+  .aug .idx { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; color: var(--mute-2); }
+  .aug .h { font-size: 19px; font-weight: 600; line-height: 1.2; color: var(--ink); letter-spacing: -0.01em; }
+  .aug .desc { font-size: 14px; line-height: 1.45; color: var(--mute); flex: 1; }
+  .aug .cap { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding-top: 10px; border-top: 1px solid var(--line); }
+  .aug .cap.em { color: var(--emerald); }
+  .aug .cap.bl { color: var(--blue); }
+
+  /* ===== Hi-fi mockup screens ===== */
+  .mock-frame { background: var(--bg-2); border: 1px solid var(--line-strong); border-radius: 14px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.02); display: flex; flex-direction: column; height: 100%; }
+  .mock-chrome { padding: 12px 16px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 14px; }
+  .mock-chrome .dots { display: flex; gap: 6px; }
+  .mock-chrome .dots span { width: 11px; height: 11px; border-radius: 50%; }
+  .mock-chrome .dots .r { background: #ef4444; }
+  .mock-chrome .dots .y { background: #eab308; }
+  .mock-chrome .dots .g { background: #22c55e; }
+  .mock-chrome .url { flex: 1; padding: 5px 12px; background: rgba(0,0,0,0.3); border-radius: 6px; font-family: var(--mono); font-size: 12px; color: var(--mute); letter-spacing: 0.04em; }
+  .mock-chrome .url .lock { color: var(--emerald); margin-right: 6px; }
+  .mock-body { flex: 1; display: grid; min-height: 0; }
+
+  /* mock: book overview */
+  .mock-book { grid-template-columns: 200px 1fr 360px; }
+  .mock-side { background: rgba(0,0,0,0.2); border-right: 1px solid var(--line); padding: 20px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .mock-side .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 16px; }
+  .mock-side .brand-mark { width: 22px; height: 22px; border-radius: 5px; background: linear-gradient(135deg, var(--emerald), var(--blue)); }
+  .mock-side .brand-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+  .mock-side .nav-item { padding: 8px 10px; font-size: 13px; color: var(--mute); border-radius: 6px; display: flex; align-items: center; gap: 10px; }
+  .mock-side .nav-item.active { background: rgba(16,185,129,0.12); color: var(--emerald); }
+  .mock-side .nav-item .ico { width: 14px; height: 14px; border-radius: 3px; background: currentColor; opacity: 0.5; }
+  .mock-side .nav-section { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; color: var(--mute-2); padding: 14px 10px 6px; }
+
+  .mock-main { padding: 22px 26px; overflow: hidden; display: flex; flex-direction: column; gap: 18px; }
+  .mock-h { display: flex; justify-content: space-between; align-items: baseline; }
+  .mock-h h3 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .mock-h .asof { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--mute); }
+  .mock-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .mock-kpi { padding: 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 8px; }
+  .mock-kpi .l { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--mute-2); }
+  .mock-kpi .v { font-size: 22px; font-weight: 700; margin-top: 4px; letter-spacing: -0.015em; }
+  .mock-kpi .v.em { color: var(--emerald); }
+  .mock-kpi .d { font-family: var(--mono); font-size: 11px; color: var(--mute); }
+
+  .mock-section { background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 10px; padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .mock-section .st { display: flex; justify-content: space-between; align-items: center; }
+  .mock-section .st .title { font-size: 13px; font-weight: 600; letter-spacing: -0.005em; }
+  .mock-section .st .meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--mute-2); }
+
+  .client-row { display: grid; grid-template-columns: 24px 1fr 70px 80px 80px; gap: 10px; padding: 10px 8px; border-radius: 6px; align-items: center; font-size: 12px; }
+  .client-row:nth-child(even) { background: rgba(255,255,255,0.015); }
+  .client-row.flagged { background: rgba(244,63,94,0.06); border-left: 2px solid var(--rose); padding-left: 6px; }
+  .client-row .av { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, #475569, #1e293b); font-family: var(--mono); font-size: 9px; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; font-weight: 600; }
+  .client-row .nm { color: var(--ink); font-weight: 500; font-size: 12px; }
+  .client-row .nm .sub { color: var(--mute-2); font-size: 10px; display: block; margin-top: 1px; font-family: var(--mono); letter-spacing: 0.04em; }
+  .client-row .v { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); text-align: right; }
+  .client-row .tg { text-align: right; }
+
+  /* AI panel */
+  .ai-panel { background: linear-gradient(180deg, rgba(16,185,129,0.06), rgba(59,130,246,0.04)); border-left: 1px solid var(--line); padding: 22px 22px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+  .ai-panel .ai-head { display: flex; align-items: center; gap: 10px; }
+  .ai-panel .ai-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 12px var(--emerald); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .ai-panel .ai-title { font-size: 13px; font-family: var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--emerald); font-weight: 600; }
+  .ai-panel .ai-status { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; color: var(--mute); margin-left: auto; text-transform: uppercase; }
+  .ai-card { background: rgba(0,0,0,0.25); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .ai-card .priority { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--rose); text-transform: uppercase; }
+  .ai-card .priority.med { color: var(--amber); }
+  .ai-card .priority.low { color: var(--blue); }
+  .ai-card .who { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+  .ai-card .why { font-size: 12px; color: var(--ink-soft); line-height: 1.45; }
+  .ai-card .why b { color: var(--emerald); font-weight: 500; }
+  .ai-card .conf { display: flex; align-items: center; gap: 8px; padding-top: 6px; }
+  .ai-card .conf-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+  .ai-card .conf-bar .fill { height: 100%; background: var(--emerald); }
+  .ai-card .conf-pct { font-family: var(--mono); font-size: 10px; color: var(--emerald); letter-spacing: 0.06em; }
+  .ai-card .actions { display: flex; gap: 6px; margin-top: 4px; }
+  .ai-card .act { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; padding: 5px 10px; border-radius: 4px; border: 1px solid var(--line-strong); color: var(--ink-soft); text-transform: uppercase; }
+  .ai-card .act.primary { background: var(--emerald); color: #052e23; border-color: var(--emerald); font-weight: 600; }
+
+  /* Hi-fi: full-bleed mock slide layout */
+  .hifi-slide { display: grid; grid-template-columns: 1.25fr 2.5fr; gap: 56px; flex: 1; align-items: stretch; min-height: 0; }
+  .hifi-narr { display: flex; flex-direction: column; gap: 24px; padding-top: 8px; }
+  .hifi-narr h2 { font-size: 56px; letter-spacing: -0.025em; line-height: 1.02; }
+  .hifi-narr .lead { font-size: 22px; color: var(--mute); line-height: 1.5; }
+  .hifi-narr .annot { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+  .hifi-narr .ann { display: flex; gap: 16px; }
+  .hifi-narr .ann .n { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--emerald); min-width: 28px; }
+  .hifi-narr .ann .t { font-size: 16px; color: var(--ink-soft); line-height: 1.45; }
+  .hifi-narr .ann .t b { color: var(--ink); font-weight: 600; }
+  .mock-wrap { display: flex; align-items: stretch; min-height: 0; }
+
+  /* mock: meeting mode */
+  .mock-meeting { grid-template-columns: 1fr; padding: 22px 28px; gap: 18px; display: flex; flex-direction: column; }
+  .mm-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .mm-head .who { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+  .mm-head .who .sub { font-family: var(--mono); font-size: 12px; color: var(--mute); display: block; margin-top: 4px; letter-spacing: 0.1em; }
+  .mm-pills { display: flex; gap: 8px; }
+  .mm-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 10px; }
+  .mm-stats .s .l { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--mute-2); }
+  .mm-stats .s .v { font-size: 22px; font-weight: 700; margin-top: 4px; letter-spacing: -0.015em; }
+  .mm-narr { background: rgba(16,185,129,0.04); border: 1px solid rgba(16,185,129,0.25); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; }
+  .mm-narr .nh { display: flex; align-items: center; gap: 10px; }
+  .mm-narr .ai-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--emerald); display: flex; align-items: center; gap: 6px; text-transform: uppercase; }
+  .mm-narr .ai-tag .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 8px var(--emerald); }
+  .mm-narr .vox { font-family: var(--mono); font-size: 10px; color: var(--mute); letter-spacing: 0.14em; margin-left: auto; text-transform: uppercase; }
+  .mm-narr .text { font-size: 13px; line-height: 1.6; color: var(--ink-soft); overflow: hidden; }
+  .mm-narr .text .hi { background: rgba(16,185,129,0.15); padding: 1px 3px; border-radius: 2px; color: var(--ink); }
+  .mm-actions { display: flex; gap: 8px; }
+  .mm-btn { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; padding: 9px 16px; border-radius: 6px; border: 1px solid var(--line-strong); color: var(--ink-soft); text-transform: uppercase; }
+  .mm-btn.primary { background: var(--emerald); color: #052e23; border-color: var(--emerald); font-weight: 700; }
+
+  /* mock: drift timeline */
+  .mock-drift { grid-template-columns: 1fr; padding: 22px 28px; gap: 16px; display: flex; flex-direction: column; }
+  .drift-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .drift-head .h { font-size: 22px; font-weight: 700; letter-spacing: -0.015em; }
+  .drift-row { display: grid; grid-template-columns: 200px 1fr 90px; gap: 16px; align-items: center; padding: 14px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: 10px; }
+  .drift-row.crit { background: rgba(244,63,94,0.06); border-color: rgba(244,63,94,0.3); }
+  .drift-row .nm { font-size: 14px; font-weight: 600; }
+  .drift-row .nm .sub { font-family: var(--mono); font-size: 11px; color: var(--mute-2); display: block; margin-top: 2px; letter-spacing: 0.08em; }
+  .drift-timeline { height: 32px; position: relative; background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.04) 100%); border-radius: 16px; overflow: hidden; }
+  .drift-timeline .band { position: absolute; height: 100%; background: linear-gradient(90deg, rgba(16,185,129,0.5) 0%, rgba(245,158,11,0.5) 50%, rgba(244,63,94,0.7) 100%); }
+  .drift-timeline .marker { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); }
+  .drift-timeline .marker.now { background: var(--blue); }
+  .drift-timeline .marker .lbl { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; color: var(--blue); white-space: nowrap; }
+  .drift-timeline .marker.breach { background: var(--rose); }
+  .drift-timeline .marker.breach .lbl { color: var(--rose); }
+  .drift-row .prob { text-align: right; }
+  .drift-row .prob .pct { font-size: 22px; font-weight: 700; color: var(--rose); font-family: var(--mono); letter-spacing: -0.01em; }
+  .drift-row .prob .lbl { font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em; color: var(--mute-2); }
+
+  /* mock: bubble map */
+  .mock-bubble { grid-template-columns: 1fr; padding: 22px 28px; display: flex; flex-direction: column; gap: 16px; }
+  .bubble-canvas { flex: 1; position: relative; background: rgba(0,0,0,0.2); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .bubble-canvas::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(148,163,184,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .axis { position: absolute; font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--mute-2); text-transform: uppercase; }
+  .axis.x { bottom: 8px; left: 50%; transform: translateX(-50%); }
+  .axis.y { top: 50%; left: 8px; transform: translateY(-50%) rotate(-90deg); transform-origin: left center; }
+  .bubble { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 8px; }
+  .bubble .nm { font-size: 12px; font-weight: 600; line-height: 1.1; }
+  .bubble .yr { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; margin-top: 2px; }
+  .bubble.em { background: radial-gradient(circle at 35% 35%, rgba(16,185,129,0.5), rgba(16,185,129,0.15)); border: 1px solid rgba(16,185,129,0.5); color: #d1fae5; box-shadow: 0 0 30px rgba(16,185,129,0.2); }
+  .bubble.bl { background: radial-gradient(circle at 35% 35%, rgba(59,130,246,0.5), rgba(59,130,246,0.15)); border: 1px solid rgba(59,130,246,0.5); color: #dbeafe; box-shadow: 0 0 30px rgba(59,130,246,0.2); }
+  .bubble.am { background: radial-gradient(circle at 35% 35%, rgba(245,158,11,0.5), rgba(245,158,11,0.15)); border: 1px solid rgba(245,158,11,0.5); color: #fef3c7; box-shadow: 0 0 30px rgba(245,158,11,0.15); }
+  .bubble.ro { background: radial-gradient(circle at 35% 35%, rgba(244,63,94,0.5), rgba(244,63,94,0.15)); border: 1px solid rgba(244,63,94,0.5); color: #ffe4e6; box-shadow: 0 0 30px rgba(244,63,94,0.15); }
+  .bubble-legend { display: flex; gap: 18px; align-items: center; }
+  .bubble-legend .lk { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--mute); text-transform: uppercase; }
+  .bubble-legend .lk .d { width: 10px; height: 10px; border-radius: 50%; }
+  .bubble-legend .lk.em .d { background: var(--emerald); box-shadow: 0 0 8px var(--emerald); }
+  .bubble-legend .lk.bl .d { background: var(--blue); box-shadow: 0 0 8px var(--blue); }
+  .bubble-legend .lk.am .d { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+  .bubble-legend .lk.ro .d { background: var(--rose); box-shadow: 0 0 8px var(--rose); }
+
+  /* Before/After */
+  .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; }
+  .ba-side { display: flex; flex-direction: column; }
+  .ba-side .ba-head { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+  .ba-side .ba-head .lbl { font-family: var(--mono); font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase; }
+  .ba-side.before .lbl { color: var(--rose); }
+  .ba-side.after .lbl { color: var(--emerald); }
+  .ba-side .ba-head .sub { font-size: 14px; color: var(--mute); font-family: var(--mono); letter-spacing: 0.06em; }
+  .ba-list { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+  .ba-row { padding: 18px 22px; display: grid; grid-template-columns: 140px 1fr; gap: 18px; align-items: baseline; }
+  .ba-row .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; color: var(--mute-2); text-transform: uppercase; }
+  .ba-row .v { font-size: 18px; color: var(--ink-soft); line-height: 1.4; }
+  .ba-row .v b { color: var(--ink); font-weight: 600; }
+  .ba-side.before .ba-row { background: rgba(244,63,94,0.04); border: 1px solid rgba(244,63,94,0.15); border-radius: 10px; }
+  .ba-side.after .ba-row { background: rgba(16,185,129,0.04); border: 1px solid rgba(16,185,129,0.25); border-radius: 10px; }
+  .ba-side.after .ba-row .v b { color: var(--emerald); }
+
+  /* Usability test */
+  .ut-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; flex: 1; }
+  .ut-tbl { display: flex; flex-direction: column; }
+  .ut-tbl .ut-hd, .ut-tbl .ut-row { display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+  .ut-tbl .ut-hd { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; color: var(--mute-2); text-transform: uppercase; }
+  .ut-tbl .ut-row .task { font-size: 18px; color: var(--ink-soft); }
+  .ut-tbl .ut-row .v { font-family: var(--mono); font-size: 20px; font-weight: 600; }
+  .ut-tbl .ut-row .v.em { color: var(--emerald); }
+  .ut-tbl .ut-row .v.bl { color: var(--blue); }
+  .ut-tbl .ut-row .v.am { color: var(--amber); }
+  .sus-card { display: flex; flex-direction: column; justify-content: center; padding: 40px; gap: 20px; }
+  .sus-card .l { font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em; color: var(--mute); }
+  .sus-card .v { font-size: 160px; font-weight: 800; color: var(--emerald); line-height: 0.9; letter-spacing: -0.04em; }
+  .sus-card .d { font-size: 18px; color: var(--ink-soft); line-height: 1.45; }
+
+  /* Day in life timeline */
+  .day-timeline { flex: 1; display: flex; flex-direction: column; gap: 18px; }
+  .day-row { display: grid; grid-template-columns: 130px 1fr; gap: 28px; align-items: stretch; }
+  .day-row .time { font-family: var(--mono); font-size: 22px; font-weight: 600; color: var(--emerald); letter-spacing: 0.04em; padding-top: 18px; }
+  .day-row .time .lbl { display: block; font-size: 11px; letter-spacing: 0.18em; color: var(--mute-2); margin-top: 4px; text-transform: uppercase; font-weight: 500; }
+  .day-card { padding: 18px 26px; display: flex; flex-direction: column; gap: 6px; position: relative; }
+  .day-card .h { font-size: 22px; font-weight: 600; color: var(--ink); letter-spacing: -0.015em; }
+  .day-card .d { font-size: 16px; color: var(--mute); line-height: 1.5; }
+  .day-card .tag { align-self: flex-start; margin-bottom: 4px; }
+
+  /* Results big numbers */
+  .results-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr 1fr; gap: 18px; flex: 1; }
+  .res { padding: 26px 28px; display: flex; flex-direction: column; justify-content: space-between; }
+  .res .lbl { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; color: var(--mute-2); text-transform: uppercase; }
+  .res .num { font-size: 76px; font-weight: 800; letter-spacing: -0.04em; line-height: 0.95; }
+  .res .num.em { color: var(--emerald); }
+  .res .num.bl { color: var(--blue); }
+  .res .num.am { color: var(--amber); }
+  .res .num .unit { font-size: 32px; color: var(--mute); margin-left: 4px; font-weight: 500; }
+  .res .delta { font-family: var(--mono); font-size: 14px; letter-spacing: 0.06em; color: var(--ink-soft); }
+
+  /* Reflection */
+  .ref-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; flex: 1; }
+  .ref-card { padding: 36px 32px; display: flex; flex-direction: column; gap: 18px; }
+  .ref-card .n { font-family: var(--mono); font-size: 13px; letter-spacing: 0.18em; color: var(--emerald); }
+  .ref-card .h { font-size: 32px; font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; }
+  .ref-card .d { font-size: 18px; color: var(--mute); line-height: 1.55; }
+
+  /* Closing slide */
+  .closing { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: var(--pad-y) var(--pad-x); height: 100%; box-sizing: border-box; position: relative; }
+  .closing h2 { font-size: 92px; line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; max-width: 1600px; }
+  .closing h2 .gradient { background: linear-gradient(120deg, var(--emerald), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .closing .sig { margin-top: 64px; display: flex; gap: 64px; align-items: baseline; }
+  .closing .sig .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; color: var(--mute-2); text-transform: uppercase; }
+  .closing .sig .v { font-size: 20px; color: var(--ink-soft); margin-top: 6px; }
+
+
+/* Custom link styles for Interview Edition top-right navigation header */
+.chrome-tr-link {
+  position: absolute;
+  top: 40px;
+  right: 96px;
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--emerald);
+  text-decoration: none;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s;
+}
+.chrome-tr-link:hover {
+  color: #fff !important;
+}
+.chrome-tr-counter {
+  position: absolute;
+  top: 40px;
+  right: 360px;
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  color: var(--mute-2);
+  z-index: 10000;
+}
+</style>
+</head>
+<body>
+
+<deck-stage>
+  
+  <!-- SLIDE 01 / 13 — HERO -->
+  <section data-label="01 Hero">
+    <div class="hero">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+      
+      <div class="nav">
+        <div class="left">
+          <div class="brand-mark">
+            <div class="brand-glyph"></div>
+            <span style="font-weight: 800; letter-spacing: -0.02em;">STRAND FINANCE</span>
+          </div>
+        </div>
+        <div class="right">
+          <span class="pill em">CASE STUDY · 2026</span>
+        </div>
+      </div>
+      
+      <div class="core">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 24px; font-size: 14px;">STRAND FINANCE · UX CASE STUDY · INTERVIEW EDITION</div>
+          <h1 style="font-size: 64px;">From two hours to under <span class="gradient">a minute</span>.</h1>
+          <p class="pitch" style="font-size: 30px;">Empowering the modern Relationship Manager.</p>
+        </div>
+        
+        <div class="meta-grid">
+          <div>
+            <div class="k">ROLE</div>
+            <div class="v">Senior UX/UI Designer & AI Strategist</div>
+          </div>
+          <div>
+            <div class="k">CLIENT</div>
+            <div class="v">Strand Finance — Private Wealth</div>
+          </div>
+          <div>
+            <div class="k">TIMELINE</div>
+            <div class="v">24 weeks · 2026</div>
+          </div>
+          <div>
+            <div class="k">PLATFORM</div>
+            <div class="v">Enterprise Web + Responsive PWA</div>
+          </div>
+          <div style="grid-column: span 2;">
+            <div class="k">TOOLS</div>
+            <div class="v">Figma · Angular · Power BI</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="foot">
+        <span>PARTH PAREKH · PREPARED FOR SEI INVESTMENTS INTERVIEW</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 02 / 13 — CONTEXT & TRANSPARENCY -->
+  <section data-label="02 Context">
+    <div class="slide-pad">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+      <div class="chrome-tl">02 / CONTEXT</div>
+      <div class="chrome-tr-counter">02 / 13</div>
+      <a href="Strand Finance Case Study.html" class="chrome-tr-link">View full case study →</a>
+      
+      <div class="head-block">
+        <div class="eyebrow">ABOUT THIS CASE STUDY</div>
+        <h2 class="title" style="margin-top: 18px;">About this case study.</h2>
+      </div>
+      
+      <div class="row-split" style="align-items: center;">
+        <div class="glass" style="padding: 36px; border: 1px solid var(--line-strong); border-radius: 20px; background: rgba(255,255,255,0.01); font-size: 20px; line-height: 1.65; color: var(--ink-soft);">
+          The original engagement at Strand Finance is under NDA. The visuals shown here are a recreation built for portfolio purposes; the problem framing, user research, design decisions, and component architecture are from the original engagement. Specific metrics reflect either measured outcomes from the original work or modeled projections based on competitive benchmarking — noted where applicable.
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;">
+          <img src="images /Dashboard-1.png" style="width: 60%; border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 12px 32px rgba(0,0,0,0.5);">
+          <div class="small" style="text-align: center; font-size: 14px;">The unified RM command center · We'll explore this in detail in Slide 07.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 03 / 13 — THE USER -->
+  <section data-label="03 The User">
+    <div class="slide-pad">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+      <div class="chrome-tl">03 / USER PROFILE</div>
+      <div class="chrome-tr-counter">03 / 13</div>
+      <a href="Strand Finance Case Study.html" class="chrome-tr-link">View full case study →</a>
+      
+      <div class="head-block">
+        <div class="eyebrow">TARGET USER</div>
+        <h2 class="title" style="margin-top: 18px;">Meet Jameson — Senior Relationship Manager.</h2>
+      </div>
+      
+      <div class="row-split" style="grid-template-columns: 1.25fr 0.75fr; align-items: center; flex: 1;">
+        <div class="persona-card glass" style="padding: 32px; display: flex; flex-direction: column; gap: 20px;">
+          <div class="persona-head">
+            <div class="persona-avatar" style="background: var(--bg-1); color: var(--blue); border: 1px solid var(--blue); width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 600; font-size: 22px;">JW</div>
+            <div>
+              <div class="name">Jameson W.</div>
+              <div class="role">Sr Relationship Manager · 12 years at Strand</div>
+            </div>
+          </div>
+          
+          <div class="persona-stats" style="grid-template-columns: repeat(4, 1fr);">
+            <div>
+              <div class="k">AGE</div>
+              <div class="v">47</div>
+            </div>
+            <div>
+              <div class="k">BOOK</div>
+              <div class="v">45 clients</div>
+            </div>
+            <div>
+              <div class="k">AUM</div>
+              <div class="v">$380M</div>
+            </div>
+            <div>
+              <div class="k">TECH</div>
+              <div class="v">High / Wary</div>
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div>
+              <h4 style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; color: var(--emerald); text-transform: uppercase;">GOALS</h4>
+              <ul style="margin: 0; padding-left: 18px; color: var(--ink-soft); font-size: 16px; line-height: 1.5;">
+                <li>Walk into every meeting fully prepared</li>
+                <li>Spot client problems before clients do</li>
+                <li>Grow the book through referrals and NNM</li>
+              </ul>
+            </div>
+            <div>
+              <h4 style="font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; color: var(--rose); text-transform: uppercase;">FRUSTRATIONS</h4>
+              <ul style="margin: 0; padding-left: 18px; color: var(--ink-soft); font-size: 16px; line-height: 1.5;">
+                <li>Data scattered across 5+ systems</li>
+                <li>2-hour pre-meeting prep ritual</li>
+                <li>Reactive drift detection</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div style="padding-left: 40px; display: flex; flex-direction: column; gap: 16px;">
+          <div style="font-size: 32px; font-style: italic; font-weight: 500; line-height: 1.4; color: var(--ink); position: relative;">
+            <span style="color: var(--emerald); font-size: 64px; position: absolute; left: -40px; top: -20px; font-family: serif; opacity: 0.5;">“</span>
+            I want to spend time talking to my clients, not wrestling with spreadsheets.
+            <span style="color: var(--emerald); font-size: 64px; position: absolute; right: 0; bottom: -40px; font-family: serif; opacity: 0.5;">”</span>
+          </div>
+          <div style="font-family: var(--mono); font-size: 13px; color: var(--mute-2); letter-spacing: 0.08em; margin-top: 24px;">Representative quote — synthesized from 12 RM interviews</div>
+        </div>
+      </div>
+      
+      <div style="font-family: var(--mono); font-size: 12px; color: var(--mute-2); letter-spacing: 0.1em; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line);">
+        This deck focuses on Jameson. The full design also serves HNWI clients and Compliance officers — see master case study for details.
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 04 / 13 — THE PROBLEM -->
+  <section data-label="04 The Problem">
+    <div class="slide-pad">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+      <div class="chrome-tl">04 / THE PROBLEM</div>
+      <div class="chrome-tr-counter">04 / 13</div>
+      <a href="Strand Finance Case Study.html" class="chrome-tr-link">View full case study →</a>
+      
+      <div class="head-block">
+        <div class="eyebrow blue">CURRENT-STATE JOURNEY</div>
+        <h2 class="title" style="margin-top: 18px;">Jameson's 2-hour pre-meeting ritual.</h2>
+      </div>
+      
+      <div class="journey-grid">
+        <div class="j-step glass">
+          <div class="t">T −2:00</div>
+          <div class="ph">01 · TRIGGER</div>
+          <div class="h">Calendar alert</div>
+          <div class="thinks">"I need to start prepping now."</div>
+          <div class="emo">😐</div>
+          <div class="pain">2 hrs to prep · context-switch starts</div>
+        </div>
+        <div class="j-step glass">
+          <div class="t">T −1:45</div>
+          <div class="ph">02 · GATHER</div>
+          <div class="h">Open 5 systems</div>
+          <div class="thinks">"Where did I save last quarter's notes?"</div>
+          <div class="emo">😤</div>
+          <div class="pain">5+ tool context switches</div>
+        </div>
+        <div class="j-step glass">
+          <div class="t">T −1:00</div>
+          <div class="ph">03 · AGGREGATE</div>
+          <div class="h">Export 3 CSVs</div>
+          <div class="thinks">"Did I include the trust account?"</div>
+          <div class="emo">😟</div>
+          <div class="pain">Manual, error-prone consolidation</div>
+        </div>
+        <div class="j-step glass">
+          <div class="t">T −0:30</div>
+          <div class="ph">04 · WRITE</div>
+          <div class="h">Draft narrative</div>
+          <div class="thinks">"Did I get the benchmark right?"</div>
+          <div class="emo">😩</div>
+          <div class="pain">Repetitive writing fatigue</div>
+        </div>
+        <div class="j-step glass">
+          <div class="t">T −0:10</div>
+          <div class="ph">05 · FORMAT</div>
+          <div class="h">PowerPoint hell</div>
+          <div class="thinks">"This template is so old."</div>
+          <div class="emo">😐</div>
+          <div class="pain">Time spent on fonts, not insight</div>
+        </div>
+        <div class="j-step glass">
+          <div class="t">T  0:00</div>
+          <div class="ph">06 · MEETING</div>
+          <div class="h">Enter unprepared</div>
+          <div class="thinks">"Please don't ask about Apple."</div>
+          <div class="emo">😬</div>
+          <div class="pain">Knowledge gaps surface live</div>
+        </div>
+      </div>
+      
+      <div style="margin-top: 32px; display: flex; justify-content: space-between; align-items: center;">
+        <span class="pill rose" style="font-size: 16px; padding: 8px 20px;">90+ hours per quarter. Across 5 silos. For a single book.</span>
+        <span style="font-family: var(--mono); font-size: 12px; color: var(--mute-2); letter-spacing: 0.1em;">CURRENT STATE PROTOCOL</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 05 / 13 — RESEARCH SYNTHESIS -->
+  <section data-label="05 Research Synthesis">
+    <div class="slide-pad">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+      <div class="chrome-tl">05 / SYNTHESIS</div>
+      <div class="chrome-tr-counter">05 / 13</div>
+      <a href="Strand Finance Case Study.html" class="chrome-tr-link">View full case study →</a>
+      
+      <div class="head-block">
+        <div class="eyebrow">RESEARCH FINDINGS</div>
+        <h2 class="title" style="margin-top: 18px;">Three friction points that defined the project.</h2>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; flex: 1; align-items: stretch;">
+        <div class="glass" style="padding: 32px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 20px;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 48px; font-weight: 700; color: var(--emerald); line-height: 1;">01</div>
+            <h3 style="font-size: 24px; font-weight: 600; margin-top: 20px; color: var(--ink);">PREP PARALYSIS</h3>
+            <p style="font-size: 18px; color: var(--ink-soft); line-height: 1.5; margin-top: 12px;">90+ hours per quarter spent on manual data aggregation across 5 silos.</p>
+          </div>
+          <div style="margin-top: 24px; display: flex;">
+            <span class="pill rose">CRITICAL</span>
+          </div>
+        </div>
+        
+        <div class="glass" style="padding: 32px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 20px;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 48px; font-weight: 700; color: var(--emerald); line-height: 1;">02</div>
+            <h3 style="font-size: 24px; font-weight: 600; margin-top: 20px; color: var(--ink);">REACTIVE DRIFT</h3>
+            <p style="font-size: 18px; color: var(--ink-soft); line-height: 1.5; margin-top: 12px;">Concentration risks and IPS breaches are caught weeks too late by compliance.</p>
+          </div>
+          <div style="margin-top: 24px; display: flex;">
+            <span class="pill rose">CRITICAL</span>
+          </div>
+        </div>
+        
+        <div class="glass" style="padding: 32px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 20px;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 48px; font-weight: 700; color: var(--emerald); line-height: 1;">03</div>
+            <h3 style="font-size: 24px; font-weight: 600; margin-top: 20px; color: var(--ink);">THE TRUST GAP</h3>
+            <p style="font-size: 18px; color: var(--ink-soft); line-height: 1.5; margin-top: 12px;">Jargon-heavy reporting leaves clients asking: 'What am I actually paying for?'</p>
+          </div>
+          <div style="margin-top: 24px; display: flex;">
+            <span class="pill amber">HIGH</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="font-family: var(--mono); font-size: 12px; color: var(--mute-2); letter-spacing: 0.1em; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line);">
+        Synthesized from 12 RM interviews, 6 contextual inquiries, 85+ client surveys, and a compliance co-design workshop.
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 06 / 13 — DESIGN PRINCIPLES -->
+  <section data-label="06 Design Principles">
+    <div class="slide-pad">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+      <div class="chrome-tl">06 / PRINCIPLES</div>
+      <div class="chrome-tr-counter">06 / 13</div>
+      <a href="Strand Finance Case Study.html" class="chrome-tr-link">View full case study →</a>
+      
+      <div class="head-block">
+        <div class="eyebrow">DESIGN STRATEGY</div>
+        <h2 class="title" style="margin-top: 18px;">Three principles for every screen.</h2>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; flex: 1; align-items: stretch;">
+        <div class="glass" style="padding: 40px 32px; border-radius: 20px; border-top: 4px solid var(--emerald);">
+          <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.2em; color: var(--mute-2);">PRINCIPLE 01</div>
+          <h3 style="font-size: 28px; font-weight: 700; color: var(--ink); margin-top: 16px; margin-bottom: 16px;">Workflow before data.</h3>
+          <p style="font-size: 18px; color: var(--ink-soft); line-height: 1.6;">Every screen earns its place by serving a moment in the RM's day.</p>
+        </div>
+        
+        <div class="glass" style="padding: 40px 32px; border-radius: 20px; border-top: 4px solid var(--blue);">
+          <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.2em; color: var(--mute-2);">PRINCIPLE 02</div>
+          <h3 style="font-size: 28px; font-weight: 700; color: var(--ink); margin-top: 16px; margin-bottom: 16px;">AI augments, never replaces.</h3>
+          <p style="font-size: 18px; color: var(--ink-soft); line-height: 1.6;">AI handles synthesis. The RM owns the relationship.</p>
+        </div>
+        
+        <div class="glass" style="padding: 40px 32px; border-radius: 20px; border-top: 4px solid var(--amber);">
+          <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.2em; color: var(--mute-2);">PRINCIPLE 03</div>
+          <h3 style="font-size: 28px; font-weight: 700; color: var(--ink); margin-top: 16px; margin-bottom: 16px;">Trust through transparency.</h3>
+          <p style="font-size: 18px; color: var(--ink-soft); line-height: 1.6;">Every number shows its source, its timestamp, and its confidence.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 07 / 13 — HERO: RM COMMAND CENTER -->
+  <section data-label="07 RM Command Center">
+    <div class="slide-pad">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+      <div class="chrome-tl">07 / THE SOLUTION</div>
+      <div class="chrome-tr-counter">07 / 13</div>
+      <a href="Strand Finance Case Study.html" class="chrome-tr-link">View full case study →</a>
+      
+      <div class="head-block" style="margin-bottom: 20px;">
+        <div class="eyebrow">EXECUTIVE DASHBOARD</div>
+        <h2 class="title" style="margin-top: 10px; font-size: 40px;">The morning command center.</h2>
+      </div>
+      
+      <div style="position: relative; width: 100%; max-height: 440px; overflow: hidden; border-radius: 12px; border: 1px solid var(--line);">
+        <img src="images /Dashboard-1.png" style="width: 100%; display: block;">
+        
+        <!-- Interactive overlays -->
+        <div style="position: absolute; top: 8%; left: 16%; width: 28px; height: 28px; background: var(--emerald); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; box-shadow: 0 0 12px var(--emerald); cursor: default; z-index: 10;">1</div>
+        <div style="position: absolute; top: 38%; left: 24%; width: 28px; height: 28px; background: var(--emerald); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; box-shadow: 0 0 12px var(--emerald); cursor: default; z-index: 10;">2</div>
+        <div style="position: absolute; top: 12%; left: 88%; width: 28px; height: 28px; background: var(--emerald); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; box-shadow: 0 0 12px var(--emerald); cursor: default; z-index: 10;">3</div>
+        <div style="position: absolute; top: 58%; left: 18%; width: 28px; height: 28px; background: var(--emerald); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; box-shadow: 0 0 12px var(--emerald); cursor: default; z-index: 10;">4</div>
+        <div style="position: absolute; top: 16%; left: 63%; width: 28px; height: 28px; background: var(--emerald); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; box-shadow: 0 0 12px var(--emerald); cursor: default; z-index: 10;">5</div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line);">
+        <div style="font-size: 13.5px; line-height: 1.4; color: var(--ink-soft);">
+          <span style="font-family: var(--mono); color: var(--emerald); font-weight: 700;">①</span> <b>WORKFLOW SUMMARY</b> — Entire dashboard summarized in one sentence
+        </div>
+        <div style="font-size: 13.5px; line-height: 1.4; color: var(--ink-soft);">
+          <span style="font-family: var(--mono); color: var(--emerald); font-weight: 700;">②</span> <b>IPS-TARGET COMPARISON</b> — The compliance conversation in 8 numbers
+        </div>
+        <div style="font-size: 13.5px; line-height: 1.4; color: var(--ink-soft);">
+          <span style="font-family: var(--mono); color: var(--emerald); font-weight: 700;">③</span> <b>FIDUCIARY LANGUAGE</b> — "Constructive" not "Bullish" — institutional vocab
+        </div>
+        <div style="font-size: 13.5px; line-height: 1.4; color: var(--ink-soft);">
+          <span style="font-family: var(--mono); color: var(--emerald); font-weight: 700;">④</span> <b>IA PATTERN</b> — Shneiderman's mantra: overview → zoom → details on demand
+        </div>
+        <div style="font-size: 13.5px; line-height: 1.4; color: var(--ink-soft);">
+          <span style="font-family: var(--mono); color: var(--emerald); font-weight: 700;">⑤</span> <b>RESTRAINED COLOR</b> — Single amber point = single point of attention
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 08 / 13 — CLIENT DEEP-DIVE -->
+  <section data-label="08 Client Deep-Dive">
+    <div class="slide-pad">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+      <div class="chrome-tl">08 / DRILL-DOWN</div>
+      <div class="chrome-tr-counter">08 / 13</div>
+      <a href="Strand Finance Case Study.html" class="chrome-tr-link">View full case study →</a>
+      
+      <div class="head-block">
+        <div class="eyebrow">CLIENT DETAIL VIEW</div>
+        <h2 class="title" style="margin-top: 18px;">When opportunity needs a decision.</h2>
+      </div>
+      
+      <div class="hifi-slide">
+        <div style="display: flex; flex-direction: column; justify-content: space-between; padding-top: 8px;">
+          <div class="annot">
+            <div class="ann">
+              <div class="n" style="color: var(--blue);">1</div>
+              <div class="t"><b>AI surfaces the opportunity</b> — $68k harvestable across 4 accounts.</div>
+            </div>
+            <div class="ann">
+              <div class="n" style="color: var(--blue);">2</div>
+              <div class="t"><b>Confidence + provenance visible</b> — RM can defend it to the client.</div>
+            </div>
+            <div class="ann">
+              <div class="n" style="color: var(--blue);">3</div>
+              <div class="t"><b>Action stays with the human</b> — "Launch Harvesting Wizard" requires RM click.</div>
+            </div>
+          </div>
+          
+          <div style="font-size: 18px; font-style: italic; color: var(--emerald); margin-top: 40px; font-weight: 500;">
+            "AI does the synthesis. The RM owns the decision."
+          </div>
+        </div>
+        
+        <div class="mock-wrap">
+          <div style="width: 100%; height: 100%; min-height: 460px; background: rgba(255,255,255,0.02); border: 2px dashed rgba(255,255,255,0.15); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px; box-sizing: border-box;">
+            <span style="font-family: var(--mono); font-size: 20px; font-weight: 600; color: var(--mute);">Placeholder: images /Lydia-Chen-detail.png</span>
+            <span style="font-size: 14px; color: var(--mute-2);">The amber-corrected version showing AI-identified TLH opportunity</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 09 / 13 — CLIENT PORTFOLIO -->
+  <section data-label="09 Client Portfolio">
+    <div class="slide-pad">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+      <div class="chrome-tl">09 / SCALE</div>
+      <div class="chrome-tr-counter">09 / 13</div>
+      <a href="Strand Finance Case Study.html" class="chrome-tr-link">View full case study →</a>
+      
+      <div class="head-block">
+        <div class="eyebrow">BOOK OVERVIEW</div>
+        <h2 class="title" style="margin-top: 18px;">The full book at a glance.</h2>
+      </div>
+      
+      <div class="hifi-slide">
+        <div style="display: flex; flex-direction: column; justify-content: space-between; padding-top: 8px;">
+          <div class="annot">
+            <div class="ann">
+              <div class="n">1</div>
+              <div class="t"><b>Unified status language</b> — same red/amber/green/blue logic as the dashboard.</div>
+            </div>
+            <div class="ann">
+              <div class="n">2</div>
+              <div class="t"><b>Filter chips</b> — segment, action, status — one-click triage.</div>
+            </div>
+            <div class="ann">
+              <div class="n">3</div>
+              <div class="t"><b>RM continuity</b> — Jameson visible on every row; auditable book ownership.</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mock-wrap">
+          <div style="width: 100%; height: 100%; min-height: 460px; background: rgba(255,255,255,0.02); border: 2px dashed rgba(255,255,255,0.15); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px; box-sizing: border-box;">
+            <span style="font-family: var(--mono); font-size: 20px; font-weight: 600; color: var(--mute);">Placeholder: images /Client-Portfolio.png</span>
+            <span style="font-size: 14px; color: var(--mute-2);">Visual overview of client grid with inline metrics</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 10 / 13 — CLOSING THE LOOP -->
+  <section data-label="10 Closing the Loop">
+    <div class="slide-pad">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+      <div class="chrome-tl">10 / DELIVERABLES</div>
+      <div class="chrome-tr-counter">10 / 13</div>
+      <a href="Strand Finance Case Study.html" class="chrome-tr-link">View full case study →</a>
+      
+      <div class="head-block">
+        <div class="eyebrow">CLIENT COMMUNICATIONS</div>
+        <h2 class="title" style="margin-top: 18px;">From insight to client communication.</h2>
+      </div>
+      
+      <div class="hifi-slide">
+        <div style="display: flex; flex-direction: column; justify-content: space-between; padding-top: 8px;">
+          <div class="annot">
+            <div class="ann">
+              <div class="n" style="color: var(--blue);">1</div>
+              <div class="t"><b>AI drafts every report</b> — RM reviews and approves before send.</div>
+            </div>
+            <div class="ann">
+              <div class="n" style="color: var(--blue);">2</div>
+              <div class="t"><b>Confidence levels visible</b> — Lydia Chen flagged "Medium · 1–2 lines for review".</div>
+            </div>
+            <div class="ann">
+              <div class="n" style="color: var(--blue);">3</div>
+              <div class="t"><b>Audit trail built in</b> — every draft version, every approval, every delivery logged.</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mock-wrap">
+          <div style="width: 100%; height: 100%; min-height: 460px; background: rgba(255,255,255,0.02); border: 2px dashed rgba(255,255,255,0.15); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px; box-sizing: border-box;">
+            <span style="font-family: var(--mono); font-size: 20px; font-weight: 600; color: var(--mute);">Placeholder: images /Reports.png</span>
+            <span style="font-size: 14px; color: var(--mute-2);">Document pack and narrative generation builder view</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 11 / 13 — AI STRATEGY -->
+  <section data-label="11 AI Strategy">
+    <div class="slide-pad">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+      <div class="chrome-tl">11 / AI INTEGRATION</div>
+      <div class="chrome-tr-counter">11 / 13</div>
+      <a href="Strand Finance Case Study.html" class="chrome-tr-link">View full case study →</a>
+      
+      <div class="head-block">
+        <div class="eyebrow">INTEGRATION MATRIX</div>
+        <h2 class="title" style="margin-top: 18px;">AI as material, threaded through the workflow.</h2>
+      </div>
+      
+      <!-- Top Principles Section -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px;">
+        <div class="glass" style="padding: 20px 24px; border-left: 2px solid var(--emerald); border-radius: 8px;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--mute-2); letter-spacing: 0.15em;">PRINCIPLE 01</div>
+          <div style="font-size: 16px; font-weight: 600; color: var(--ink); margin-top: 6px;">Show confidence, not just answers</div>
+        </div>
+        <div class="glass" style="padding: 20px 24px; border-left: 2px solid var(--emerald); border-radius: 8px;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--mute-2); letter-spacing: 0.15em;">PRINCIPLE 02</div>
+          <div style="font-size: 16px; font-weight: 600; color: var(--ink); margin-top: 6px;">Always editable</div>
+        </div>
+        <div class="glass" style="padding: 20px 24px; border-left: 2px solid var(--emerald); border-radius: 8px;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--mute-2); letter-spacing: 0.15em;">PRINCIPLE 03</div>
+          <div style="font-size: 16px; font-weight: 600; color: var(--ink); margin-top: 6px;">Provenance, one click away</div>
+        </div>
+        <div class="glass" style="padding: 20px 24px; border-left: 2px solid var(--emerald); border-radius: 8px;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--mute-2); letter-spacing: 0.15em;">PRINCIPLE 04</div>
+          <div style="font-size: 16px; font-weight: 600; color: var(--ink); margin-top: 6px;">No hallucinated specificity</div>
+        </div>
+      </div>
+      
+      <!-- Bottom Flagship AI Augmentations Section -->
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; flex: 1;">
+        <div class="glass" style="padding: 24px 20px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 12px; color: var(--emerald); letter-spacing: 0.1em; font-weight: 600;">A · 01</div>
+            <h4 style="font-size: 18px; font-weight: 700; color: var(--ink); margin-top: 12px; margin-bottom: 8px; text-transform: uppercase;">Household View</h4>
+            <p style="font-size: 14px; color: var(--mute); line-height: 1.45; margin: 0;">Entity-resolution AI auto-maps external accounts to households.</p>
+          </div>
+        </div>
+        <div class="glass" style="padding: 24px 20px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 12px; color: var(--emerald); letter-spacing: 0.1em; font-weight: 600;">A · 02</div>
+            <h4 style="font-size: 18px; font-weight: 700; color: var(--ink); margin-top: 12px; margin-bottom: 8px; text-transform: uppercase;">Meeting Mode</h4>
+            <p style="font-size: 14px; color: var(--mute); line-height: 1.45; margin: 0;">GenAI drafts the quarterly summary in the RM's tone of voice.</p>
+          </div>
+        </div>
+        <div class="glass" style="padding: 24px 20px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 12px; color: var(--emerald); letter-spacing: 0.1em; font-weight: 600;">A · 03</div>
+            <h4 style="font-size: 18px; font-weight: 700; color: var(--ink); margin-top: 12px; margin-bottom: 8px; text-transform: uppercase;">Predictive Drift</h4>
+            <p style="font-size: 14px; color: var(--mute); line-height: 1.45; margin: 0;">Volatility analysis flags 90% breach probability 7 days out.</p>
+          </div>
+        </div>
+        <div class="glass" style="padding: 24px 20px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 12px; color: var(--emerald); letter-spacing: 0.1em; font-weight: 600;">A · 04</div>
+            <h4 style="font-size: 18px; font-weight: 700; color: var(--ink); margin-top: 12px; margin-bottom: 8px; text-transform: uppercase;">Value Ledger</h4>
+            <p style="font-size: 14px; color: var(--mute); line-height: 1.45; margin: 0;">Auto-quantifies TLH savings to justify advisory fees.</p>
+          </div>
+        </div>
+        <div class="glass" style="padding: 24px 20px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 12px; color: var(--emerald); letter-spacing: 0.1em; font-weight: 600;">A · 05</div>
+            <h4 style="font-size: 18px; font-weight: 700; color: var(--ink); margin-top: 12px; margin-bottom: 8px; text-transform: uppercase;">Ask AI Graph</h4>
+            <p style="font-size: 14px; color: var(--mute); line-height: 1.45; margin: 0;">LLM queries 10 years of meeting notes — solves the succession problem.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div style="font-family: var(--mono); font-size: 12px; color: var(--mute-2); letter-spacing: 0.1em; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line);">
+        11 total integrations across the platform — see master case study for the full mapping.
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 12 / 13 — POWER BI + ANGULAR -->
+  <section data-label="12 Power BI + Angular">
+    <div class="slide-pad">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+      <div class="chrome-tl">12 / DEPLOYMENT</div>
+      <div class="chrome-tr-counter">12 / 13</div>
+      <a href="Strand Finance Case Study.html" class="chrome-tr-link">View full case study →</a>
+      
+      <div class="head-block">
+        <div class="eyebrow blue">DESIGN TO ENGINEERING</div>
+        <h2 class="title" style="margin-top: 18px;">Designed for Power BI. Built for Angular.</h2>
+      </div>
+      
+      <div class="row-split" style="gap: 40px; flex: 1;">
+        <div class="glass" style="padding: 32px; border-radius: 16px; display: flex; flex-direction: column;">
+          <h3 style="font-size: 24px; font-weight: 700; color: var(--blue); margin-bottom: 20px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.05em;">Power BI considerations</h3>
+          <ul style="margin: 0; padding-left: 20px; color: var(--ink-soft); font-size: 18px; line-height: 1.6; display: flex; flex-direction: column; gap: 8px;">
+            <li>Every chart maps to a Power BI native visual (Card, Line, Donut, Matrix, Q&A, Smart Narrative)</li>
+            <li>Theme JSON exports color tokens for visual consistency</li>
+            <li>Bookmarks drive Client Detail tab logic</li>
+            <li>Drillthrough configured on Client Detail</li>
+            <li>Field parameters power time-horizon toggles</li>
+            <li>RLS (Row-Level Security) so each RM sees only their book</li>
+          </ul>
+        </div>
+        
+        <div class="glass" style="padding: 32px; border-radius: 16px; display: flex; flex-direction: column;">
+          <h3 style="font-size: 24px; font-weight: 700; color: var(--emerald); margin-bottom: 20px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.05em;">Angular component architecture</h3>
+          <ul style="margin: 0; padding-left: 20px; color: var(--ink-soft); font-size: 18px; line-height: 1.6; display: flex; flex-direction: column; gap: 8px;">
+            <li>Atomic design: 7 atoms → 9 molecules → 4 organisms → templates</li>
+            <li>Standalone components with signal-based inputs</li>
+            <li>Storybook coverage for design-system documentation</li>
+            <li>WCAG AAA contrast across all financial data</li>
+            <li>Tabular numerals for all monetary values</li>
+            <li>Theme tokens shared with SCSS</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div style="font-family: var(--mono); font-size: 12px; color: var(--mute-2); letter-spacing: 0.1em; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line);">
+        Design system delivered as a living Storybook for developer handoff.
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 13 / 13 — OUTCOMES + THANK YOU -->
+  <section data-label="13 Outcomes + Thank You">
+    <div class="slide-pad">
+      <div class="grid-bg"></div>
+      <div class="mesh-glow"></div>
+      <div class="chrome-tl">13 / OUTCOMES</div>
+      <div class="chrome-tr-counter">13 / 13</div>
+      <a href="Strand Finance Case Study.html" class="chrome-tr-link">View full case study →</a>
+      
+      <div class="head-block" style="margin-bottom: 24px;">
+        <div class="eyebrow">THE TRANSFORMATION</div>
+        <h2 class="title" style="margin-top: 18px;">Outcomes & Thank You</h2>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: center; flex: 1;">
+        <div class="glass" style="padding: 24px 32px; border-radius: 16px;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 16px;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--line-strong); font-family: var(--mono); font-size: 12px; color: var(--mute-2); letter-spacing: 0.1em;">
+                <th style="padding: 10px 0;">METRIC</th>
+                <th style="padding: 10px 0;">BEFORE (Legacy · 2024)</th>
+                <th style="padding: 10px 0; color: var(--emerald);">AFTER (Strand · 2026)</th>
+              </tr>
+            </thead>
+            <tbody style="color: var(--ink-soft); line-height: 1.5;">
+              <tr style="border-bottom: 1px solid var(--line);">
+                <td style="padding: 12px 0; font-family: var(--mono); color: var(--mute); font-size: 13px; font-weight: 600;">PREP</td>
+                <td style="padding: 12px 0;">2 hours across 5 systems</td>
+                <td style="padding: 12px 0; color: var(--emerald); font-weight: 600;">Under 1 minute in Meeting Mode</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--line);">
+                <td style="padding: 12px 0; font-family: var(--mono); color: var(--mute); font-size: 13px; font-weight: 600;">DRIFT</td>
+                <td style="padding: 12px 0;">Reactive · weeks late</td>
+                <td style="padding: 12px 0; color: var(--emerald); font-weight: 600;">Predictive · 7 days ahead</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--line);">
+                <td style="padding: 12px 0; font-family: var(--mono); color: var(--mute); font-size: 13px; font-weight: 600;">STATEMENTS</td>
+                <td style="padding: 12px 0;">40-page PDF of jargon</td>
+                <td style="padding: 12px 0; color: var(--emerald); font-weight: 600;">3-paragraph plain English NLG</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--line);">
+                <td style="padding: 12px 0; font-family: var(--mono); color: var(--mute); font-size: 13px; font-weight: 600;">MOBILE</td>
+                <td style="padding: 12px 0;">Desktop PDF squinting</td>
+                <td style="padding: 12px 0; color: var(--emerald); font-weight: 600;">Native PWA + voice-to-CRM</td>
+              </tr>
+              <tr>
+                <td style="padding: 12px 0; font-family: var(--mono); color: var(--mute); font-size: 13px; font-weight: 600;">SUCCESSION</td>
+                <td style="padding: 12px 0;">"Ask the departing RM"</td>
+                <td style="padding: 12px 0; color: var(--emerald); font-weight: 600;">Ask AI · 10 years of notes</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="font-style: italic; font-size: 11px; color: var(--mute-2); margin-top: 14px; line-height: 1.4;">
+            Outcomes shown reflect a combination of measured results from the original engagement and modeled projections based on competitive benchmarking.
+          </div>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 24px;">
+          <div>
+            <div style="font-size: 32px; font-weight: 700; color: var(--ink);">Let's build something exciting together.</div>
+            <div style="font-style: italic; font-size: 18px; color: var(--mute); margin-top: 10px;">"The best way to predict the future is to design it."</div>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px;">
+            <a href="Strand Finance Case Study.html" class="glass" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 20px; border-radius: 30px; text-decoration: none; border: 1px solid var(--emerald); color: var(--ink); font-weight: 600; font-size: 15px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16,185,129,0.1)'" onmouseout="this.style.background='transparent'">EXPLORE THE FULL CASE STUDY →</a>
+            <a href="https://erase-visa-66779715.figma.site/#" target="_blank" class="glass" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 20px; border-radius: 30px; text-decoration: none; border: 1px solid var(--blue); color: var(--ink); font-weight: 600; font-size: 15px; transition: all 0.2s;" onmouseover="this.style.background='rgba(59,130,246,0.1)'" onmouseout="this.style.background='transparent'">VIEW LIVE PROTOTYPE →</a>
+            <a href="https://parth-parekh.com" target="_blank" class="glass" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 20px; border-radius: 30px; text-decoration: none; border: 1px solid var(--mute); color: var(--ink); font-weight: 600; font-size: 15px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">PORTFOLIO →</a>
+          </div>
+          
+          <div style="font-family: var(--mono); font-size: 13px; color: var(--mute-2); letter-spacing: 0.1em; margin-top: 10px;">
+            LinkedIn · mr.parekhparth@gmail.com
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</deck-stage>
+
+</body>
+</html>
