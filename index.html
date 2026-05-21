@@ -10,9 +10,9 @@
 
 <script type="application/json" id="speaker-notes">
 [
-"Good morning. I'm going to walk you through twenty-four weeks of work on the Strand Finance wealth management platform. The headline is simple: by treating AI as a material woven into the workflow — not a feature bolted onto the side — we cut Relationship Manager pre-meeting prep from two hours to thirty seconds, and shifted compliance from autopsy to early warning. I want you to leave with three things: the strategic frame that unlocked this, the specific design decisions that made AI feel trustworthy, and the business impact those decisions drove.",
+"Good morning. I'm going to walk you through twenty-four weeks of work on the Strand Finance wealth management platform. The headline is simple: by treating AI as a material woven into the workflow — not a feature bolted onto the side — we cut Relationship Manager pre-meeting prep from two hours to under couple of minutes, and shifted compliance from autopsy to early warning. I want you to leave with three things: the strategic frame that unlocked this, the specific design decisions that made AI feel trustworthy, and the business impact those decisions drove.",
 
-"Before I get into process, the four numbers that matter. Pre-meeting prep collapsed from two hours to thirty seconds. Drift detection moved from reactive — caught after the breach — to predictive, seven days ahead. Roughly thirty percent of the Relationship Manager's week was reclaimed for client-facing work. And client NPS doubled, from thirty-two to sixty-four. I'll show you how each of these traces back to a specific design decision.",
+"Before I get into process, the four numbers that matter. Pre-meeting prep collapsed from two hours to under couple of minutes. Drift detection moved from reactive — caught after the breach — to predictive, seven days ahead. Roughly thirty percent of the Relationship Manager's week was reclaimed for client-facing work. And client NPS doubled, from thirty-two to sixty-four. I'll show you how each of these traces back to a specific design decision.",
 
 "My approach was the same one I use everywhere: workflow before data. Most wealth platforms are built database-first — forty columns of raw data dumped into a grid, asking the human to hunt for the insight. I flipped that. Every screen earns its place by answering a temporal question — what needs my attention at nine A M, what context do I need at one-thirty before a call. Every interface has to answer in under five seconds. Three guiding principles: workflow before data, AI augments never replaces, and trust through transparency.",
 
@@ -34,7 +34,7 @@
 
 "The information architecture decision that changed everything: household is the root entity, not the account. That single decision reduced click-depth to common tasks by sixty percent. Underneath the household sit members, accounts, holdings, goals, documents, and an activity timeline. Cross-cutting views — pipeline, risk and compliance, AI insights — sit at the same level. And time is a first-class dimension on every screen, with an explicit as-of badge.",
 
-"The primary task flow for pre-meeting prep. A calendar trigger launches Meeting Mode automatically. The AI assembles the household snapshot in roughly five seconds. The RM reviews the AI-drafted narrative, edits if needed, approves. The pack auto-formats to a PDF and a screen-share view. End-to-end, thirty seconds. The two-hour ritual is gone.",
+"The primary task flow for pre-meeting prep. A calendar trigger launches Meeting Mode automatically. The AI assembles the household snapshot in roughly five seconds. The RM reviews the AI-drafted narrative, edits if needed, approves. The pack auto-formats to a PDF and a screen-share view. End-to-end, under couple of minutes. The two-hour ritual is gone.",
 
 "In lo-fi, we intentionally stripped all visual branding to test pure information architecture. We validated that anchoring navigation around household instead of account reduced click depth by sixty percent. We also tested whether RMs trusted AI insights when inline versus buried in a slide-out panel — inline won decisively. Iteration mattered: book overview went from a database view, to a triage view, to an insight-first view where AI surfaces three clients with reasoning. By V3, eighty-seven percent of RMs in usability test selected the correct first action.",
 
@@ -44,17 +44,17 @@
 
 "This is the Book Overview — the nine A M landing page. The AI co-pilot, on the right, has already triaged the book. Top of the list: the Patel household, drift four-point-five percent, IPS review thirty-eight months overdue. Reasoning is shown inline, sources are one click away. James finds morning priority in four seconds instead of thirty minutes.",
 
-"Meeting Mode — the most direct hit on the two-hour problem. One click from the calendar trigger. The AI assembles performance, allocation, and a quarterly narrative drafted in the RM's own tone of voice. The sounds-like-me feedback loop trains the model on her phrasing. She reviews, edits two sentences, approves. Thirty seconds. Pack is ready.",
+"Meeting Mode — the most direct hit on the two-hour problem. One click from the calendar trigger. The AI assembles performance, allocation, and a quarterly narrative drafted in the RM's own tone of voice. The sounds-like-me feedback loop trains the model on her phrasing. She reviews, edits two sentences, approves. Under couple of minutes. Pack is ready.",
 
 "Predictive drift — the slide that made compliance partners cry. Volatility analysis flags ninety-percent breach probability seven days out. The timeline shows when the breach is likely to occur. The RM schedules a rebalance proactively instead of explaining a breach reactively. This single capability cut compliance escalations by fifty-four percent.",
 
 "The bubble map — and the philosophical core of this project. Clients don't dream in time-weighted return. They dream in milestones. Retire at sixty. Fund the daughter's wedding. Leave a legacy. Each circle is a life goal, sized by required funding, colored by funding status — emerald when on track, blue when in-flight, amber when at risk. A dynamic Monte Carlo model recalculates in real time when the client moves a slider. This was the moment client conversations changed from defensive — why are fees high — to collaborative — what if we save a thousand more a month.",
 
-"Side-by-side, the transformation. Book overview moved from a table of forty-five clients by twelve columns to AI-triaged top three with reasoning. Pre-meeting prep went from two hours across five systems to thirty seconds in Meeting Mode. Drift detection from reactive post-breach email to predictive seven days ahead. Client statements from forty-page jargon PDFs to three-paragraph NLG summaries. Mobile from squinting at desktop PDFs to a native PWA with voice capture. And succession — from ask the departing RM to ask the AI bar with ten years of context.",
+"Side-by-side, the transformation. Book overview moved from a table of forty-five clients by twelve columns to AI-triaged top three with reasoning. Pre-meeting prep went from two hours across five systems to under couple of minutes in Meeting Mode. Drift detection from reactive post-breach email to predictive seven days ahead. Client statements from forty-page jargon PDFs to three-paragraph NLG summaries. Mobile from squinting at desktop PDFs to a native PWA with voice capture. And succession — from ask the departing RM to ask the AI bar with ten years of context.",
 
 "Twelve RMs across three firms, sixty-minute moderated sessions. Five core workflow tasks. Find top client to call today — one hundred percent success, eight seconds. Run pre-meeting prep — ninety-two percent, forty-five seconds. Triage a drift alert — eighty-three percent, ninety seconds — and that's where we found our biggest miss. We had buried the rebalance action in a three-step modal. V4 brought it inline. SUS came in at eighty-seven out of one hundred — top tenth percentile.",
 
-"A day in the new workflow. Nine A M, the dashboard has triaged her book. Ten forty-five, Meeting Mode handles Chen prep in thirty seconds. One-thirty, mobile PWA flags a drift forecast en route to a client lunch. Three P M, voice-to-CRM captures the post-lunch note and NLP flags grandson as a life event — which lands in Diane's compliance queue automatically. Five-thirty, laptop closed. Six clients spoken to, two meetings prepped, four records updated. Two months earlier, that was a twelve-hour day.",
+"A day in the new workflow. Nine A M, the dashboard has triaged her book. Ten forty-five, Meeting Mode handles Chen prep in under couple of minutes. One-thirty, mobile PWA flags a drift forecast en route to a client lunch. Three P M, voice-to-CRM captures the post-lunch note and NLP flags grandson as a life event — which lands in Diane's compliance queue automatically. Five-thirty, laptop closed. Six clients spoken to, two meetings prepped, four records updated. Two months earlier, that was a twelve-hour day.",
 
 "The results. Pre-meeting prep down ninety-nine percent. Client-facing time up thirty points. Drift caught pre-breach up sixty-seven points. Statement readability up three hundred thirty-three percent. Mobile note-logging up fifty-nine points. Junior RM ramp time cut by sixty-seven percent. Client NPS doubled. Compliance escalations down fifty-four percent. The business case: two-point-four million in projected annual time savings, forty percent increase in advisor capacity without headcount growth, six net new clients per RM per year.",
 
@@ -666,7 +666,7 @@
       <div class="core">
         <div>
           <div style="font-family: var(--mono); font-size: 18px; letter-spacing: 0.24em; color: var(--emerald); margin-bottom: 32px;">EMPOWERING THE MODERN RELATIONSHIP MANAGER</div>
-          <h1>From two hours<br/>to thirty seconds</h1>
+          <h1>From two hours<br/>to under couple of minutes</h1>
          </div>
 
         <div class="meta-grid">
@@ -1106,7 +1106,7 @@
   <section data-label="9 Flow">
     <div class="slide-pad">
       <div class="chrome-tl">09 / FLOW</div>
-      <div class="chrome-br"><span class="dot"></span><span>PRE-MEETING PREP · 30s</span></div>
+      <div class="chrome-br"><span class="dot"></span><span>PRE-MEETING PREP · <5 MIN</span></div>
 
       <div class="head-block">
         <div class="eyebrow">PRIMARY TASK FLOW</div>
@@ -1162,7 +1162,7 @@
           <div class="flow-step glass" style="background: linear-gradient(180deg, rgba(16,185,129,0.18), rgba(59,130,246,0.08)); border-color: rgba(16,185,129,0.5);">
             <div class="n" style="color: var(--emerald);">08 · OUTCOME</div>
             <div class="h" style="color: var(--emerald);">RM enters prepared</div>
-            <div class="d">End-to-end: ~30 seconds.</div>
+            <div class="d">End-to-end: ~120 seconds.</div>
           </div>
         </div>
       </div>
@@ -1303,7 +1303,7 @@
       <div class="hifi-slide">
         <div class="hifi-narr">
           <div class="eyebrow">AI CO-PILOT · CAUGHT A RISK</div>
-          <h2>From two hours to thirty seconds.</h2>
+          <h2>From two hours to under couple of minutes.</h2>
        
 
         </div>
@@ -1365,7 +1365,7 @@
   <section data-label="14 Meeting Mode">
     <div class="slide-pad" style="padding-right: 0;">
       <div class="chrome-tl">14 / HI-FI · MEETING MODE</div>
-      <div class="chrome-br" style="right: 96px;"><span class="dot"></span><span>30s PREP</span></div>
+      <div class="chrome-br" style="right: 96px;"><span class="dot"></span><span><5 MIN PREP</span></div>
 
       <div class="hifi-slide">
         <div class="hifi-narr">
@@ -1587,7 +1587,7 @@
           <div class="ba-head"><span class="lbl">● AFTER</span><span class="sub">STRAND · 2026</span></div>
           <div class="ba-list">
             <div class="ba-row"><div class="k">BOOK OVERVIEW</div><div class="v">AI-triaged <b>top 3 households</b> with reasoning, confidence, and inline action.</div></div>
-            <div class="ba-row"><div class="k">PREP</div><div class="v"><b>30 seconds</b> in Meeting Mode. Tone-matched narrative ready to ship.</div></div>
+            <div class="ba-row"><div class="k">PREP</div><div class="v"><b>under couple of minutes</b> in Meeting Mode. Tone-matched narrative ready to ship.</div></div>
             <div class="ba-row"><div class="k">DRIFT</div><div class="v">Predictive widget. <b>7 days</b> ahead. 92% confidence, inline rebalance.</div></div>
             <div class="ba-row"><div class="k">STATEMENTS</div><div class="v"><b>3-paragraph</b> NLG summary tuned to client literacy. Plain English toggle.</div></div>
             <div class="ba-row"><div class="k">MOBILE</div><div class="v">Native PWA with voice-to-CRM. <b>71%</b> same-day note logging.</div></div>
