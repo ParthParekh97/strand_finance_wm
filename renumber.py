@@ -49,7 +49,8 @@ files_to_renumber = [
     'Strand Finance Case Study (AI Presenter).html',
     'Strand Finance Case Study (Concise).html',
     'Strand Finance Interview deck.html',
-    'Strand Finance Interview (Scrolling).html'
+    'Strand Finance Interview (Scrolling).html',
+    'index.html'
 ]
 
 dirs = [
